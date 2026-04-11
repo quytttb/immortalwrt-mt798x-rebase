@@ -10,7 +10,7 @@ endef
 
 define Build/fit-with-netgear-top-level-rootfs-node
 	$(call Build/fit-its,$(1))
-	$(TOPDIR)/scripts/gen_netgear_rootfs_node.sh $(KERNEL_BUILD_DIR)/root.squashfs > $@.rootfs
+	$(TOPDIR)/scripts/gen_netgear_rootfs_node.sh $(KERNEL_BUILD_DIR)/root.squashfs$(if $(TARGET_PER_DEVICE_ROOTFS),+pkg=$(ROOTFS_ID/$(DEVICE_NAME))) > $@.rootfs
 	awk '/configurations/ { system("cat $@.rootfs") } 1' $@.its > $@.its.tmp
 	@mv -f $@.its.tmp $@.its
 	@rm -f $@.rootfs
@@ -388,6 +388,8 @@ TARGET_DEVICES += arcadyan_mozart
 define Device/asus_rt-ax52
   DEVICE_VENDOR := ASUS
   DEVICE_MODEL := RT-AX52
+  DEVICE_ALT0_VENDOR := ASUS
+  DEVICE_ALT0_MODEL := RT-AX52 PRO
   DEVICE_DTS := mt7981b-asus-rt-ax52
   DEVICE_DTS_DIR := ../dts
   DEVICE_PACKAGES := 
@@ -667,7 +669,8 @@ define Device/bananapi_bpi-r4-common
   DEVICE_DTS_OVERLAY:= mt7988a-bananapi-bpi-r4-emmc mt7988a-bananapi-bpi-r4-rtc mt7988a-bananapi-bpi-r4-sd
   DEVICE_DTC_FLAGS := --pad 4096
   DEVICE_PACKAGES := kmod-hwmon-pwmfan kmod-i2c-mux-pca954x kmod-eeprom-at24 kmod-mt7996-firmware kmod-mt7996-233-firmware \
-		     kmod-rtc-pcf8563 kmod-sfp kmod-usb3 e2fsprogs f2fsck mkf2fs mt7988-wo-firmware automount
+		     kmod-rtc-pcf8563 kmod-sfp kmod-phy-aquantia kmod-usb3 e2fsprogs f2fsck mkf2fs mt7988-wo-firmware \
+		     automount
   DEVICE_COMPAT_VERSION := 1.1
   DEVICE_COMPAT_MESSAGE := The non-switch ports were renamed to match the board/case labels
   IMAGES := sysupgrade.itb
@@ -1557,6 +1560,27 @@ define Device/glinet_gl-mt3000
 endef
 TARGET_DEVICES += glinet_gl-mt3000
 
+define Device/glinet_gl-mt3600be
+  DEVICE_VENDOR := GL.iNet
+  DEVICE_MODEL := GL-MT3600BE
+  DEVICE_DTS := mt7987a-glinet-gl-mt3600be
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := mt7987-2p5g-phy-firmware kmod-mt7990-firmware \
+	kmod-hwmon-pwmfan kmod-usb3 automount
+  KERNEL = kernel-bin | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  KERNEL_INITRAMFS = kernel-bin | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd
+  KERNEL_IN_UBI := 1
+  KERNEL_LOADADDR := 0x40000000
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 483328k
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += glinet_gl-mt3600be
+
 define Device/glinet_gl-mt6000
   DEVICE_VENDOR := GL.iNet
   DEVICE_MODEL := GL-MT6000
@@ -1854,6 +1878,32 @@ define Device/kebidumei_ax3000-u22
   SUPPORTED_DEVICES += mediatek,mt7981-spim-nor-rfb
 endef
 TARGET_DEVICES += kebidumei_ax3000-u22
+
+define Device/keenetic_kap-630-common
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware \
+		kmod-phy-airoha-en8811h
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 6144k
+  IMAGE_SIZE := 108544k
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb | \
+	append-squashfs4-fakeroot
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | \
+	append-ubi | check-size | zyimage -d $$(ZYIMAGE_ID) -v "$$(DEVICE_MODEL)"
+endef
+
+define Device/keenetic_kap-630
+  DEVICE_VENDOR := Keenetic
+  DEVICE_MODEL := KAP-630
+  DEVICE_DTS := mt7981b-keenetic-kap-630
+  ZYIMAGE_ID := 0x810630
+  $(call Device/keenetic_kap-630-common)
+endef
+TARGET_DEVICES += keenetic_kap-630
 
 define Device/keenetic_kn-1812-common
   DEVICE_DTS_DIR := ../dts
@@ -2352,6 +2402,15 @@ define Device/netcore_n60-pro
   ARTIFACT/bl31-uboot.fip := mt7986-bl31-uboot netcore_n60-pro
 endef
 TARGET_DEVICES += netcore_n60-pro
+
+define Device/netcraze_nap-630
+  DEVICE_VENDOR := Netcraze
+  DEVICE_MODEL := NAP-630
+  DEVICE_DTS := mt7981b-netcraze-nap-630
+  ZYIMAGE_ID := 0xC10630
+  $(call Device/keenetic_kap-630-common)
+endef
+TARGET_DEVICES += netcraze_nap-630
 
 define Device/netcraze_nc-1812
   DEVICE_VENDOR := Netcraze
@@ -3485,3 +3544,31 @@ define Device/zyxel_nwa50ax-pro
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += zyxel_nwa50ax-pro
+
+define Device/zyxel_wx5600-t0-ubootmod
+  DEVICE_VENDOR := Zyxel
+  DEVICE_MODEL := WX5600-T0
+  DEVICE_VARIANT := (OpenWrt U-Boot layout)
+  DEVICE_DTS := mt7986b-zyxel-wx5600-t0-ubootmod
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware
+  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
+  IMAGES := sysupgrade.itb
+  BLOCKSIZE := 256k
+  PAGESIZE := 4096
+  KERNEL_IN_UBI := 1
+  UBOOTENV_IN_UBI := 1
+  KERNEL := kernel-bin | lzma
+  KERNEL_INITRAMFS := kernel-bin | lzma | \
+        fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd
+  IMAGE/sysupgrade.itb := append-kernel | \
+        fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | append-metadata
+  ARTIFACTS := preloader.bin bl31-uboot.fip
+  ARTIFACT/preloader.bin := mt7986-bl2 spim-nand-4k-ddr3
+  ARTIFACT/bl31-uboot.fip := mt7986-bl31-uboot zyxel_wx5600-t0
+ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+  ARTIFACTS += initramfs-factory.ubi
+  ARTIFACT/initramfs-factory.ubi := append-image-stage initramfs-recovery.itb | ubinize-kernel
+endif
+endef
+TARGET_DEVICES += zyxel_wx5600-t0-ubootmod

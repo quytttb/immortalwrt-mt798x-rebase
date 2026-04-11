@@ -120,6 +120,8 @@ mediatek_setup_interfaces()
 	cudy,ap3000-v1|\
 	cudy,re3000-v1|\
 	kebidumei,ax3000-u22|\
+	keenetic,kap-630|\
+	netcraze,nap-630|\
 	netgear,eax17|\
 	netgear,wax220|\
 	openfi,6c|\
@@ -149,6 +151,7 @@ mediatek_setup_interfaces()
 	glinet,gl-mt2500|\
 	glinet,gl-mt2500-airoha|\
 	glinet,gl-mt3000|\
+	glinet,gl-mt3600be|\
 	glinet,gl-x3000|\
 	glinet,gl-xe3000|\
 	openembed,som7981|\
@@ -221,6 +224,9 @@ mediatek_setup_interfaces()
 	xiaomi,redmi-router-ax6000-stock|\
 	xiaomi,redmi-router-ax6000-ubootmod)
 		ucidef_set_interfaces_lan_wan "lan2 lan3 lan4" wan
+		;;
+	zyxel,wx5600-t0-ubootmod)
+		ucidef_set_interface_lan "lan1 lan2"
 		;;
 	*)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" wan

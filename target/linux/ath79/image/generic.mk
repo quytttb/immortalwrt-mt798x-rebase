@@ -1640,6 +1640,7 @@ define Device/fortinet_fap_common
 	check-size | pad-to $$$$(IMAGE_SIZE) | \
 	append-loader-okli-uimage $(1) | pad-to 10944k | \
 	gzip-filename $$$$(FACTORY_IMG_NAME)
+  DEFAULT := n
 endef
 
 define Device/fortinet_fap-220-b
@@ -1649,7 +1650,6 @@ define Device/fortinet_fap-220-b
   FACTORY_IMG_NAME := FAP22B-9.99-AP-build999-999999-patch99
   DEVICE_PACKAGES := -uboot-envtools kmod-usb-ohci kmod-usb2 \
 	kmod-owl-loader
-  DEFAULT := n
 endef
 TARGET_DEVICES += fortinet_fap-220-b
 
@@ -1840,6 +1840,7 @@ define Device/huawei_ap5030dn
   DEVICE_PACKAGES := ath10k-firmware-qca988x-ct kmod-ath10k-ct
   LOADER_TYPE := bin
   LOADER_FLASH_OFFS := 0x111DC0
+  LZMA_TEXT_START := 0x82800000
   KERNEL_SIZE := 15360k
   IMAGE_SIZE := 30720k
   COMPILE := loader-$(1).bin
@@ -1855,6 +1856,7 @@ define Device/huawei_ap6010dn
   DEVICE_MODEL := AP6010DN
   LOADER_TYPE := bin
   LOADER_FLASH_OFFS := 0x111DC0
+  LZMA_TEXT_START := 0x82800000
   KERNEL_SIZE := 15360k
   IMAGE_SIZE := 30720k
   COMPILE := loader-$(1).bin
@@ -2237,6 +2239,7 @@ define Device/netgear_wndap360
   $(Device/netgear_generic)
   SOC := ar7161
   DEVICE_MODEL := WNDAP360
+  DEVICE_PACKAGES := kmod-owl-loader
   IMAGE_SIZE := 7744k
   BLOCKSIZE := 256k
   KERNEL := kernel-bin | append-dtb | gzip | uImage gzip

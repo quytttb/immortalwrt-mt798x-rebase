@@ -671,6 +671,23 @@ endef
 $(eval $(call KernelPackage,phy-motorcomm))
 
 
+define KernelPackage/dwmac-motorcomm
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Motorcomm PCI DWMAC support
+  DEPENDS:=@PCI_SUPPORT +kmod-phy-motorcomm +kmod-stmmac-core
+  KCONFIG:=CONFIG_DWMAC_MOTORCOMM
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/stmicro/stmmac/dwmac-motorcomm.ko
+  AUTOLOAD:=$(call AutoProbe,dwmac-motorcomm,1)
+endef
+
+define KernelPackage/dwmac-motorcomm/description
+  Supports the Motorcomm DWMAC-based PCI Ethernet controllers.
+  Currently only YT6801 is supported.
+endef
+
+$(eval $(call KernelPackage,dwmac-motorcomm))
+
+
 define KernelPackage/dsa
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Distributed Switch Architecture support
@@ -1359,7 +1376,7 @@ $(eval $(call KernelPackage,igb))
 define KernelPackage/igbvf
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) 82576 Virtual Function Ethernet support
-  DEPENDS:=@PCI_SUPPORT @TARGET_x86 +kmod-i2c-core +kmod-i2c-algo-bit +kmod-ptp
+  DEPENDS:=@PCI_SUPPORT @(TARGET_loongarch64||TARGET_x86) +kmod-i2c-core +kmod-i2c-algo-bit +kmod-ptp
   KCONFIG:=CONFIG_IGBVF \
     CONFIG_IGB_HWMON=y \
     CONFIG_IGB_DCA=n
@@ -2141,7 +2158,7 @@ $(eval $(call KernelPackage,pcs-qcom-ipq9574))
 define KernelPackage/pcs-xpcs
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Synopsis DesignWare PCS driver
-  DEPENDS:=@(TARGET_x86_64||TARGET_armsr) +kmod-phylink +kmod-mdio-devres
+  DEPENDS:=@(TARGET_armsr||TARGET_loongarch64||TARGET_x86_64) +kmod-phylink +kmod-mdio-devres
   KCONFIG:=CONFIG_PCS_XPCS
   FILES:=$(LINUX_DIR)/drivers/net/pcs/pcs_xpcs.ko
   AUTOLOAD:=$(call AutoLoad,20,pcs_xpcs)
@@ -2153,7 +2170,7 @@ $(eval $(call KernelPackage,pcs-xpcs))
 define KernelPackage/stmmac-core
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Synopsis Ethernet Controller core (NXP,STMMicro,others)
-  DEPENDS:=@TARGET_x86_64||TARGET_armsr +kmod-pcs-xpcs +kmod-ptp
+  DEPENDS:=@(TARGET_armsr||TARGET_loongarch64||TARGET_x86_64) +kmod-pcs-xpcs +kmod-ptp
   KCONFIG:=CONFIG_STMMAC_ETH \
     CONFIG_STMMAC_SELFTESTS=n \
     CONFIG_STMMAC_PLATFORM \
@@ -2187,7 +2204,7 @@ $(eval $(call KernelPackage,igc))
 define KernelPackage/hinic
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Huawei Intelligent PCIE Network Interface Card support
-  DEPENDS:=@PCI_SUPPORT @TARGET_x86||TARGET_armsr_armv8
+  DEPENDS:=@PCI_SUPPORT @(TARGET_armsr_armv8||TARGET_loongarch64||TARGET_x86)
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/huawei/hinic/hinic.ko
   KCONFIG:=CONFIG_HINIC
   AUTOLOAD:=$(call AutoProbe,hinic)
