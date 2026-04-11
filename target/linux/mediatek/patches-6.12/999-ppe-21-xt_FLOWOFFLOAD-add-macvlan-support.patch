@@ -1,3 +1,12 @@
+---
+[v1] xt_FLOWOFFLOAD add macvlan support
+
+Without this patch, the packets forwarded through macvlan device
+would not be HNAT offloaded.
+---
+v1: Add macvlan support to xt_FLOWOFFLOAD for HNAT offload.
+---
+
 From dafec73a320a200ed356c1063c9fda1d3045c9fc Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Wed, 24 Sep 2025 12:59:34 +0800

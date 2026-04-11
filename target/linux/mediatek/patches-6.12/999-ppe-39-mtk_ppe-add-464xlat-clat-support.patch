@@ -1,3 +1,15 @@
+---
+[v1] net: ethernet: mtk_ppe: add 464xlat clat support
+
+Without this patch, traffic could not be hardware-offloaded
+by PPE when our platform act as 464-xlat CLAT gateway.
+
+Users can enable this feature using the following commands.
+ - echo "1 <NAT64_PREFIX>" > /sys/kernel/debug/mtk_ppe/464xlat
+---
+v1: Add 464XLAT CLAT hardware offload support.
+---
+
 From b16a337bef3919b6f26a3d746a7cbce50a2428a0 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Mon, 16 Mar 2026 17:20:55 +0800

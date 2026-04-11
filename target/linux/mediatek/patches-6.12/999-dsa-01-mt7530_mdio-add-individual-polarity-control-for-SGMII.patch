@@ -1,3 +1,15 @@
+---
+[v1] net: dsa: mt7530: add individual polarity control for SGMII
+
+The user can add the following property to the sgmiisys node of the DTS
+to control the SGMII PN polarity.
+- mediatek,pnswap: Swap TX and RX PN polarity
+- mediatek,pnswap-tx: Swap TX PN polarity
+- mediatek,pnswap-rx: Swap RX PN polarity
+---
+v1: add individual polarity control for SGMII
+---
+
 From e2e76226a9eb6facb0d0c0ce9288e1b75668a756 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:37:46 +0800

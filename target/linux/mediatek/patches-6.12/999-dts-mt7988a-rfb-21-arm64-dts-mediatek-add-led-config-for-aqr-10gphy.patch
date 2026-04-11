@@ -1,3 +1,12 @@
+---
+[v1] arm64: dts: mt7988: add led config for aqr 10gphy
+
+Add LED configuration for AQR 10G PHY with three LED nodes per PHY
+for link status indication. Enables netdev trigger for network activity LEDs.
+---
+v1: Add LED properties for our AQR113C RFB.
+---
+
 From 08ffe0bbe320a8ce67b2be4238c42f29018d7e74 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Wed, 28 Jan 2026 11:13:33 +0800

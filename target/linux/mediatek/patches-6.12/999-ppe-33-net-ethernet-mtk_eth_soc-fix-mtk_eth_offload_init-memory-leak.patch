@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: fix mtk_eth_offload_init memory leak
+
+Without this patch, the flow table rhashtable allocated in
+mtk_eth_offload_init is never destroyed, causing a memory leak on driver
+unload.
+---
+v1: Fix flow table rhashtable memory leak in mtk_ppe_deinit.
+---
+
 From d933c660a042bd291511cba53b9cfb444d49fbaa Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 20 Jan 2026 16:35:52 +0800

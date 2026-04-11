@@ -1,3 +1,17 @@
+---
+[v1] net: ethernet: mtk_ppe: add keep dscp toggle
+
+Some use scenarios require preserving the DSCP value when packets are
+forwarded by the PPE. Therefore, we have designed a new mode to achieve
+this. Users can enable this feature using the following commands.
+ - echo 1 > /sys/kernel/debug/mtk_ppe/dscp_toggle
+
+Without this patch, the DSCP value may be changed if the DSCP field in
+IB2 is not the same as that in the ingress packets.
+---
+v1: Add keep DSCP toggle to preserve DSCP value in PPE forwarding.
+---
+
 From b6b583518718b72c4a60f49ba752636cc2e362aa Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 13:03:38 +0800

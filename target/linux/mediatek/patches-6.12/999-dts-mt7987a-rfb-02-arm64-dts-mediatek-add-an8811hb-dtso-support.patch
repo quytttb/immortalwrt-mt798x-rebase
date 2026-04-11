@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: mt7987a-rfb: add AN8811HB dtso support
+
+Add device tree overlay support for Airoha AN8811HB 2.5G Ethernet PHY
+on MT7987A RFB. Enables GMAC1 connection with AN8811HB PHY via DTSO
+for flexible PHY configuration.
+---
+v1: Initial AN8811HB 2.5G PHY DTSO support for MT7987A RFB GMAC1 interface.
+---
+
 From 15c0a511ac8500cfc9ce4a94110228456fa35d85 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Thu, 18 Dec 2025 18:00:53 +0800

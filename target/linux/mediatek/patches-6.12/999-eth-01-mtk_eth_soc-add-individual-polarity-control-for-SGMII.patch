@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add individual polarity control for SGMII
+
+Implement parsing of device tree properties for individual TX/RX PN
+polarity control on SGMII interfaces to allow fine-grained polarity
+configuration for hardware compatibility.
+---
+v1: Add individual SGMII TX/RX PN polarity control.
+---
+
 From 933061753d47efaa2453cdf721379db75bc9a4bb Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:39:27 +0800

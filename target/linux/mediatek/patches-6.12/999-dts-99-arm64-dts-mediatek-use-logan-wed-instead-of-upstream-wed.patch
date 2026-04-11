@@ -1,3 +1,16 @@
+---
+[v2] arm64: dts: mediatek: use logan based WED/WARP instead of upstream WED/WARP
+
+The upstream based and logan based WED driver is not the same,
+this patch update the dts to use logan based WED settig instead of
+upstraem base wed setting
+
+---
+v2: Renamed to 999-dts-99-arm64-dts-mediatek-use-logan-wed-instead-of-upstream-wed.patch
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988-logan-warp.dtsi
 @@ -0,0 +1,177 @@
@@ -180,7 +193,7 @@
 +
 --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -1465,3 +1465,5 @@
+@@ -1468,3 +1468,5 @@
  		compatible = "mediatek,mt7988-rng";
  	};
  };

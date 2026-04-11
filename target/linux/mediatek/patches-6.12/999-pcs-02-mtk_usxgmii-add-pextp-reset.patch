@@ -1,3 +1,14 @@
+---
+[v1] net: pcs: mtk_usxgmii: add pextp reset
+
+Refactor PHYD/PHYA reset flow for the USXGMII PCS drivers.
+
+Without this patch, the USXGMII PHYD/PHYA reset flow may differ from the
+designer's suggestion.
+---
+v1: Move the PHYA reset flow to the USXGMII PCS drivers.
+---
+
 From d6ddc6a84642a069dca7fe31f22b441f779ca3cf Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:44:22 +0800

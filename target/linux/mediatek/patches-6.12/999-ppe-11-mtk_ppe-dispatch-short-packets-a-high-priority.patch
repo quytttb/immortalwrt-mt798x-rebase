@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: dispatch short packets a high priority queue in PPPQ path
+
+Without this patch, the performance of ETH to ETH cannot reach line rate
+in an unbalanced PHY rate test for the mt7988.
+---
+v1: Dispatch short packets to high priority queue in PPPQ path.
+---
+
 From 770bc427dd25583f4a53771448319bb7f49bdb2c Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:56:19 +0800

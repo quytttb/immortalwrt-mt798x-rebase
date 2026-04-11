@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add IEEE1588v2 support for NETSYSv3.1
+
+Add IEEE1588v2 PTP support for NETSYSv3.1 hardware. This enables hardware
+timestamping for both Delay Request-Response and Peer Delay measurements,
+providing accurate time synchronization for GMAC interfaces.
+---
+v1: Add IEEE1588v2 support for NETSYSv3.1.
+---
+
 From 7e7db22a49d99ad111c2409627c90f193f12dc6a Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 26 Dec 2025 11:19:36 +0800

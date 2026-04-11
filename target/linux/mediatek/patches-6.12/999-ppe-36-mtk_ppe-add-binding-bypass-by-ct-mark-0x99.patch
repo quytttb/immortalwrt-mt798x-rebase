@@ -1,3 +1,14 @@
+---
+[v1] net: ethernet: mtk_ppe: add binding bypass by ct mark 0x99
+
+Without this patch, there is no way to prevent specific connections from
+being hardware-offloaded by the PPE.
+
+Users can mark 0x99 to conntrack entry to bypass PPE binding using.
+---
+v1: Add PPE binding bypass for flows with conntrack mark 0x99.
+---
+
 From 462920b3c6dae2fa472020c1d822704888eb7c67 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Wed, 11 Mar 2026 16:55:40 +0800

@@ -1,3 +1,23 @@
+---
+[v3] arm64: dts: mediatek: convert mt7987 to dts-overlay architecture
+
+Convert MT7987 device tree to overlay based architecture. This comprehensive
+implementation demonstrates the full power of DTS overlay architecture for
+complex SoC platforms with multiple hardware configurations. The base
+mt7987a-rfb.dts keeps essential nodes. Storage media overlays support various
+flash types, refer to mt7987-<flash-type>.dtso for different storage options.
+Network configuration overlays support various PHY and switch configurations,
+refer to mt7987-netsys-*.dtso for different networking options. Peripheral
+overlays include SPIDEV for development.
+
+---
+v3: Update AN8855 SWCONFIG (GSW) driver to v1.0.11 for improved switch support.
+v2: Fix Bananapi BPI-R4-Lite NAND boot patches. BPI-R4-Lite uses SPI2 for NAND
+    instead of SPI0 which differs from standard MT7987 RFB board.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7987-spidev.dtso
 @@ -0,0 +1,28 @@

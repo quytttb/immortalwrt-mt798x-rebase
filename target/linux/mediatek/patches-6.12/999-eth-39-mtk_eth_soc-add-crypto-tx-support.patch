@@ -1,3 +1,15 @@
+---
+[v3] net: ethernet: mtk_eth_soc: add crypto TX support for MT7988
+
+Add cryptographic TX support for IPsec ESP tunnels on NETSYSv3. This enables
+hardware offload for IPsec encryption via EIP197 engine, with proper descriptor
+handling for crypto DMA transport and tunnel metadata.
+---
+v3: Add extra QDMA path after EIP197 SW inline encryption.
+v2: Add txd info for IPSec inline mode in gro frag_list processing.
+v1: Refactor and decouple crypto TX with NF_HNAT driver.
+---
+
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 @@ -1808,6 +1808,9 @@ static void mtk_tx_set_dma_desc_v2(struc

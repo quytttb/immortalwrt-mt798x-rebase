@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_eth_soc: support forced reset control
+
+Add debugfs interface for forced reset control. This allows users to trigger
+manual resets through proprietary debugfs for debugging and recovery purposes.
+---
+v1: Add forced reset control for the NETSYS SER.
+---
+
 From 0277e1da9c04f8e216fef5af96635cfd008ab0e5 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 17:08:19 +0800

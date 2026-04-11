@@ -1,3 +1,13 @@
+---
+[v1] net: dsa: add MaxLinear mxl862xx switch tagging drivers
+
+Add two DSA tagging formats for MaxLinear mxl862xx switches:
+1. Proprietary 8-byte special tag
+2. 4-byte VLAN-based tag using dsa_tag_8021q infrastructure
+---
+v1: add MaxLinear mxl862xx switch tagging drivers
+---
+
 From fd1cec7529fe1ddc0974042b6512c9652ea6dec0 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Mon, 3 Nov 2025 10:13:05 +0800

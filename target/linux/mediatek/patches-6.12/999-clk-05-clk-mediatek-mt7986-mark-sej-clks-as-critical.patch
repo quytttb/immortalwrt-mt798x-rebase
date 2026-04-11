@@ -1,11 +1,14 @@
-From b53ed8b226f4b04218f0d5464cff560e121b7db4 Mon Sep 17 00:00:00 2001
-From: "guan-gm.lin" <guan-gm.lin@mediatek.com>
-Date: Tue, 20 Jan 2026 15:14:51 +0800
-Subject: [PATCH] enable sej clock
-
 ---
- drivers/clk/mediatek/clk-mt7986-infracfg.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+[v1] clk: mediatek: mt7986: mark SEJ clocks as critical
+
+Mark clocks used by OP-TEE driver as CLK_IS_CRITICAL to prevent them from being
+disabled during the kernel's unused clock cleanup flow. The driver implementation
+is not in kernel space but in OP-TEE, so we keep these clocks critical to prevent
+them from being disabled by the kernel clock framework.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
 
 diff --git a/drivers/clk/mediatek/clk-mt7986-infracfg.c b/drivers/clk/mediatek/clk-mt7986-infracfg.c
 index 732c65e61..a4e0ebbcf 100644

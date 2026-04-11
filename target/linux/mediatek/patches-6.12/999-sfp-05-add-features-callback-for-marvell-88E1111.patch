@@ -1,3 +1,11 @@
+---
+[v1] net: phy: marvell: add features callback for 88E1111
+
+Add ".features = PHY_GBIT_FEATURES" to properly register PHY capabilities.
+---
+v1: add features callback for 88E1111
+---
+
 From 1a3d8b31a5730952021235343f2cdaee296e16b6 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 10 Nov 2025 13:21:15 +0800

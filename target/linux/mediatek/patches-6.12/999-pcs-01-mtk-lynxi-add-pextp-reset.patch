@@ -1,3 +1,14 @@
+---
+[v1] net: pcs: mtk-lynxi: add pextp reset
+
+Refactor PHYD/PHYA reset flow for the SGMII PCS drivers.
+
+Without this patch, the SGMII PHYD/PHYA reset flow may differ from the
+designer's suggestion.
+---
+v1: Move the PHYA reset flow to the SGMII PCS drivers.
+---
+
 From 09d4a5d27cdbd74a82d795c8ef08187866a09da7 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 25 Nov 2025 20:33:14 +0800

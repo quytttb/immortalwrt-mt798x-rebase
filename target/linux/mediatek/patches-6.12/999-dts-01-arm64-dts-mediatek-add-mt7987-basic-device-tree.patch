@@ -1,3 +1,25 @@
+---
+[v2] arm64: dts: mediatek: mt7987: Add basic device tree support
+
+Add basic device tree support for MediaTek MT7987 SoC. This includes the main
+SoC dtsi file `mt7987.dtsi`. Variant-specific dtsi files `mt7987a.dtsi` and
+`mt7987b.dtsi` are provided for different chip variants. Pin control
+definitions are separated into `mt7987-pinctrl.dtsi` for better organization.
+
+The dtsi files are designed to flexibly support DTS overlay technique, so flash
+device-related nodes are defined in DTS and DTSO instead of dtsi. Network
+subsystem base definitions in `mt7987-netsys.dtsi` include basic nodes. These
+network nodes are designed to be extended by specific `mt7987-netsys-*.dtso`
+files using the overlay DTS to support different network components based on
+your board with only one Linux image.
+
+---
+v2: Add and align mt798x flash DTS clock/driving settings. Add SPI2 driving
+    configuration for MT7987 flash support.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7987-pinctrl.dtsi
 @@ -0,0 +1,259 @@

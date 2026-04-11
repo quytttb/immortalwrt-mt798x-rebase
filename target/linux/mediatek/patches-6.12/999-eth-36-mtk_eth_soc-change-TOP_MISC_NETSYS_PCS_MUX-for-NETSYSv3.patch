@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: change TOP_MISC_NETSYS_PCS_MUX offset for NETSYSv3
+
+Adjust TOP_MISC_NETSYS_PCS_MUX register offset from 0x0 to 0x84 for NETSYSv3.
+This change aligns with updated topmisc base address to meet TOPS power control
+requirements on NETSYSv3.
+---
+v1: Change TOP_MISC_NETSYS_PCS_MUX offset from 0x0 to 0x84 for NETSYSv3.
+---
+
 From f567f7868a65d69d8e6ce10b5d882d93df5614ad Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 28 Nov 2025 11:13:17 +0800

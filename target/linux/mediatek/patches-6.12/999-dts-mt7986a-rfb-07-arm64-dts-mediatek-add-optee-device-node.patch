@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7986a rfb: add optee device node
+
+Add OP-TEE (Open Portable Trusted Execution Environment) firmware node for
+MT7986A RFB to enable secure world communication via SMC method.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From f415cc270902fa4bcb67b1711d733c2b03123df0 Mon Sep 17 00:00:00 2001
 From: "guan-gm.lin" <guan-gm.lin@mediatek.com>
 Date: Tue, 20 Jan 2026 16:30:01 +0800

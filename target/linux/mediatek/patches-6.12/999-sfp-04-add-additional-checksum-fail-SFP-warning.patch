@@ -1,3 +1,14 @@
+---
+[v1] net: phy: sfp: support JESS-LINK and SK-LINK modules with EEPROM
+quirks
+
+Add explicit support for JESS-LINK and SK-LINK modules with incorrect
+phys_id values. Tolerate checksum failures for these vendors like
+COTSWORKS.
+---
+v1: support JESS-LINK and SK-LINK modules with EEPROM quirks
+---
+
 From 4055660aa9f6c5cc1e11607dd139fa2ae34987f4 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Tue, 28 Oct 2025 11:35:15 +0800

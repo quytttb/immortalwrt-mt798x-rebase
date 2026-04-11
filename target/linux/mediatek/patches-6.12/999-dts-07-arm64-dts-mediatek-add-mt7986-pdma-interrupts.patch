@@ -1,3 +1,14 @@
+---
+[v1] arm64: dts: mediatek: add mt7986 pdma interrupts
+
+Add additional PDMA interrupt lines (189-192) to ethernet controller for MT7986
+to support RSS (Receive Side Scaling) and HWLRO (Hardware Large Receive Offload)
+features for improved network performance.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 047216f56de91560a3c4c34a6ab5f8a75f93e68c Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Fri, 5 Dec 2025 11:51:20 +0800

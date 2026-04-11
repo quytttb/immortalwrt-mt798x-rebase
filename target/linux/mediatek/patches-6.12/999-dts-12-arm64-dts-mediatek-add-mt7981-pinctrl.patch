@@ -1,3 +1,15 @@
+---
+[v2] arm64: dts: mediatek: add mt7981 pinctrl
+
+Create separate mt7981-pinctrl.dtsi file to consolidate basic pinctrl node
+definitions. Includes pin configurations for SPI, I2C, PWM, PCIe.
+
+---
+v2: Move PWM and I2C pins to pinctrl dtsi for better organization.
+v1: Add and unify basic pinctrl nodes scattered across different dts into unified
+    mt7981-pinctrl.dtsi file.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7981-pinctrl.dtsi
 @@ -0,0 +1,78 @@

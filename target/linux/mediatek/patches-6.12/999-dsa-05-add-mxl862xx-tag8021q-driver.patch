@@ -1,3 +1,15 @@
+---
+[v3] net: dsa: change log level for error handling on mxl862xx 2.5G switch
+
+This reduces unnecessary log messages in systems that include other MDIO 
+devices which, for certain reasons, must send dummy MDIO r/w commands to
+non-existent MDIO address, such as the AN8831 10G PHY.
+---
+v3: change log level for error handling on mxl862xx 2.5G switch
+v2: fix incomplete mxl862xx switch boot by increasing reset duration
+v1: add MaxLinear mxl862xx 2.5G switch DSA driver
+---
+
 From 9279fdd00762bcdc2cada81af3b69f45cba13516 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Mon, 3 Nov 2025 10:16:17 +0800

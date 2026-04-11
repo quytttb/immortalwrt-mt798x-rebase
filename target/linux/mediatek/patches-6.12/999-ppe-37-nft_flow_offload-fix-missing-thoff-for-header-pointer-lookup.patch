@@ -1,3 +1,15 @@
+---
+[v1] netfilter: nft_flow_offload: fix missing thoff for header pointer lookup
+
+When nft_thoff(pkt) returns zero, the subsequent call to
+skb_header_pointer() for the TCP header uses offset 0, which points
+to the network header rather than the transport header. This causes
+incorrect TCP flag inspection (fin/rst) and may lead to flows being
+incorrectly offloaded or rejected.
+---
+v1: Fix TCP header offset when nft_thoff returns zero in nft_flow_offload.
+---
+
 From 91e2474506b069f1cf6eed3cd64a7442b82993f5 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Thu, 12 Mar 2026 10:11:50 +0800

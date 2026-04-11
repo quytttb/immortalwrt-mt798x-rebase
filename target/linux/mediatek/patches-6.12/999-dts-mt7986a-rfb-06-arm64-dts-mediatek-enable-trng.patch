@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7986a rfb: enable trng
+
+Enable TRNG (True Random Number Generator) support for MT7986A RFB to provide
+hardware-based random number generation for cryptographic operations.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 0aca8a23678d3e98290c8c2291998ea62ab304fe Mon Sep 17 00:00:00 2001
 From: "guan-gm.lin" <guan-gm.lin@mediatek.com>
 Date: Thu, 22 Jan 2026 10:54:09 +0800

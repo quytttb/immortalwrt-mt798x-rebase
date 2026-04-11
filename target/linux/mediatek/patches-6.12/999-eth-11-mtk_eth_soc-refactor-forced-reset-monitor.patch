@@ -1,3 +1,16 @@
+---
+[v4] net: ethernet: mtk_eth_soc: refactor forced reset monitor
+
+Refactor forced reset monitoring mechanism for improved error detection and recovery.
+This patch enhances reset condition detection, adds comprehensive state tracking,
+and improves recovery procedures for system stability.
+---
+v4: Refactor GMAC TX hang condition for the NETSYS SER monitor.
+v3: Add mtk_stats_update() to the NETSYS SER monitor.
+v2: Correct GDM/GMAC ID and refactor GDM TX hang condition.
+v1: Add WDMA Tx, QDMA Tx, GMAC Tx/Rx, GDM Tx/Rx, and ADMA Rx to NETSYS SER monitor.
+---
+
 From 1b0d740e728bef30438c293e94de6b90a9eccbe6 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 7 Oct 2025 15:41:30 +0800

@@ -1,3 +1,15 @@
+---
+[v2] arm64: dts: mediatek: use software reset for aqr 10gphy
+
+Remove hardware reset GPIO configuration for AQR 10G PHYs and rely on a software
+reset to prevent firmware loss issues when the users execute the network
+interface down and up.
+---
+v2: Rename from 999-dts-mt7988a-rfb-21-arm64-dts-mediatek-use-software-reset-for-aqr-10gphy.patch
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 8df73feee61ae61482038ae6b72173e6f6914324 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Mon, 29 Dec 2025 11:17:19 +0800

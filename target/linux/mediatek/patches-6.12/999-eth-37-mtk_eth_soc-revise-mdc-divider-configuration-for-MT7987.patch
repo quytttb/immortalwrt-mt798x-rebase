@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: revise MDC divider configuration for MT7987
+
+Revise MDC divider calculation for NETSYSv3.1 hardware changes on MT7987. This
+implements new formula to obtain correct divider settings, preventing MDC clock
+from running faster than expected.
+---
+v1: Revise MDC divider configuration for MT7987.
+---
+
 From 46a8a8c6489376b68df5f71496cde2f0fb076a57 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 16 Dec 2025 21:19:23 +0800

@@ -1,3 +1,12 @@
+---
+[v1] net: pcs: mtk_usxgmii: add link_poll mechanism
+
+Without this patch, the USXGMII PCS cannot recover from a link-down
+state when the system encounters certain error situations.
+---
+v1: Add a USXGMII link_poll mechanism to recover from a link-down state.
+---
+
 From a62fc31865f3fd125ddd4ea8d470ca0dc140c16a Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 2 Jan 2026 09:45:29 +0800

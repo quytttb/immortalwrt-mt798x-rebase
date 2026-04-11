@@ -1,3 +1,16 @@
+---
+[v1] arm64: dts: mt7986a rfb: fix spim nand nor dts setting
+
+Fix SPI NAND/NOR clock setting and move pinctrl nodes from base dts to flash
+specific overlay-dts. Changes SPI NAND clock frequency from 10MHz to 52MHz and
+relocates pinctrl configuration from mt7986a-rfb.dts to respective flash specific
+overlay-dts (spi_nand_pins for NAND, spi_nor_pins for NOR) for proper flash type
+specific pin configuration.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7986a-rfb-spim-nand.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7986a-rfb-spim-nand.dts
 @@ -37,12 +37,14 @@

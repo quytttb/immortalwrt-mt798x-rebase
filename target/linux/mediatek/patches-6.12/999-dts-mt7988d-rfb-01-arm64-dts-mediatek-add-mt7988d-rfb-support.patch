@@ -1,3 +1,15 @@
+---
+[v2] arm64: dts: mediatek: add mt7988d rfb support
+
+Add device tree support for MediaTek MT7988D (3-core variant) RFB board.
+Inherits from MT7988A RFB with CPU3 removed.
+
+---
+v2: Add a new Airoha AN8831X 10G PHY image for MT7988D.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988d-rfb.dts
 @@ -0,0 +1,82 @@

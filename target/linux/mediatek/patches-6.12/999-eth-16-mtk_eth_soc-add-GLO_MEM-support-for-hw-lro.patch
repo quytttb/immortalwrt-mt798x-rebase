@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add GLO_MEM support for HW_LRO on the MT7987
+
+Add GLO_MEM support for HW_LRO on MT7987. This patch implements a new
+configuration for HW_LRO functionality, enabling Large Receive Offload
+feature on MT7987 SoC.
+---
+v1: Add GLO_MEM support for HW_LRO on the MT7987.
+---
+
 From 03238933f20f171f33769f15052d803c8de95654 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:07 +0800

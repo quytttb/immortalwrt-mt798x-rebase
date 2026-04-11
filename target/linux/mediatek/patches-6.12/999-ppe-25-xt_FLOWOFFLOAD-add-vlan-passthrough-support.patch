@@ -1,10 +1,20 @@
+---
+[v1] xt_FLOWOFFLOAD add vlan passthrough support
+
+VLAN passthrough packet can be offloaded when the below toggle is enabled
+ - echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+
+---
+v1: Add VLAN passthrough support to xt_FLOWOFFLOAD.
+---
+
 From e2865c58ab0a257f1522673de8ab60103a13e239 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 21 Oct 2025 21:28:39 +0800
 Subject: [PATCH] xt_FLOWOFFLOAD add vlan passthrough support
 
 VLAN passthrough packet can be offloaded when the below toggle is enabled
-	echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+ - echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
 
 Signed-off-by: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 ---

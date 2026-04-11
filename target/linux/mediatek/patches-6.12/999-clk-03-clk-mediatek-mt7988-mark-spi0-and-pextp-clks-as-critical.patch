@@ -1,3 +1,15 @@
+---
+[v1] clk: mediatek: mt7988: mark SPI and PCIE clocks as critical
+
+Mark a small set of SPI and PCIE clocks with CLK_IS_CRITICAL so that they are
+not gated by the common clock framework. These clocks have dependencies from
+other clocks, and gating them in some cases might cause problems, so mark them
+as critical.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
 +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
 @@ -196,10 +196,12 @@ static const struct mtk_gate infra_clks[

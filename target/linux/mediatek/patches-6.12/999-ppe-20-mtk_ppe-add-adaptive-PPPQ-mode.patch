@@ -1,3 +1,15 @@
+---
+[v1] net: ethernet: mtk_ppe: add adaptive PPPQ mode
+
+User can use the commnad below to enable adaptive PPPQ mode.
+  - echo 3 > /sys/kernel/debug/mtk_ppe/qos_toggle
+
+This mode can control the total number of PPPQ users to ensure they
+do not exceed the QDMA bandwidth.
+---
+v1: Add adaptive PPPQ mode to control PPPQ user count dynamically.
+---
+
 From 6fb6034cfbb152c3355017b9d3b09f27e6d7f4c1 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:59:26 +0800

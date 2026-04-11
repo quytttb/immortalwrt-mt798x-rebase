@@ -1,3 +1,13 @@
+---
+[v1] netfilter: add vlan egress qos learning flow to nft_flow_offload
+
+Without this patch, the PPEs are unable to learn VLAN PCP field
+when the below command is configured.
+ - vconfig set_egress_map $dev $priority $pcp
+---
+v1: Add VLAN egress QoS learning flow to nft_flow_offload.
+---
+
 From 99e5457a1512d8216b2e572137ee82159b6f1896 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 25 Nov 2025 19:28:10 +0800

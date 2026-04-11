@@ -1,3 +1,18 @@
+---
+[v2] net: phy: update AN8855 gigabit switch driver to v1.0.11
+
+include the following fixes:
+- Disable the unnecessary EEE settings on SERDES port 5
+- Change the wording from 'extSurge' to 'ext-surge'
+- Enable unknown packets flooding on the CPU port only
+- Disable learning on CPU port
+- Add loop detect configuration
+- Fixed compile error of devm_gpio_free
+---
+v2: update AN8855 gigabit switch driver to v1.0.11
+v1: add AN8855 gigabit switch driver v1.0.6 support
+---
+
 From 482cfce379002f2ea7e313047a3ff3c837e8d3b6 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Tue, 21 Oct 2025 15:08:33 +0800

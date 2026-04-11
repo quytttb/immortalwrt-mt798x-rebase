@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add TX ring full event counter
+
+Add atomic counter to track TX ring full events. This diagnostic feature helps
+monitor ring congestion and provides visibility into transmit queue overflow
+conditions for performance tuning and troubleshooting.
+---
+v1: Add debugfs support for reading TX ring full event count.
+---
+
 From 0c039f8714c37bff440cb6fac6b14d7fa96f3b13 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Tue, 7 Oct 2025 10:52:08 +0800

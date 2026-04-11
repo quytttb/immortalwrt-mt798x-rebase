@@ -1,3 +1,14 @@
+---
+[v2] net: ethernet: mtk_eth_soc: refactor hardware dump for forced reset
+
+Refactor hardware register dump functionality to execute before forced resets.
+This patch enables comprehensive register state capture during reset operations,
+improving debugging capabilities for hardware failure analysis.
+---
+v2: Add more registers dump before triggering NETSYS warm reset.
+v1: Add full registers dump for the NETSYS SER.
+---
+
 From 7f5ea5902e528b4631a4cd259dfa4586e18f7af4 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 17:12:45 +0800

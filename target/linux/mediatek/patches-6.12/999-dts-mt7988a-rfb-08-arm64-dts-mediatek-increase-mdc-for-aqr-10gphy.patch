@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7988: increase mdc for aqr 10gphy
+
+Increase MDC clock frequency to 10.5MHz for AQR 10G PHY to speed up firmware
+download.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 63a3fb0e9cd15e7f148a9190d2789270755b479b Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 3 Oct 2025 10:43:31 +0800

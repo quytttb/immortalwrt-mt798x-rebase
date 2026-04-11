@@ -1,13 +1,27 @@
+---
+[v1] netfilter: add DSCP learning flow to nft_flow_offload
+
+We have implemented a mechanism to learn the DSCP until count of the
+bi-directional TCP packets reached threshold.
+
+User can use the command below to enable DSCP learning flow.
+ - echo [0, 200] > /proc/sys/net/netfilter/nf_conntrack_qos
+
+Without this patch, the PPEs are unable to learn the DSCP from SKB.
+---
+v1: Add DSCP learning flow to nft_flow_offload.
+---
+
 From bdbdcfa2efdc414324351e595128462aaba14e1c Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:58:10 +0800
 Subject: [PATCH] netfilter: add DSCP learning flow to nft_flow_offload
 
 We have implemented a mechanism to learn the DSCP until count of the
-bi-directional TCP packets reached 30.
+bi-directional TCP packets reached threshold.
 
 User can use the command below to enable DSCP learning flow.
- - echo 1 > /proc/sys/net/netfilter/nf_conntrack_qos
+ - echo [0, 200] > /proc/sys/net/netfilter/nf_conntrack_qos
 
 Without this patch, the PPEs are unable to learn the DSCP from SKB.
 

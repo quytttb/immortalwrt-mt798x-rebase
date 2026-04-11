@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add ETH ports link down for NETSYSv3 SER
+
+Add Ethernet port link down flow for NETSYSv3 SER. This patch handles
+XGMAC and built-in MT7531 switch link down procedures, extending SER
+support for new NETSYSv3 hardware components.
+---
+v1: Add ETH ports link down flow for NETSYSv3 SER.
+---
+
 From b487917477958c0bab6d144cd19c0f3509383b54 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:10 +0800

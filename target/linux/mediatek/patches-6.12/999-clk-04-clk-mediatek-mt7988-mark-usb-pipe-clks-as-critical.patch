@@ -1,3 +1,14 @@
+---
+[v1] clk: mediatek: mt7988: mark USB PIPE clocks as critical
+
+Mark USB PIPE clocks as CLK_IS_CRITICAL for MT7988 SoC. These clocks control
+the USB PHY PIPE interface and are required for USB 3.0 functionality. Disabling
+them would cause USB port failures and must remain enabled for proper USB operation.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
 +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
 @@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[

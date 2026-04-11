@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add XGMACv2 support for MT7987
+
+This patch implements link status control and TX/RX flow control for
+XGMACv2, enabling internal 2.5G PHY operation on MT7987 SoC.
+---
+v1: Add XGMACv2 support for MT7987.
+---
+
 From 8a27a1208f6799696dfc52312d31e24cb90513ef Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 6 Nov 2025 22:15:31 +0800

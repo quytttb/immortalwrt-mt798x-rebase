@@ -1,3 +1,12 @@
+---
+[v1] netfilter: add flow_offload_teardown_by_tuple API
+
+Without this patch, users are unable to delete or flush flow rule and
+PPE entries via the FTNL application.
+---
+v1: Add flow_offload_teardown_by_tuple API for targeted flow deletion.
+---
+
 From 001a19322452521841b4c0010f9cef5e3f582227 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:51:29 +0800

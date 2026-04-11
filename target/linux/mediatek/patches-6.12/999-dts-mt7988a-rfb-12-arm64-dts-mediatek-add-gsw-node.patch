@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7988: add gsw node
+
+Add a gsw device node to the MT7988A DTS for the MT7531 GSW driver to enable
+4-ports built-in switch functionality.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From a6c7715c031d6b8b169fdcbe7ae318853e7f4d44 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Mon, 20 Oct 2025 15:29:33 +0800

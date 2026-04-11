@@ -1,23 +1,23 @@
 ---
-[v4] arm64: dts: mediatek: mt7987a: add Banana Pi BPI-R4-Lite support
+[v3] arm64: dts: mediatek: mt7987a: add Banana Pi BPI-R4-Lite support
 
 Add device-tree support for the Banana Pi BPI-R4-Lite (MT7987A).
-Introduce the base board DTS and a mikroBUS dtsi, plus DT overlays
+Introduce the base board DTS and mikroBUS dtsi, plus DT overlays
 to select boot/storage media (eMMC/NAND/NMBM/NOR/SD) and to switch
 PCIe topology between a single 2-lane port and two 1-lane ports.
 By default the platform uses a single 2-lane port unless the
 bootloader register setup is changed. Flash-related overlays are
 split out from mt7987a-rfb to match the DTSO layout used upstream
 in OpenWrt.
+---
+v3: Separate BPI-R4-Lite flash-related DTSO from mt7987a-rfb to align with
+    upstream OpenWrt DTSO format.
+v2: Add PCIe mux overlays for 1x2-lane or 2x1-lane topology configuration.
+    Default uses 1-port 2-lanes unless bootloader registers are changed.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
-v4: Split BPI-R4-Lite flash overlays out of mt7987a-rfb; add storage
-    media DT overlays; align with OpenWrt DTSO format
-v3: Add PCIe mux overlays for 1x2-lane or 2x1-lane and document defaults
-v2: Move patch under openwrt-25.12 branch path (no functional change)
-v1: Initial port from mediatek SDK; base DTS and PCIe option
----
 
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7987a-bananapi-bpi-r4-lite-mikrobus.dtsi

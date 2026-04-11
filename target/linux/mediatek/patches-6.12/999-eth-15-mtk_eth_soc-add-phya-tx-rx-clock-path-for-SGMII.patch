@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add PHY A TX/RX clock path for SGMII
+
+Add a new PHYA TX/RX clock path configuration for SGMII in NETSYSv3.1. This patch
+enables SGMII PCS clock source switching to PHYA path for improved performance
+on MT7987 with the new hardware clock routing.
+---
+v1: Add a new PHYA TX/RX clock path for SGMII in NETSYSv3.1.
+---
+
 From 3372b6c6c8734f9f99d9daab6ac969421e92c7dc Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:07 +0800

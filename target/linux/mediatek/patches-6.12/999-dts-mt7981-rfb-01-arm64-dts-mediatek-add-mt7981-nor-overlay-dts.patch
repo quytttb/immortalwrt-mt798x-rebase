@@ -1,3 +1,16 @@
+---
+[v1] arm64: dts: mediatek: add mt7981 SPI NOR flash overlay
+
+Add DTS overlay for MT7981 SPI NOR flash storage configuration. This overlay
+is part of the MT7981 DTS overlay architecture enabling runtime device tree
+composition for different storage types. Root filesystem reference is added
+to chosen node. Combining base MT7981 DTS with this overlay enables NOR boot
+configuration.
+
+---
+v1: Initial release for the openwrt-25.12 branch.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7981-rfb-spim-nor.dtso
 @@ -0,0 +1,59 @@

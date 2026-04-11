@@ -1,3 +1,12 @@
+---
+[v1] net: pcs: mtk-lynxi: add link_poll mechanism
+
+Without this patch, the SGMII PCS cannot recover from a link-down
+state when the system encounters certain error situations.
+---
+v1: Add a SGMII link_poll mechanism to recover from a link-down state.
+---
+
 From 7dfffc16b71099fd37e218af7e62e3adb56b0e41 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 2 Jan 2026 09:44:08 +0800

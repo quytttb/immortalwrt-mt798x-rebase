@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: add mxl862 switch dsa tag 8021q flow offload support
+
+Without this patch, MXL862 switch ports using DSA tag_8021q protocol cannot
+be hardware-offloaded through the PPE.
+---
+v1: Add mxl862 switch DSA tag 8021q flow offload support.
+---
+
 From 66da960d9d987af9cb8b8f63bac91fa456bdbaf3 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Thu, 8 Jan 2026 15:09:19 +0800

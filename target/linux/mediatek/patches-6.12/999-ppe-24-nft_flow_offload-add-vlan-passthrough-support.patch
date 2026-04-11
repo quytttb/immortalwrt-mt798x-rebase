@@ -1,10 +1,20 @@
+---
+[v1] nft_flow_offload add vlan passthrough support
+
+VLAN passthrough packet can be offloaded when the below toggle is enabled
+ - echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+
+---
+v1: Add VLAN passthrough support to nft_flow_offload.
+---
+
 From 51b35e13cf6a178f44a3feb901bea17e71444f5c Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 21 Oct 2025 19:30:27 +0800
 Subject: [PATCH] nft_flow_offload add vlan passthrough support
 
 VLAN passthrough packet can be offloaded when the below toggle is enabled
-	echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+ - echo 1 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
 
 Signed-off-by: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 ---

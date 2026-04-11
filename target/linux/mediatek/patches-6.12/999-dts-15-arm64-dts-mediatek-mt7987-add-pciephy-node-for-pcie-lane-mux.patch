@@ -1,3 +1,18 @@
+---
+[v1] arm64: dts: mediatek: mt7987: add pciephy node for pcie lane mux
+
+Add PCIe PHY node with lane mux support for flexible PCIe topology
+configuration. Supports both 1-port 2-lanes and 2-port 1-lane modes
+for PCIe bandwidth allocation flexibility.
+
+Requirements:
+- Enable CONFIG_PHY_MTK_PCIE in kernel config
+- Apply kernel patch: 999-phy-01-mediatek-phy-mtk-pcie-add-mt7987-pcie-lane-mux-support.patch
+---
+v1: Initial PCIe PHY node with lane mux support for flexible 1x2 or 2x1
+    lane topology configuration.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7987.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7987.dtsi
 @@ -661,10 +661,23 @@

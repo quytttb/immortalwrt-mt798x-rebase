@@ -1,3 +1,14 @@
+---
+[v2] net: ethernet: mtk_eth_soc: refactor PSE PPE port link down for NETSYS SER
+
+Refactor PPE port link down handling for System Error Recovery (SER).
+This simplifies the flow by removing manual re-enable code since
+hardware automatically re-enables PSE PPE ports after NETSYS SER.
+---
+v2: Add the missing equal sign to the MTK_FE_GLO_CFG definition.
+v1: Refactor PSE PPE port link down flow for NETSYS SER.
+---
+
 From b49580f4b78abc1e6f49b8677ad1a8dd5faa05f7 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:09 +0800

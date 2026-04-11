@@ -1,3 +1,15 @@
+---
+[v1] net: pcs: mtk-lynxi: add autoneg off mode
+
+OpenWrt 24.10/25.12 enforces SFP optical modules to operate with autoneg
+disabled in kernel 6.6/6.12, configured from user space via ethtool.
+
+Without this patch, 1000BaseX SFP optical modules cannot successfully link
+with their link partners.
+---
+v1: Add SGMII/1000BaseX autoneg off mode.
+---
+
 From f57c3c1318c7cf95c3fb0d0edc5bc38ad4d6f917 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:31:44 +0800

@@ -1,3 +1,13 @@
+---
+[v1] net: phy: sfp: make mod-def0 GPIO shareable for combo SFP/PHY
+designs
+
+Add GPIOD_FLAGS_BIT_NONEXCLUSIVE flag to mod-def0 GPIO to allow sharing
+between SFP module detection and passive mux control.
+---
+v1: make mod-def0 GPIO shareable for combo SFP/PHY designs
+---
+
 From 8bbccf7263fb6bd902baef5c15e9472b58b79fd7 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Tue, 28 Oct 2025 10:57:10 +0800

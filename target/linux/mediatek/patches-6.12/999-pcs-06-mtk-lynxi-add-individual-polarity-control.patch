@@ -1,3 +1,13 @@
+---
+[v1] net: pcs: mtk-lynxi: add individual polarity control
+
+Implement parsing of device tree properties for individual TX/RX PN
+polarity control on SGMII interfaces to allow fine-grained polarity
+configuration for hardware compatibility.
+---
+v1: Add individual SGMII TX/RX PN polarity control.
+---
+
 From 214923b5896be57946810182f8a6ead60c2a3af0 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:36:37 +0800

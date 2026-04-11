@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7988: move phys to sgmiipcs and usxgmiisys node
+
+Move PHY references (xfi_tphy0/1) to their proper parent nodes in sgmiipcs and
+usxgmiisys to better handle the PHYA and PHYD reset flow.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From f8a9077417d95647cd4a1d545a6ecdac91357088 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 3 Oct 2025 10:33:14 +0800

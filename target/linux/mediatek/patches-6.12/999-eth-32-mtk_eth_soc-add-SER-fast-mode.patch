@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add NETSYS SER fast mode
+
+Add fast mode for System Error Recovery that avoids PHY power-down when GMAC
+is not hung. This optimization saves several seconds during SER by using
+MAC_LINK_DOWN instead of PHY reset, preventing WiFi traffic interruption.
+---
+v1: Add NETSYS SER fast mode.
+---
+
 From 02248e4190b6f8ae7401079461eb06b7b1264b17 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 10 Nov 2025 11:47:15 +0800

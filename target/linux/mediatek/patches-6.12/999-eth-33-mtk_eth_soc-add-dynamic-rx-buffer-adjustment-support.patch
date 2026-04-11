@@ -1,3 +1,15 @@
+---
+[v3] net: ethernet: mtk_eth_soc: add dynamic RX buffer adjustment support
+
+Add dynamic RX buffer length adjustment based on MTU changes. This allows
+buffer sizes to be adapted to actual requirements, supporting MTUs from
+1.5K up to 9K with proper alignment and validation.
+---
+v3: Add 9K RX length support for GMAC.
+v2: Fix RX buffer length check error for XDP.
+v1: Add dynamic RX buffer adjustment support.
+---
+
 From 3ab7912f36036b8adb062b8c7ee13131ae7c1ce3 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Thu, 11 Dec 2025 19:29:31 +0800

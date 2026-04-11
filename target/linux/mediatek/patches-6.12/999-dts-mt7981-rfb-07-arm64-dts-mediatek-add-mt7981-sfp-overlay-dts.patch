@@ -1,3 +1,12 @@
+---
+[v1] arm64: dts: mediatek: add mt7981 sfp overlay dts
+
+Add an SFP (Small Form-factor Pluggable) overlay device tree for the MT7981 RFB to
+enable phylink support for SFP modules.
+---
+v1: Add a SFP DTSO for our MT7981 RFB.
+---
+
 From f6389515bcebf8eec727ef34bea38d3169b96c28 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 9 Mar 2026 16:45:47 +0800

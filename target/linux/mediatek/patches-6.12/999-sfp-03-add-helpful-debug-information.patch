@@ -1,3 +1,15 @@
+---
+[v1] net: phy: sfp: enhance logging for SFP module troubleshooting
+
+Add SFP debug messages to info level and add detailed diagnostic
+information:
+- Dump SFP state machine
+- Dump System/Line interface status
+- Dump SFP, PHY, and Host link mode
+---
+v1: enhance logging for SFP module troubleshooting
+---
+
 From f01b49ae6043e40a1953c8f5ef8951dea225c4a4 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 23 Feb 2026 10:30:52 +0800

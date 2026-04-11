@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: fix mtk_eth_offload_init memory leak
+
+Fix memory leak in mtk_eth_offload_init by correcting initialization sequence.
+This moves offload initialization outside the PPE loop to prevent multiple
+allocations, ensuring proper resource management.
+---
+v1: Fix mtk_eth_offload_init memory leak.
+---
+
 From 970222d6ae0073e38289a691245a0f13392b8641 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 3 Feb 2026 10:59:49 +0800

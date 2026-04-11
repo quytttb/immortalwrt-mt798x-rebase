@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: add mt7988 cpufreq cooling device
+
+Enable cpufreq cooling for MT7988 CPU thermal zones to allow thermal
+throttling via CPU frequency scaling.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From c5c8b1bc5f50acc7786b4f63bc060a1d5485d623 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Fri, 26 Sep 2025 16:28:37 +0800

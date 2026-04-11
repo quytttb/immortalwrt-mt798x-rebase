@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: mt7988a: add pextp clk node
+
+Add pextp clock nodes to all PCIe controllers (P0/P1/P2/P3) in MT7988A device
+tree. This fixes PCIe issues in L1 sub-states (L1ss) power saving mode by
+providing proper clock configuration.
+---
+v1: Add pextp to PCIe clock nodes to fix PCIe L1ss mode issues.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 @@ -661,9 +661,10 @@

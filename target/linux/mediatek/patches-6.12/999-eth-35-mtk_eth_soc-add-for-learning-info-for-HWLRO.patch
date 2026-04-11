@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add learning definition registers for HWLRO
+
+Add register definitions for hardware LRO auto-learning table information.
+This provides debugging and monitoring capabilities for LRO flow tracking,
+aggregation counters, and descriptor fields.
+---
+v1: Add HWLRO learning definition registers.
+---
+
 From 0e45ba3bb7ae42c7cfaab1b188992d066e9a63c8 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 2 Dec 2025 13:53:08 +0800

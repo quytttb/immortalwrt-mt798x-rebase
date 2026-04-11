@@ -1,3 +1,14 @@
+---
+[v1] net: dsa: an8855: add generic netlink interface for userspace
+switch tool
+
+Add generic netlink interface to support userspace applications to
+access AN8855 switch registers and PHY registers through netlink
+sockets.
+---
+v1: add generic netlink interface for userspace switch tool
+---
+
 From a78a0a0d3ded4a9dc1f570289f1c6bc0f272cd81 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Tue, 21 Oct 2025 16:18:39 +0800

@@ -1,3 +1,25 @@
+---
+[v11] net: ethernet: mtk_eth_soc: support proprietary debugfs
+
+Add comprehensive proprietary debugfs support for MTK Ethernet driver. This
+provides extensive debugging interfaces for register access, statistics,
+configuration inspection, and hardware state monitoring.
+---
+v11: Refactor phy_read_mmd/phy_write_mmd support for mii_mgr_cl45 command.
+v10: Correct the typo in displaying the physical address of DMADs for the
+     rx_ring debug command.
+v9: Add phy_read_mmd/phy_write_mmd support for mii_mgr_cl45 command.
+v8: Move HWLRO learning definition to individual patches.
+v7: Add a link polling mechanism control for SGMII/USXGMII PCS drivers.
+v6: Move FE INT status definition to appropriate patch
+v5: Add debugfs support for TX ring full event count.
+v4: Fix panic issue with the hwtx_ring, tx_ring, and rx_ring debug commands.
+v3: Refactor the ETH debugfs infrastructure to align with upstream coding
+    style.
+v2: Add QDMA queue and scheduler control.
+v1: Add proprietary debugfs for mtk_eth.
+---
+
 From 1d9311b4eadf79c458a379eae7ebddf273c25128 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Tue, 2 Dec 2025 13:53:08 +0800

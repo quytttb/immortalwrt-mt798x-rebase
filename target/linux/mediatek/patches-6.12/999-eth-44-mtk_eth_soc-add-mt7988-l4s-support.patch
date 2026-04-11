@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add MT7988 L4S support
+
+Add Low Latency, Low Loss, Scalable Throughput (L4S) support for MT7988. This
+enables TDMA path for L4S traffic when toggle is enabled, providing improved
+Quality of Experience for latency-sensitive applications.
+---
+v1: Add L4S support for MT7988.
+---
+
 From b15180131e3f90773dc9760c87780f6c4d447093 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Tue, 3 Mar 2026 14:10:24 +0800

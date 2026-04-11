@@ -1,3 +1,12 @@
+---
+[v1] netfilter: add bridging support to the nft_flow_offload
+
+Without this patch, the bridging traffic is unable to BIND using
+nft_flow_offload.
+---
+v1: Add bridging support to nft_flow_offload.
+---
+
 From 69321b59fc74390c8f86999578e1d7c9359d82b5 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:57:31 +0800

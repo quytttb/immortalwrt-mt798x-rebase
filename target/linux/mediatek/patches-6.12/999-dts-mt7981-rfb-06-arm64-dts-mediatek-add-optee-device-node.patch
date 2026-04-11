@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: add optee device node
+
+Add OP-TEE (Open Portable Trusted Execution Environment) firmware node for
+MT7981 to enable secure world communication via SMC method.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 8242ed3745c6c9fd098600dba84dfa0e398e5576 Mon Sep 17 00:00:00 2001
 From: "guan-gm.lin" <guan-gm.lin@mediatek.com>
 Date: Wed, 21 Jan 2026 17:26:01 +0800

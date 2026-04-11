@@ -1,3 +1,12 @@
+---
+[v1] arm64: dts: mt7988: disable eee for aqr 10gphy
+
+Disable EEE for AQR 10G PHYs to prevent Rx error packets from USXGMII.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 9986883644ec72eebab57db8a3fbebb1045ea674 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 3 Oct 2025 10:39:14 +0800

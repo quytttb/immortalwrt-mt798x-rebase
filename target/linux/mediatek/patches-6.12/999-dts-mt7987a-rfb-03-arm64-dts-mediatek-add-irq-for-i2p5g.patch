@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: mt7987a-rfb: add irq for i2p5g
+
+Add IRQ support for the built-in 2.5G Ethernet PHY (i2p5g) of the MT7987. This
+enables interrupt-driven handling of PHY events, resulting in reduced MAC link-up
+latency.
+---
+v1: Initial IRQ support for MT7987 internal 2.5G Ethernet PHY.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7987-netsys-eth1-i2p5g.dtso
 +++ b/arch/arm64/boot/dts/mediatek/mt7987-netsys-eth1-i2p5g.dtso
 @@ -3,6 +3,8 @@

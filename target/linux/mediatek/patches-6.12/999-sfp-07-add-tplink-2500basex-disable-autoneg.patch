@@ -1,3 +1,13 @@
+---
+[v2] net: phy: sfp: fix SFP_QUIRK_S patch conflict
+
+Fix SFP_QUIRK_S patch conflict caused by the kernel update to v6.12.70
+---
+v2: fix SFP_QUIRK_S patch conflict caused by the kernel update to
+    v6.12.70
+v1: add TP-LINK TL-SM410U 2.5G quirk
+---
+
 From eac216a8c702bbd0aba81222a8d4acfb7b9028cd Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Sun, 11 Jan 2026 13:12:01 +0800

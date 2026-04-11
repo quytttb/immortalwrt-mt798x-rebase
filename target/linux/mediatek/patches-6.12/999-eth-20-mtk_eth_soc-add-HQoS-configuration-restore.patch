@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add HQoS configuration restore for NETSYS SER
+
+Add HQoS configuration save and restore to NETSYS SER. This patch
+preserves HQoS settings across QDMA resets during NETSYS SER, ensuring
+QoS policies remain effective after recovery.
+---
+v1: Add HQoS configuration restore flow to NETSYS SER
+---
+
 From 7b43b86f22dc7a0cae398faa50c8f724f7c0d6e4 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:10 +0800

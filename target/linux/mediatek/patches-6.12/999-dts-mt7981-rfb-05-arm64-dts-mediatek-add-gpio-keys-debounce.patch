@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: add gpio keys debounce
+
+Add debounce configuration for GPIO keys (WPS and reset buttons) on MT7981 RFB
+to prevent spurious key press detection.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7981-rfb.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7981-rfb.dts
 @@ -50,11 +50,13 @@

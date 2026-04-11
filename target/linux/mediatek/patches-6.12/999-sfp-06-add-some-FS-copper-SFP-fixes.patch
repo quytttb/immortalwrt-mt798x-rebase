@@ -1,3 +1,12 @@
+---
+[v1] net: phy: sfp: fix FS copper SFP with Realtek PHY issues
+
+Add FS "SFP-2.5G-T-I" quirk, force 2500BASE-X mode in Realtek driver,
+disable RTL8221B soft_reset, and retry PHY probe on -EINVAL errors.
+---
+v1: fix FS copper SFP with Realtek PHY issues
+---
+
 From ea493756f9c1e6deafdde488cfed53315b0f1923 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 10 Nov 2025 13:22:05 +0800

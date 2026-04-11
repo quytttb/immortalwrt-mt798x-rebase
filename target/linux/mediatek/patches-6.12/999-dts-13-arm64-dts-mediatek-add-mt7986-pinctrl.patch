@@ -1,3 +1,17 @@
+---
+[v3] arm64: dts: mediatek: add mt7986 pinctrl
+
+Create separate mt7986-pinctrl.dtsi file to consolidate all pinctrl node
+definitions scattered across different device trees. Includes pin configurations
+for I2C, MMC, UART, SPI, PCIe, WiFi.
+---
+v3: Remove pcie_clk/pcie_wake due to GPIO button pin sharing.
+v2: Fix SPI-related DTS settings (clock parent, NAND/NOR driving, 52MHz
+    frequency, spidev support).
+v1: Add and unify all pinctrl nodes scattered across different dts into unified
+    mt7986-pinctrl.dtsi file.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7986-pinctrl.dtsi
 @@ -0,0 +1,225 @@

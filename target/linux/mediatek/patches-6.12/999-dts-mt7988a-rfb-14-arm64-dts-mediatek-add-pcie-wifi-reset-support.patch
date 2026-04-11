@@ -1,8 +1,29 @@
+---
+[v5] arm64: dts: mt7988: add pcie wifi reset support
+
+Add WiFi hardware reset GPIO control for PCIe with proper timing delays to
+ensure reliable WiFi module initialization. Supports GPIO7 reset control with
+configurable assert and deassert delays. Includes special handling for MT7988D
+dual-PCIe WiFi configuration where PCIe3 is probed before PCIe0, preventing
+duplicate GPIO acquisition conflicts.
+---
+v5: Add WiFi hardware reset deassert delay to improve stability and ensure
+    proper initialization timing for WiFi modules.
+v4: Update PCIE wifi-hw-reset mechanism and fix mt7988d wifi-reset. Add
+    mt7988d-rfb-2pcie.dtso for dual-PCIe WiFi support. Handle GPIO acquisition
+    conflicts when both PCIe0 and PCIe3 have reset nodes.
+v3: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+v2: OpenWrt master SDK version upgrade to support mt7987 related changes.
+v1: Initial WiFi hardware reset GPIO support in PCIE device tree using GPIO7
+    for WiFi reset control during PCIe probe process.
+---
+
 --- a/arch/arm64/boot/dts/mediatek/mt7988a-rfb.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb.dts
 @@ -289,6 +289,9 @@
  };
- 
+
  &pcie0 {
 +	wifi-reset-gpios = <&pio 7 GPIO_ACTIVE_LOW>;
 +	wifi-reset-msleep = <100>;

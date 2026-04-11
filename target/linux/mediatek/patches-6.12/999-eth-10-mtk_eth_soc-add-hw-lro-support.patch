@@ -1,3 +1,15 @@
+---
+[v3] net: ethernet: mtk_eth_soc: add hardware LRO support
+
+Implement Hardware Large Receive Offload (LRO) support for improved receive throughput.
+This patch adds LRO ring management, aggregation configuration, and interrupt handling
+to aggregate TCP segments at hardware level before delivery to software.
+---
+v3: Change LRO initialization with L4 PSH check enabled.
+v2: Add Ethernet LRO support for MT7981/7986.
+v1: Add Ethernet LRO support for MT7988.
+---
+
 From 93f1b172525d9d0de39f731c1b6b3d1b806a8cfe Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Tue, 21 Oct 2025 20:53:04 +0800

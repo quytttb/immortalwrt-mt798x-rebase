@@ -1,3 +1,12 @@
+---
+[v1] net: dsa: mt7530: fix VLAN deletion to override the FID
+
+Fix mt7530_hw_vlan_del() to explicitly set FID(FID_BRIDGED) when
+updating a VLAN entry that still has port members after deletion.
+---
+v1: fix VLAN deletion to override the FID
+---
+
 From 872b5bd1b3975ade934902f03f9ea58855b62092 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Tue, 3 Mar 2026 14:22:14 +0800

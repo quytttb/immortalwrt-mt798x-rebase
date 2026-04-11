@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: keep sp in the info1
+
+Without this patch, the source port of the PPE entry will be cleared
+after BIND.
+---
+v1: Preserve source port in PPE info1 field across BIND operations.
+---
+
 From 41042125d0678f49a2166d94ef5530d026f649e9 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:03:30 +0800

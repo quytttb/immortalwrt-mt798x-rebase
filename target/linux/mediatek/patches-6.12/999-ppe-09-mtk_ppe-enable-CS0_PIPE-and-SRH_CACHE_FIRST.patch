@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_ppe: enable CS0_PIPE and SRH_CACHE_FIRST for NETSYSv3
+
+Without this patch, the MT7988 2x10Gbps BiDi cannot achieve line rate
+when packets smaller than 256B.
+---
+v1: Enable CS0_PIPE and SRH_CACHE_FIRST for NETSYSv3 to achieve line rate
+    with small packets.
+---
+
 From cffea78e42e86ed5b8c1bdfded9d1a363e623527 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:56:02 +0800

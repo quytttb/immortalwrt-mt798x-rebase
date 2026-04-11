@@ -1,15 +1,42 @@
+From c3f25accc62f18adb22abc256add6c954fa415a0 Mon Sep 17 00:00:00 2001
+From: Tim-cy Yang <Tim-cy.Yang@mediatek.com>
+Date: Fri, 20 Mar 2026 16:16:49 +0800
+Subject: [PATCH] soc: mediatek: mtk-devapc: add mt798x support
+
+---
+ drivers/soc/mediatek/mtk-devapc.c | 150 +++++++++++++++++++++++++++---
+ 1 file changed, 139 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-devapc.c b/drivers/soc/mediatek/mtk-devapc.c
+index f54c966138b5..7256834e37a5 100644
 --- a/drivers/soc/mediatek/mtk-devapc.c
 +++ b/drivers/soc/mediatek/mtk-devapc.c
-@@ -15,7 +16,7 @@
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2020 MediaTek Inc.
+  */
+ 
++#include <linux/arm-smccc.h>
+ #include <linux/clk.h>
+ #include <linux/interrupt.h>
+ #include <linux/iopoll.h>
+@@ -11,11 +12,15 @@
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
++#include <linux/soc/mediatek/mtk_sip_svc.h>
+ 
  #define VIO_MOD_TO_REG_IND(m)	((m) / 32)
  #define VIO_MOD_TO_REG_OFF(m)	((m) % 32)
  
 -struct mtk_devapc_vio_dbgs {
++#define MTK_SIP_DAPC_GET_SEC_CFG	MTK_SIP_SMC_CMD(0x5A0)
++#define NO_PROTECTION			0
++
 +struct mtk_devapc_vio_dbgs_v1 {
  	union {
  		u32 vio_dbg0;
  		struct {
-@@ -31,12 +32,29 @@ struct mtk_devapc_vio_dbgs {
+@@ -31,12 +36,29 @@ struct mtk_devapc_vio_dbgs {
  	u32 vio_dbg1;
  };
  
@@ -39,15 +66,16 @@
  	u32 apc_con_offset;
  	u32 vio_shift_sta_offset;
  	u32 vio_shift_sel_offset;
-@@ -46,6 +64,7 @@ struct mtk_devapc_regs_ofs {
+@@ -46,6 +68,8 @@ struct mtk_devapc_regs_ofs {
  struct mtk_devapc_data {
  	/* numbers of violation index */
  	u32 vio_idx_num;
 +	u32 version;
++	u32 nsec_access;
  	const struct mtk_devapc_regs_ofs *regs_ofs;
  };
  
-@@ -154,13 +173,9 @@ static int devapc_sync_vio_dbg(struct mt
+@@ -154,13 +178,9 @@ static int devapc_sync_vio_dbg(struct mtk_devapc_context *ctx)
  	return true;
  }
  
@@ -63,7 +91,7 @@
  	void __iomem *vio_dbg0_reg;
  	void __iomem *vio_dbg1_reg;
  
-@@ -181,6 +196,46 @@ static void devapc_extract_vio_dbg(struc
+@@ -181,6 +201,46 @@ static void devapc_extract_vio_dbg(struct mtk_devapc_context *ctx)
  		 vio_dbgs.vio_dbg1);
  }
  
@@ -90,7 +118,7 @@
 +	else if (vio_dbgs.dbg0_bits.vio_r)
 +		dev_info(ctx->dev, "Read Violation\n");
 +
-+	printk("Bus ID:0x%x, Dom ID:0x%x, Vio Addr:0x%llx\n",
++	dev_info(ctx->dev, "Bus ID:0x%x, Dom ID:0x%x, Vio Addr:0x%llx\n",
 +		 vio_dbgs.vio_dbg1, vio_dbgs.dbg0_bits.dmnid,
 +		 ((u64)vio_dbgs.vio_dbg3 << 32) | vio_dbgs.vio_dbg2);
 +}
@@ -110,7 +138,7 @@
  /*
   * devapc_violation_irq - the devapc Interrupt Service Routine (ISR) will dump
   *                        violation information including which master violates
-@@ -229,16 +284,37 @@ static const struct mtk_devapc_regs_ofs
+@@ -229,16 +289,58 @@ static const struct mtk_devapc_regs_ofs devapc_regs_ofs_mt6779 = {
  	.vio_shift_con_offset = 0xF20,
  };
  
@@ -130,17 +158,38 @@
  static const struct mtk_devapc_data devapc_mt6779 = {
  	.vio_idx_num = 511,
 +	.version = 1,
++	.nsec_access = 1,
  	.regs_ofs = &devapc_regs_ofs_mt6779,
  };
  
  static const struct mtk_devapc_data devapc_mt8186 = {
  	.vio_idx_num = 519,
 +	.version = 1,
++	.nsec_access = 1,
  	.regs_ofs = &devapc_regs_ofs_mt6779,
  };
  
++static const struct mtk_devapc_data devapc_mt7981 = {
++	.vio_idx_num = 293,
++	.version = 2,
++	.regs_ofs = &devapc_regs_ofs_mt7986,
++};
++
++static const struct mtk_devapc_data devapc_mt7986 = {
++	.vio_idx_num = 270,
++	.version = 2,
++	.regs_ofs = &devapc_regs_ofs_mt7986,
++};
++
 +static const struct mtk_devapc_data devapc_mt7987 = {
 +	.vio_idx_num = 283,
++	.version = 2,
++	.nsec_access = 1,
++	.regs_ofs = &devapc_regs_ofs_mt7986,
++};
++
++static const struct mtk_devapc_data devapc_mt7988 = {
++	.vio_idx_num = 298,
 +	.version = 2,
 +	.regs_ofs = &devapc_regs_ofs_mt7986,
 +};
@@ -148,17 +197,52 @@
  static const struct of_device_id mtk_devapc_dt_match[] = {
  	{
  		.compatible = "mediatek,mt6779-devapc",
-@@ -247,6 +323,9 @@ static const struct of_device_id mtk_dev
+@@ -246,6 +348,18 @@ static const struct of_device_id mtk_devapc_dt_match[] = {
+ 	}, {
  		.compatible = "mediatek,mt8186-devapc",
  		.data = &devapc_mt8186,
- 	}, {
++	}, {
++		.compatible = "mediatek,mt7981-devapc",
++		.data = &devapc_mt7981,
++	}, {
++		.compatible = "mediatek,mt7986-devapc",
++		.data = &devapc_mt7986,
++	}, {
 +		.compatible = "mediatek,mt7987-devapc",
 +		.data = &devapc_mt7987,
 +	}, {
++		.compatible = "mediatek,mt7988-devapc",
++		.data = &devapc_mt7988,
+ 	}, {
  	},
  };
- MODULE_DEVICE_TABLE(of, mtk_devapc_dt_match);
-@@ -278,10 +357,12 @@ static int mtk_devapc_probe(struct platf
+@@ -255,6 +369,7 @@ static int mtk_devapc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct mtk_devapc_context *ctx;
++	struct arm_smccc_res res;
+ 	u32 devapc_irq;
+ 	int ret;
+ 
+@@ -268,6 +383,17 @@ static int mtk_devapc_probe(struct platform_device *pdev)
+ 	ctx->data = of_device_get_match_data(&pdev->dev);
+ 	ctx->dev = &pdev->dev;
+ 
++	/* check if violation can be handled by kernel */
++	if (!ctx->data->nsec_access) {
++		arm_smccc_smc(MTK_SIP_DAPC_GET_SEC_CFG, 0, 0, 0, 0, 0, 0, 0,
++			      &res);
++		if (res.a0 != NO_PROTECTION) {
++			dev_info(&pdev->dev,
++				 "violation cannot be handled in normal world\n");
++			return 0;
++		}
++	}
++
+ 	ctx->infra_base = of_iomap(node, 0);
+ 	if (!ctx->infra_base)
+ 		return -EINVAL;
+@@ -278,10 +404,12 @@ static int mtk_devapc_probe(struct platform_device *pdev)
  		goto err;
  	}
  
@@ -175,3 +259,6 @@
  	}
  
  	ret = devm_request_irq(&pdev->dev, devapc_irq, devapc_violation_irq,
+-- 
+2.45.2
+

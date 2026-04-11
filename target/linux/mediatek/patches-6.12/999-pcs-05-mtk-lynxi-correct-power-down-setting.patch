@@ -1,3 +1,11 @@
+---
+[v1] net: pcs: mtk-lynxi: correct power down setting
+
+SGMII may not power down correctly due to a HW race condition.
+---
+v1: Correct SGMII power down setting.
+---
+
 From 953421f00127ce506f75a2e524fe3c265598c827 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:33:36 +0800

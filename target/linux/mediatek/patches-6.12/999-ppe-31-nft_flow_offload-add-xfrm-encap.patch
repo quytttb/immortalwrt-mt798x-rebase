@@ -1,3 +1,13 @@
+---
+[v1] nft_flow_offload: Enable IPSec flow offload
+
+Enable IPSec flow offload. This patch avoid FLOW_OFFLOAD_XMIT_XFRM transmit
+type use wrong MAC address and enable FLOW_OFFLOAD_XMIT_XFRM tansmit type
+to be processed in nft_dev_forward_path.
+---
+v1: Enable IPSec flow offload in nft_flow_offload
+---
+
 --- a/net/netfilter/nft_flow_offload.c
 +++ b/net/netfilter/nft_flow_offload.c
 @@ -362,7 +362,8 @@ static int nft_dev_forward_path(const st

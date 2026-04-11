@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mediatek: add mt7988 multiple thermal zones
+
+Add separate thermal zones for each sensor to allow independent monitoring and
+configuration with per-sensor trip points and cooling maps.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 606483decf1701d23a61fbd80f024984bc5e390a Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Tue, 23 Sep 2025 17:03:40 +0800

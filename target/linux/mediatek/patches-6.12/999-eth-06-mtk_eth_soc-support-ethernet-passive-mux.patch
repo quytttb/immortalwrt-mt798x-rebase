@@ -1,3 +1,16 @@
+---
+[v4] net: ethernet: mtk_eth_soc: support ethernet passive mux
+
+Add passive multiplexer support for dynamic SFP/PHY switching on SerDes path.
+This patch implements GPIO-controlled mux switching between SFP cage and PHY,
+enabling hot-swappable SFP modules with automatic framework selection.
+---
+v4: Change default active channel of the passive mux to 10G PHY.
+v3: Refactor Ethernet passive mux selection mechanism.
+v2: Add support for Bpi-R4-Pro RFB with two Ethernet passive mux.
+v1: Add support for the MXL86252 RFB with one Ethernet passive Mux.
+---
+
 From 4349947a1d8d9d52cc6820fb8544ef41a47c5068 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 17:20:56 +0800

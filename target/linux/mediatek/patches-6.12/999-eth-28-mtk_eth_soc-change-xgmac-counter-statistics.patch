@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: change XGMAC counter statistics method
+
+Refactor XGMAC hardware counter statistics collection for NETSYSv3. This adds
+carrier state checking, proper MIB counter reading from XGMAC registers, and
+MIB counter clear control for external 10G and internal 2.5G PHY interfaces.
+---
+v1: Change MIB counter statistics method for XGMAC.
+---
+
 From 46e10009f3d7029c42b2b93d1b7bc8edd0de4180 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Tue, 20 Jan 2026 20:17:01 +0800

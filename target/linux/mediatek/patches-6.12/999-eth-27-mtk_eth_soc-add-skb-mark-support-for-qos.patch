@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add skb mark support for HQoS
+
+Add skb mark support for HQoS queue selection. This enables userspace
+applications to control transmit queue selection via skb marking,
+providing flexible traffic prioritization and quality-of-service control.
+---
+v1: Add skb mark support for HQoS.
+---
+
 From 5db3f26b17830e5468b06a6757f23c3b03e25918 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Fri, 3 Oct 2025 11:22:02 +0800

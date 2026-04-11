@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: add roaming handler
+
+Add PPE roaming handler to prevent traffic interruption during WiFi roaming.
+This significantly reduces connection downtime from over 30 seconds to minimal
+disruption, maintaining flow offload state during station reassociation.
+---
+v1: Add roaming handler for Flowblock.
+---
+
 From 79ba7f4667a0848dbdf4546a361f8f74cdf1e6da Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:52:33 +0800

@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: change to internal PPE debugfs
+
+Without this patch, users cannot get the Bind or Unbind entries
+with a single debug command.
+---
+v1: Add internal PPE debugfs interface.
+---
+
 From b325bbc1cf3caf4b26f8b2ccdb45c0b6c534a7d2 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:02:44 +0800

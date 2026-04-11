@@ -1,3 +1,12 @@
+---
+[v1] net: pcs: mtk-lynxi: add 1000BaseX autoneg mode
+
+Some SFP optical 1000BaseX modules need to use autoneg mode to link
+with their link partners.
+---
+v1: Add 1000BaseX autoneg mode.
+---
+
 From fa1e066936ed1a0237aee8615363887315327bcc Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 16:27:10 +0800

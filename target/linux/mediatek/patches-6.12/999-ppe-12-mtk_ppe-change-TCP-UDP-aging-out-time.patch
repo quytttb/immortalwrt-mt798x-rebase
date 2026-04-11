@@ -1,3 +1,15 @@
+---
+[v1] net: ethernet: mtk_ppe: change TCP UDP aging out time
+
+The PPE will age out the entry earlier than the flow offload garbage
+collection (GC) work when traffic stops for a duration longer than
+the PPE TCP/UDP aging out time. During this period, the flow offload
+GC work does not teardown this flow rule. As a result, the flow offload
+cannot immediately reallocate a new flow rule when the traffic resumes.
+---
+v1: Change TCP/UDP aging out time to align with flow offload GC interval.
+---
+
 From fbd00e8736c54eda4af650ffc274f02f1c431a73 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:56:55 +0800

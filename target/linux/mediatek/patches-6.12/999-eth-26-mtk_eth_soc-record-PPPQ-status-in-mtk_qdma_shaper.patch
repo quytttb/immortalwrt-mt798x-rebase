@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: record PPPQ status in mtk_qdma_shaper structure
+
+Add PPPQ (Per-Port-Per-Queue) status tracking in mtk_qdma_shaper structure for
+NETSYSv3. This tracks queue reference counts and speed limits, enabling dynamic
+shaper availability checks and improved QoS resource management.
+---
+v1: Record PPPQ status in mtk_qdma_shaper structure.
+----
+
 From 4af1c1df72c9fd447de27412b9bdf851bf057dc0 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 22 Sep 2025 11:12:15 +0800

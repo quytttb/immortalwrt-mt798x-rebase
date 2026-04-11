@@ -1,3 +1,13 @@
+---
+[v1] netfilter: nft_flow_offload: add ttl learning flow
+
+Without this patch, the TTL/hop limit values are not learned and stored
+during flow offload, so the PPE cannot preserve the original TTL for
+hardware-offloaded flows.
+---
+v1: Add TTL/hop limit learning to nft_flow_offload via nf_conn_ttl extension.
+---
+
 From 3b0e2ff78898042dd7fe47e0db505400333b8b48 Mon Sep 17 00:00:00 2001
 From: "chak-kei.lam" <chak-kei.lam@mediatek.com>
 Date: Thu, 12 Mar 2026 14:54:23 +0800

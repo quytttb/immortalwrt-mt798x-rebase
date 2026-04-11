@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: fix panic with napi_enable in mtk_open
+
+Fix kernel panic during late ETH initialization when mtk_open is called before
+netif_napi_add completes. This patch reorders NAPI initialization to ensure proper
+setup before interface opening, preventing race conditions.
+---
+v1: Fix panic with napi_enable in mtk_open.
+---
+
 From 54298b484f6bd28a33901d2b3562dc536c7807e8 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 17:26:48 +0800

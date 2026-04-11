@@ -1,3 +1,11 @@
+---
+[v1] net: ethernet: mtk_eth_soc: refactor EEE support for GMAC
+
+Refactor Energy Efficient Ethernet (EEE) support for GMAC.
+---
+v1: Refactor EEE support for the GMAC.
+---
+
 From d1f8cd781d5e7500c844e36d877a3108caf0e397 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 6 Nov 2025 21:46:17 +0800

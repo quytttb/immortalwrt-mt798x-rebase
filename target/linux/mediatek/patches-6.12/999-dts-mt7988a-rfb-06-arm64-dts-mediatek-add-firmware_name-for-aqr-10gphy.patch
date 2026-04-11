@@ -1,3 +1,13 @@
+---
+[v1] arm64: dts: mt7988: add firmware_name for aqr 10gphy
+
+Add firmware file name for Aquantia AQR113C 10G PHY to enable proper PHY
+initialization.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From 027156a755873f87425ad56aee397b7881ffb11d Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Fri, 3 Oct 2025 10:36:34 +0800

@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_eth_soc: revise XGMAC force mode
+
+Without this patch, the ETH driver cannot successfully force the XGAMC
+link down or up.
+---
+v1: Refactor XGMAC link down/up flow.
+---
+
 From 740d56718e6cd9482e48eaa10ba0295ef4c1f841 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Thu, 18 Sep 2025 17:00:04 +0800

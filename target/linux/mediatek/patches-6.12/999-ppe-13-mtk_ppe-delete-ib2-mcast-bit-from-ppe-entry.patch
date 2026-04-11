@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: delete ib2 mcast bit from ppe entry
+
+Without this patch, the CDMA may receive an incorrect PPE CPU reason
+with a multicast packet, resulting in abnormal operation of the CDMA.
+---
+v1: Delete ib2 mcast bit from PPE entry to prevent incorrect CDMA CPU reason.
+---
+
 From 9d284e85d79983a3cb23ca88462268ec6f925334 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:57:07 +0800

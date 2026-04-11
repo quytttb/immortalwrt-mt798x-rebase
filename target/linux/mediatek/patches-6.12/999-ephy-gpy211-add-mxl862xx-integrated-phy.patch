@@ -1,3 +1,13 @@
+---
+[v1] net: phy: add PHY support for MaxLinear mxl862xx switches
+
+Add support for the built-in 2500M/1000M/100M/10M copper PHYs found in
+MaxLinear MXL862xx switches which are mostly identical with the GPY211
+family of PHYs.
+---
+v1: add PHY support for MaxLinear mxl862xx switches
+---
+
 From 7229f8cce387c8ade362df54532a3bc28d4a6aa6 Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Wed, 5 Nov 2025 08:42:48 +0800

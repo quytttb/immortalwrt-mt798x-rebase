@@ -1,3 +1,14 @@
+---
+[v2] net: ethernet: mtk_eth_soc: add mtk_validate_sram_range to MTK_SRAM feature
+
+Add SRAM range validation to prevent allocating non-existent SRAM regions to
+TX/RX/FQ rings. This enables MTK_SRAM feature on platforms with insufficient
+SRAM, improving compatibility across different SoCs.
+---
+v2: Fix the ADMA RX hang issue that occurs during the reboot test.
+v1: Add mtk_validate_sram_range() to the MTK_SRAM feature.
+---
+
 From 7fb965b100f4b5f70ea1ac7e0d05dfb8b0a78931 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Mon, 19 Jan 2026 16:41:44 +0800

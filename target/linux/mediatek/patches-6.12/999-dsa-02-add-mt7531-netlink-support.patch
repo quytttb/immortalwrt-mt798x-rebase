@@ -1,3 +1,14 @@
+---
+[v1] net: dsa: mt7530: add generic netlink interface for userspace
+switch tool
+
+Add generic netlink interface to support userspace applications to
+access MT753x switch registers and PHY registers through netlink
+sockets.
+---
+v1: add generic netlink interface for userspace switch tool
+---
+
 From 8700a460e6be1ff4dc657390c597ae6b918204ef Mon Sep 17 00:00:00 2001
 From: "neal.yen" <neal.yen@mediatek.com>
 Date: Wed, 22 Oct 2025 11:17:31 +0800

@@ -1,3 +1,20 @@
+---
+[v4] arm64: dts: mediatek: add dt overlay related dts
+
+Add device tree overlay support for MT7988A RFB with various Ethernet PHY
+configurations including AN8831X, AN8855, AQR113C, CUX3410, interal 2.5G PHYs,
+and MXL86252 switch. Enables flexible hardware configuration through
+runtime DTS overlays.
+---
+v4: Add a device tree overlay for the new mt7988a-mxl86252-rfb (MTK-5197) to
+replace the older one.
+v3: Remove hnat node from mt7988a-rfb-eth2-mxl86252-an8831x.dtso because it is
+only used by NF HNAT driver.
+v2: Add a device tree overlay for mt7988a-mxl86252-cob.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-an8831x.dtso
 @@ -0,0 +1,71 @@

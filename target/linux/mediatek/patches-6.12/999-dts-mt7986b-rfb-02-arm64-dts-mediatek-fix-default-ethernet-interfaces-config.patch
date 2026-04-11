@@ -1,3 +1,14 @@
+---
+[v2] arm64: dts: mt7986b rfb: fix default ethernet interfaces config
+
+Fix default Ethernet interface configuration for MT7986B RFB to ensure proper
+network port initialization and connectivity.
+---
+v2: Rename from 999-dts-mt7986b-rfb-01-arm64-dts-mediatek-fix-default-ethernet-interfaces-config.patch.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 From e45d61de9a0cdcb1c069d74077bb2f0b171e2961 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Tue, 9 Dec 2025 19:56:13 +0800

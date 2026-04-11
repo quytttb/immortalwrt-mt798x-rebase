@@ -1,11 +1,12 @@
-From 7f76fb447585ed365c6d1f453061c65acaa813f5 Mon Sep 17 00:00:00 2001
-From: Mason Chang <mason-cw.chang@mediatek.com>
-Date: Wed, 24 Sep 2025 14:09:05 +0800
-Subject: [PATCH] dts: mediatek: add mt7987 multiple thermal zones
-
 ---
- arch/arm64/boot/dts/mediatek/mt7987.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+[v1] arm64: dts: mediatek: add mt7987 multiple thermal zones
+
+Add separate thermal zones for each sensor to allow independent monitoring and
+configuration with per-sensor trip points and cooling maps.
+---
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7987.dtsi b/arch/arm64/boot/dts/mediatek/mt7987.dtsi
 index f036128..953a28f 100644

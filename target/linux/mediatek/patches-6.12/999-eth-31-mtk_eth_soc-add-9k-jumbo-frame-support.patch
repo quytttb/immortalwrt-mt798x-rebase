@@ -1,3 +1,14 @@
+---
+[v2] net: ethernet: mtk_eth_soc: add 9K jumbo frame support
+
+Add support for 9K jumbo frames on MT7988. This enables handling of large
+packets for improved Rx throughput, with proper MTU configuration for
+both GMAC and XGMAC interfaces.
+---
+v2: Add 9K jumbo frame support for GMAC on MT7988.
+v1: Add 9K jumbo frame support for XGMAC on MT7988.
+---
+
 From 056472e54b579fc2d97744f9efdd5f35622f7be1 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Fri, 17 Oct 2025 17:25:15 +0800

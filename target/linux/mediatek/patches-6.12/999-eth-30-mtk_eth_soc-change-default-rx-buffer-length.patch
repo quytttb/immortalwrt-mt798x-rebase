@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_eth_soc: change default ADMA RX buffer length
+
+Change default ADMA RX buffer length from 2K to 1.5K. This optimization
+improves software path peak throughput and reduces overall CPU usage,
+providing better performance for typical packet sizes.
+---
+v1: Change defualt ADMA RX buffer length from 2K to 1.5K.
+---
+
 From b230793adddbe7512b9e5369f18f860c64e89de9 Mon Sep 17 00:00:00 2001
 From: Mason Chang <mason-cw.chang@mediatek.com>
 Date: Wed, 8 Oct 2025 13:46:34 +0800

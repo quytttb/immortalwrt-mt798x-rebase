@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: add tport_idx for QoS on MT7988
+
+Without this patch, the ETH/WiFi to ETH traffic may not enter the QDMA,
+even if IB2_PSE_QOS is set on the MT7988.
+---
+v1: Add tport_idx for HQoS on MT7988 to ensure traffic enters QDMA.
+---
+
 From c0cc342b75b73849a955ffac1f62e392aecc0197 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 13:03:31 +0800

@@ -1,3 +1,12 @@
+---
+[v1] netfilter: add bridging support to xt_FLOWOFFLOAD
+
+Without this patch, we are unable to use xt_FLOWOFFLOAD to perform
+bridging offload.
+---
+v1: add bridging support to xt_FLOWOFFLOAD.
+---
+
 From 2a669c4912aca698fd03d308bc9e749f872a4738 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:00:42 +0800

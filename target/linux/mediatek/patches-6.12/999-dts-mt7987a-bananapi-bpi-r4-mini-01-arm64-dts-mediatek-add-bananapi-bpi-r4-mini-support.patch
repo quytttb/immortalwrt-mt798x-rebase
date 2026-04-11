@@ -4,10 +4,9 @@
 Add device-tree support for the Banana Pi BPI-R4-Mini (MT7987A).
 Introduce the base board DTS and DT overlays to select boot/storage media
 (eMMC/NAND/NMBM/SD). GMAC0 is configured to use the AN8811HB PHY.
-
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 ---
-v1: Initial version; base DTS and storage media overlays; GMAC0 uses AN8811HB
+v1: Initial device tree support for BPI-R4-Mini with base DTS and storage
+    media overlays (eMMC/NAND/NMBM/SD). GMAC0 uses AN8811HB PHY.
 ---
 
 --- /dev/null

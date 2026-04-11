@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: fix typo for enabling MIB cache
+
+Without this patch, the PPE performance might degrade when
+per-accounting is enabled.
+---
+v1: Fix typo for enabling MIB cache.
+---
+
 From 247c94692e87cc67fca6d785f99e79844939f505 Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:56:11 +0800

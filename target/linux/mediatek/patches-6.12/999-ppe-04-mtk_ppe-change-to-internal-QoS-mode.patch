@@ -1,3 +1,12 @@
+---
+[v1] net: ethernet: mtk_ppe: change to internal QoS mode
+
+Without this patch, the users are unable to use the proprietary HQoS
+and PPPQ modes.
+---
+v1: Add internal HQoS and PPPQ QoS mode support with debugfs control.
+---
+
 From 05abd2daebed58b3b875f08e4fb1349e1293e17f Mon Sep 17 00:00:00 2001
 From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 Date: Wed, 24 Sep 2025 12:04:02 +0800

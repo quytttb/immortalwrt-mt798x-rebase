@@ -1,3 +1,18 @@
+---
+[v3] arm64: dts: mediatek: refactor mt7988a pinctrl
+
+Create separate mt7988a-pinctrl.dtsi file to consolidate all pinctrl node
+definitions scattered across different device trees. Includes pin configurations
+for MDIO, Ethernet LEDs, I2C, SPI, UART, PWM, PCIe, USB, and flash devices.
+---
+v3: Add all pin nodes scattered across different dts into unified pinctrl dtsi.
+v2: Add mt7988 spi0/1/2 clock assignments, fix spi_cs name to spi_csb, align
+    NOR driving to 8mA. Add mt798x flash DTS clock/driving settings. Refactor
+    mt7988 pinctrl and add mt7988a-pinctrl.dtsi with spi2/mmc0 pin driving.
+v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
+    25.12 branch release.
+---
+
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-pinctrl.dtsi
 @@ -0,0 +1,315 @@

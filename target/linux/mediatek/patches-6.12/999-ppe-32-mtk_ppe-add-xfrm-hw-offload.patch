@@ -1,3 +1,13 @@
+---
+[v1] net: ethernet: mtk_ppe: add xfrm hw offload
+
+Implement IPsec XFRM hardware offload for PPE with EIP-197 crypto engine. This
+adds CDRT and TPORT fields for crypto routing, teardown-by-crypto-id handler,
+and FLOW_ACTION_IPSEC_PUSH support for ESP packet offload.
+---
+v1: Add xfrm hw offload
+---
+
 --- a/drivers/net/ethernet/mediatek/mtk_ppe.c
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
 @@ -620,6 +620,28 @@ int mtk_foe_entry_set_pppoe(struct mtk_e
