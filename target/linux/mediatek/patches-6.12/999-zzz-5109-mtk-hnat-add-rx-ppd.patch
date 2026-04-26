@@ -1,66 +1,23 @@
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
-@@ -354,6 +354,19 @@ static void gmac_ppe_fwd_enable(struct n
- 		set_gmac_ppe_fwd(NR_GMAC3_PORT, 1);
- }
- 
-+static struct net_device *find_rx_ppd(void)
-+{
-+	struct net_device *dev;
-+
-+	dev = __dev_get_by_name(&init_net, hnat_priv->rx_ppd);
-+	if (!dev || !(dev->flags & IFF_UP) || !netif_carrier_ok(dev))
-+		return NULL;
-+
-+	pr_info("%s: %s, ifindex: %d",
-+			__func__, dev->name, dev->ifindex);
-+	return dev;
-+}
-+
- int nf_hnat_netdevice_event(struct notifier_block *unused, unsigned long event,
- 			    void *ptr)
- {
-@@ -367,8 +380,14 @@ int nf_hnat_netdevice_event(struct notif
- 
- 		extif_set_dev(dev);
- 
-+		if (IS_RX_PPD(dev))
-+			WRITE_ONCE(g_rx_ppdev, find_rx_ppd());
-+
- 		break;
- 	case NETDEV_CHANGE:
-+		if (IS_RX_PPD(dev))
-+			WRITE_ONCE(g_rx_ppdev, find_rx_ppd());
-+
- 		/* Clear PPE entries if the slave of bond device physical link down */
- 		if (!netif_is_bond_slave(dev) ||
- 		    (!IS_LAN_GRP(dev) && !IS_WAN(dev)))
-@@ -388,6 +407,9 @@ int nf_hnat_netdevice_event(struct notif
- 		    !dev->netdev_ops->ndo_flow_offload_check)
- 			break;
- 
-+		if (IS_RX_PPD(dev))
-+			WRITE_ONCE(g_rx_ppdev, find_rx_ppd());
-+
- 		foe_clear_all_bind_entries();
- 
- 		break;
-@@ -401,6 +423,9 @@ int nf_hnat_netdevice_event(struct notif
+@@ -402,6 +402,11 @@ int nf_hnat_netdevice_event(struct notif
  			dev_put(dev);
  		}
  
-+		if (g_rx_ppdev == dev)
++		if (g_rx_ppdev == dev) {
 +			WRITE_ONCE(g_rx_ppdev, NULL);
++			dev_put(dev);
++		}
 +
  		break;
  	case NETDEV_REGISTER:
  		if (IS_PPD(dev) && !hnat_priv->g_ppdev)
-@@ -408,6 +433,9 @@ int nf_hnat_netdevice_event(struct notif
+@@ -409,6 +414,9 @@ int nf_hnat_netdevice_event(struct notif
  		if (IS_WAN(dev) && !hnat_priv->g_wandev)
  			hnat_priv->g_wandev = dev_get_by_name(&init_net, hnat_priv->wan);
  
 +		if (IS_RX_PPD(dev) && !g_rx_ppdev)
-+			WRITE_ONCE(g_rx_ppdev, find_rx_ppd());
++			g_rx_ppdev = dev_get_by_name(&init_net, hnat_priv->rx_ppd);
 +
  		break;
  	default:
@@ -94,7 +51,7 @@
  		       u16 eth_proto, int mape);
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat.c
-@@ -1574,6 +1574,13 @@ static int hnat_probe(struct platform_de
+@@ -1568,6 +1568,13 @@ static int hnat_probe(struct platform_de
  		strncpy(hnat_priv->ppd, (char *)name, IFNAMSIZ - 1);
  	dev_info(&pdev->dev, "ppd = %s\n", hnat_priv->ppd);
  
