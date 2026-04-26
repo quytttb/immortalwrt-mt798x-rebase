@@ -25,7 +25,7 @@
  *          has phys_switch_id + phys_port_name, and has a lower_* chain to a GMAC root
  *  - All switch ports are summarized as a single LAN prefix (e.g. "lan") for driver prefix match.
  *  - LAN2 is an independent PHY GMAC-root (has phydev). If none -> "/".
- *
+ *  - Rx PPD for Ext devices HNAT, only add to bridge when an ext device is detected.
  */
 
 'use strict';
@@ -212,38 +212,41 @@ const is_ext = (name) => {
 };
 let ext_devs = filter(nat_zone_devs, d => is_ext(d) && !is_gmac(d));
 
+/* cmd queue to exec */
+let rx_ppd_cmd = [];
+
 /* remove useless "dummy0" created by default */
 if (sysnet.dev_exist("dummy0")) {
-	system(`ip link delete dummy0`);
+	push(rx_ppd_cmd, `ip link delete dummy0`);
+}
+
+/* find bridge device in lan zone */
+let br_dev = null;
+let lan_devs = lan_zone_devs;
+for (let dev in lan_devs) {
+	if (sysnet.is_bridge(dev)) {
+		br_dev = dev;
+		break;
+	}
 }
 
 if (length(ext_devs) > 0) {
-	/* find bridge device in lan zone */
-	let br_dev = null;
-	let lan_devs = lan_zone_devs;
-	for (let dev in lan_devs) {
-		if (sysnet.is_bridge(dev)) {
-			br_dev = dev;
-			break;
-		}
-	}
-
 	if (br_dev) {
 		log.info(`ext devices: ${ext_devs}, enable ${RX_PPD_NAME} on ${br_dev}`);
 		/* add Rx PPD */
 		if (!sysnet.dev_exist(RX_PPD_NAME)) {
-			system(`ip link add ${RX_PPD_NAME} type dummy`);
-			system(`ip link set ${RX_PPD_NAME} up`);
+			push(rx_ppd_cmd, `ip link add ${RX_PPD_NAME} type dummy`);
+			push(rx_ppd_cmd, `ip link set ${RX_PPD_NAME} up`);
 		}
 		/* add Rx PPD to bridge */
 		if (index(sysnet.br_members(br_dev), RX_PPD_NAME) < 0) {
-			system(`ip link set ${RX_PPD_NAME} master ${br_dev}`);
+			push(rx_ppd_cmd, `ip link set ${RX_PPD_NAME} master ${br_dev}`);
 		}
     }
 } else {
-	/* no ext devices, remove Rx PPD */
-	if (sysnet.dev_exist(RX_PPD_NAME)) {
-		system(`ip link delete ${RX_PPD_NAME}`);
+	/* no ext devices, remove Rx PPD from bridge */
+	if (sysnet.dev_exist(RX_PPD_NAME) && index(sysnet.br_members(br_dev), RX_PPD_NAME) >= 0) {
+		push(rx_ppd_cmd, `ip link set ${RX_PPD_NAME} nomaster`);
 		log.info(`No ext devices, removing ${RX_PPD_NAME}`);
 	}
 }
@@ -251,6 +254,7 @@ if (length(ext_devs) > 0) {
 /* Apply:
  * - WAN: only write when we resolved a GMAC/switch endpoint (never apcli0/aplicx0).
  * - LAN/LAN2: always write the safe result.
+ * - Rx PPD: batch exec queued commands.
  */
 
 const hook_toggle = () => debugfs.hook_toggle.read() == 'enabled' ? true : false;
@@ -266,7 +270,8 @@ let cur_state = {
 let changed = (ppd_name && ppd_name != cur_state.ppd) ||
 	(wan_name && wan_name != cur_state.wan) ||
 	(lan_name && lan_name != cur_state.lan) ||
-	(lan2_name && lan2_name != cur_state.lan2);
+	(lan2_name && lan2_name != cur_state.lan2) || 
+	(length(rx_ppd_cmd) > 0);
 
 /* if changed, disable hook first */
 if (changed && cur_state.hook_toggle) {
@@ -288,6 +293,10 @@ if (lan_name != cur_state.lan)
 
 if (lan2_name != cur_state.lan2)
 	debugfs.lan2.write(lan2_name);
+
+for (let cmd in rx_ppd_cmd) {
+	system(cmd);
+}
 
 if (cur_state.hook_toggle && !hook_toggle()) {
 	debugfs.hook_toggle.write("1");
