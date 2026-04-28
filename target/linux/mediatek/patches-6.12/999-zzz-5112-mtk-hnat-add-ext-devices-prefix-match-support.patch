@@ -73,12 +73,17 @@
  			dev_hold(dev);
  			ext_entry->dev = dev;
  			pr_info("%s(%s)\n", __func__, dev->name);
-@@ -135,6 +153,21 @@ static inline int extif_set_dev(struct n
+@@ -136,6 +154,26 @@ static inline int extif_set_dev(struct n
  		}
  	}
  
 +	/* fallback to match rules */
 +	if (extif_prefix_match(dev->name)) {
++		/* filter GMACs */
++		struct device_node *np = dev_of_node(&dev->dev);
++		if (np && of_device_is_compatible(np, "mediatek,eth-mac"))
++			return -1;
++
 +		ext_entry = kzalloc(sizeof(*ext_entry), GFP_KERNEL);
 +		if (!ext_entry)
 +			return -1;
@@ -88,7 +93,7 @@
 +		ext_entry->dev = dev;
 +		ext_if_add(ext_entry);
 +
-+		pr_info("%s prefix match (%s)\n", __func__, dev->name);
++		pr_info("%s: prefix match (%s)\n", __func__, dev->name);
 +		return dev->ifindex;
 +	}
 +
