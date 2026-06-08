@@ -1,0 +1,30 @@
+#!/bin/sh /etc/rc.common
+# NR3053: LAN 192.168.10.1 + early LED update (START=19).
+
+START=19
+
+board_nr3053() {
+	[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "viettel,nr3053" ]
+}
+
+nr3053_apply_lan() {
+	board_nr3053 || return 0
+
+	case "$(uci -q get network.lan.ipaddr 2>/dev/null)" in
+	192.168.10.1) return 0 ;;
+	192.168.1.1|"")
+		uci -q set network.lan.ipaddr='192.168.10.1'
+		uci -q set network.lan.netmask='255.255.255.0'
+		uci -q commit network
+		;;
+	esac
+}
+
+boot() {
+	nr3053_apply_lan
+	board_nr3053 && [ -x /usr/sbin/led-nr3053 ] && /usr/sbin/led-nr3053 update
+}
+
+start() {
+	nr3053_apply_lan
+}

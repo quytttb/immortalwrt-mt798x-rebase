@@ -121,6 +121,7 @@ platform_do_upgrade() {
 	routerich,be7200|\
 	ruijie,rg-x60-new-ubi|\
 	snr,snr-cpe-ax2|\
+	viettel,nr3053|\
 	tplink,tl-7dr7230-v1|\
 	tplink,tl-7dr7230-v2|\
 	tplink,tl-7dr7250-v1|\
@@ -329,6 +330,7 @@ platform_check_image() {
 	qihoo,360t7|\
 	routerich,ax3000-ubootmod|\
 	ruijie,rg-x60-new-ubi|\
+	viettel,nr3053|\
 	tplink,tl-7dr7230-v1|\
 	tplink,tl-7dr7230-v2|\
 	tplink,tl-7dr7250-v1|\

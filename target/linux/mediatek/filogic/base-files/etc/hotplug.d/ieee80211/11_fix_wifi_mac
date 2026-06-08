@@ -184,7 +184,8 @@ case "$board" in
 		[ "$PHYNBR" = "1" ] && macaddr_add $hw_mac_addr 3 > /sys${DEVPATH}/macaddress
 		;;
 	netis,nx31|\
-	netis,nx32u)
+	netis,nx32u|\
+	viettel,nr3053)
 		addr=$(mtd_get_mac_binary "Factory" 0x4)
 		addr=$(macaddr_unsetbit $(macaddr_setbit_la $addr) 25)
 		addr_2g=$(macaddr_unsetbit $(macaddr_unsetbit $addr 26) 27)

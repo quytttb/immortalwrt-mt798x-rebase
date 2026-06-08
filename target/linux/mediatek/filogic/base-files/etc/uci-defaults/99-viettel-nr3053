@@ -1,0 +1,20 @@
+#!/bin/sh
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "viettel,nr3053" ] || exit 0
+
+case "$(uci -q get network.lan.ipaddr 2>/dev/null)" in
+192.168.10.1) ;;
+192.168.1.1|"")
+	uci -q set network.lan.ipaddr='192.168.10.1'
+	uci -q set network.lan.netmask='255.255.255.0'
+	uci -q commit network
+	;;
+esac
+
+for s in wan status; do
+	uci -q delete "system.$s"
+done
+uci commit system
+
+/etc/init.d/nr3053-board enable
+/etc/init.d/led-nr3053 enable
+exit 0

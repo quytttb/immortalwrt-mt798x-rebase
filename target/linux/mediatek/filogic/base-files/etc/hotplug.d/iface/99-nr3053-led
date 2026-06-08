@@ -1,0 +1,5 @@
+#!/bin/sh
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "viettel,nr3053" ] || exit 0
+[ "$INTERFACE" = "wan" ] || exit 0
+case "$ACTION" in ifup|ifupdate|ifdown) ;; *) exit 0 ;; esac
+/usr/sbin/led-nr3053 update &
