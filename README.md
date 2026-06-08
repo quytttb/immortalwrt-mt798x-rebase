@@ -16,7 +16,6 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | LED | Đỏ / xanh (WAN + Internet) | RGB (đỏ / xanh / xanh dương) |
 | IP LAN mặc định | `192.168.10.1` | `192.168.2.1` |
 | Branch | [`viettel-nr3053`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-nr3053) | [`viettel-vht-32x6`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-vht-32x6) |
-| PR upstream | [#50](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/pull/50) | [#51](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/pull/51) |
 | Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
 ---
