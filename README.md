@@ -2,8 +2,6 @@
 
 Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (branch `25.12`), bổ sung hỗ trợ **hai router WiFi 6 Viettel** chạy ImmortalWrt trên nền MediaTek MT7981.
 
-> **Lưu ý:** README và tài liệu trong fork **chỉ hiển thị trên repo của bạn**. Repo gốc `chasey-dev` **không thay đổi** cho đến khi maintainer merge pull request tương ứng.
-
 ---
 
 ## Router được hỗ trợ
