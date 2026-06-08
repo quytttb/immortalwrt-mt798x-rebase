@@ -1,67 +1,98 @@
-# ImmortalWrt - MT798x
+# ImmortalWrt MT798x — Fork hỗ trợ router Viettel
 
-```
-This repository is worked on ImmortalWrt with MTK OpenWrt Feeds patches imported.
-```
+Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (branch `25.12`), bổ sung hỗ trợ **hai router WiFi 6 Viettel** chạy ImmortalWrt trên nền MediaTek MT7981.
 
-## Commit Cutoff Revisions
+> **Lưu ý:** README và tài liệu trong fork **chỉ hiển thị trên repo của bạn**. Repo gốc `chasey-dev` **không thay đổi** cho đến khi maintainer merge pull request tương ứng.
 
-### ImmortalWrt: [e04af5b](https://github.com/immortalwrt/immortalwrt/commit/e04af5bf78280429e9dc2c8602982416bd862076)
+---
 
-```
-kernel: refresh patches
+## Router được hỗ trợ
 
-Fixes: 697d67e8a4ce ("Merge Official Source")
-Signed-off-by: Tianling Shen <cnsztl@immortalwrt.org>
-```
+| | **Viettel NR3053** | **Viettel VHT-32X6V1** |
+|---|---|---|
+| SoC | MediaTek MT7981B | MediaTek MT7981B |
+| RAM | 512 MB DDR3 | 128 MB DDR3 |
+| Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
+| Cổng LAN | 3 × LAN + 1 × WAN | 3 × LAN + 1 × WAN |
+| USB | Không | Không |
+| LED | Đỏ / xanh (WAN + Internet) | RGB (đỏ / xanh / xanh dương) |
+| IP LAN mặc định | `192.168.10.1` | `192.168.2.1` |
+| Branch | [`viettel-nr3053`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-nr3053) | [`viettel-vht-32x6`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-vht-32x6) |
+| PR upstream | [#50](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/pull/50) | [#51](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/pull/51) |
+| Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
-### MTK OpenWrt Feeds: [8b882e5](https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/8b882e59cf7123f3138153e5db7a18873dee6f71)
+---
 
-```
-[][kernel-6.12][common][eth][Fix the issue where the esw_cnt debug command cannot read the MIB]
+## Build firmware
 
-[Description]
-Fix the issue where the esw_cnt debug command cannot read the MIB.
+Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build, đã `make menuconfig` / feeds theo hướng dẫn upstream.
 
-[Root Cause]
-Both the GDM and MT753x counters are cleared each time the kernel
-executes mtk_esw_cnt_read(). However, when running the cat esw_cnt
-debug command, the kernel may invoke mtk_esw_cnt_read() multiple times,
-not just once. As a result, GDM and MT753x counter data may be lost
-during the execution of the esw_cnt debug command.
+### NR3053
 
-[Solution]
-We save the GDM counters in mtk_esw_cnt_open() and move the Switch
-counters clear to mtk_esw_cnt_release().
-
-[How to Verify]
-N/A
-
-[Info to Customer]
-N/A
-
-
-Change-Id: Idb28da45ee92f07ad64ad00206388e0ac06c9f19
-Reviewed-on: https://gerrit.mediatek.inc/c/openwrt/feeds/mtk_openwrt_feeds/+/12183429
+```bash
+git checkout viettel-nr3053
+./scripts/prepare-viettel-nr3053-config.sh
+make -j$(nproc)
+# hoặc: ./scripts/build-viettel-nr3053-firmware.sh
 ```
 
-### l1parser: [081bb31](https://github.com/chasey-dev/l1parser/commit/081bb31211efc74594d25bfd1bb5811f3408a205)
+### VHT-32X6
+
+```bash
+git checkout viettel-vht-32x6
+./scripts/prepare-vht-32x6-config.sh
+make -j$(nproc)
+# hoặc: ./scripts/build-vht32x6-firmware.sh
+```
+
+**Artifact** (cả hai máy):
 
 ```
-feat(ucode): add get all device map support
+bin/targets/mediatek/filogic/
+  immortalwrt-mediatek-filogic-<device>-preloader.bin
+  immortalwrt-mediatek-filogic-<device>-bl31-uboot.fip
+  immortalwrt-mediatek-filogic-<device>-squashfs-sysupgrade.itb
+  immortalwrt-mediatek-filogic-<device>-initramfs-recovery.itb
 ```
-## About External Devices HNAT
-> [!WARNING]
-> Current HNAT support for external devices is basic and lack of complete test for various types. Please use with caution.
 
-> [!IMPORTANT]
-> Please keep interface `rxppd` in your bridge device (e.g. `br-lan`) while using external device HNAT.
+---
 
-### Support Matrix:
-|               |  Ext as WAN   | Ext as LAN                |
-|   :----:      |   :----:      | :----:                    |
-|  **Ethernet** |      ✔️       |   ❌                     |
-| **AP/ApCli**  |      ✔️       |   ⚠️(**Untested**)       |
+## Nạp firmware
 
-## Acknowledgements
-HNAT support for external devices is adapted from [Padavanonly's repo](https://github.com/padavanonly/immortalwrt-mt798x-6.6). 
+Hướng dẫn chi tiết (TFTP, U-Boot bootmenu, UART, sysupgrade NAND):
+
+**[docs/huong-dan-nap-firmware.md](docs/huong-dan-nap-firmware.md)**
+
+Tóm tắt nhanh:
+
+1. Cắm PC vào cổng **LAN**, cấu hình TFTP server `192.168.1.254/24`.
+2. **Test không ghi NAND:** boot initramfs qua TFTP (bootmenu mục **[2]**).
+3. **Cài vĩnh viễn:** ghi `sysupgrade.itb` qua TFTP (bootmenu mục **[5]**) hoặc `sysupgrade` từ Linux.
+4. UART 115200 8N1 nếu cần debug / recovery.
+
+---
+
+## Cấu trúc branch
+
+| Branch | Mục đích |
+|--------|----------|
+| `25.12` | Đồng bộ upstream + README/tài liệu fork (branch này) |
+| `viettel-nr3053` | Mã nguồn + PR cho NR3053 |
+| `viettel-vht-32x6` | Mã nguồn + PR cho VHT-32X6 |
+
+Nên merge PR **#50 trước #51** trên upstream để tránh conflict file dùng chung (`filogic.mk`, `02_network`, …).
+
+---
+
+## Upstream & ghi công
+
+- Repo gốc: [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase)
+- Nền: [ImmortalWrt](https://immortalwrt.org/) + MTK OpenWrt feeds
+- Tham khảo thêm mục **About External Devices HNAT** và commit cutoff trong lịch sử README upstream
+
+---
+
+## Đóng góp
+
+- Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
+- Patch device nên gửi qua PR vào `chasey-dev:25.12`, giữ diff tách theo từng thiết bị.
