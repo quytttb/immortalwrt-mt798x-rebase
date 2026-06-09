@@ -74,7 +74,8 @@ mediatek_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" wan
 		;;
 	viettel,nr3053)
-		ucidef_set_interface "lan" device "lan1 lan2 lan3" protocol static ipaddr "192.168.10.1"
+		ucidef_set_interface "lan" device "lan1 lan2 lan3" protocol static \
+			ipaddr "192.168.10.1" netmask "255.255.255.0"
 		ucidef_set_interface_wan wan
 		;;
 	asus,tuf-ax4200|\
