@@ -821,6 +821,7 @@ setup_model()
 	tplink,fr365-v1 |\
 	ubnt,unifi-6-plus |\
 	unielec,u7981* |\
+	viettel,nr3053 |\
 	wavlink,wl-wn551x3 |\
 	wavlink,wl-wn586x3* |\
 	wavlink,wl-wn573hx3 |\
