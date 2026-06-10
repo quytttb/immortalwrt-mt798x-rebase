@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+USE_PROCD=1
+
+BNDSTRG_IF_2G=ra0
+BNDSTRG_IF_5G=rax0
+
+bndstrg_wifi_ready() {
+	[ -d "/sys/class/net/$BNDSTRG_IF_2G" ] && [ -d "/sys/class/net/$BNDSTRG_IF_5G" ] || return 1
+	iwconfig "$BNDSTRG_IF_2G" 2>/dev/null | grep -q 'Frequency:' || return 1
+	iwconfig "$BNDSTRG_IF_5G" 2>/dev/null | grep -q 'Frequency:' || return 1
+}
+
+bndstrg_enable_driver() {
+	iwpriv "$BNDSTRG_IF_2G" set BndStrgEnable=1 2>/dev/null
+	iwpriv "$BNDSTRG_IF_5G" set BndStrgEnable=1 2>/dev/null
+}
+
+start_service() {
+	local n=0
+
+	while ! bndstrg_wifi_ready; do
+		n=$((n + 1))
+		[ "$n" -ge 60 ] && return 1
+		sleep 2
+	done
+
+	bndstrg_enable_driver
+
+	procd_open_instance
+	procd_set_param env LD_PRELOAD=/usr/lib/bndstrg-ioctl-shim.so
+	procd_set_param command /usr/sbin/bndstrg -c /etc/bndstrg.conf
+	procd_set_param respawn 3600 15 5
+	procd_close_instance
+}
+
+stop_service() {
+	killall bndstrg 2>/dev/null
+}

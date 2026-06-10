@@ -1,0 +1,20 @@
+#!/bin/sh
+# Enable band steering in mt_wifi profile on Viettel DBDC boards.
+
+case "$(cat /tmp/sysinfo/board_name 2>/dev/null)" in
+viettel,nr3053|viettel,vht-32x6) ;;
+*) exit 0 ;;
+esac
+
+for f in /etc/wireless/mediatek/mt7981.dbdc.b0.dat /etc/wireless/mediatek/mt7981.dbdc.b1.dat; do
+	[ -f "$f" ] || continue
+	sed -i \
+		-e 's/^BandSteering=.*/BandSteering=1/' \
+		-e 's/^BndStrgBssIdx=.*/BndStrgBssIdx=1/' \
+		-e 's/^FtSupport=.*/FtSupport=1/' \
+		"$f"
+done
+
+/etc/init.d/bndstrg enable 2>/dev/null
+
+exit 0
