@@ -1,0 +1,19 @@
+--- a/mt_wifi/embedded/ap/ap_band_steering.c
++++ b/mt_wifi/embedded/ap/ap_band_steering.c
+@@ -1979,6 +1979,18 @@ INT BndStrg_MsgHandle(PRTMP_ADAPTER pAd, RTMP_IOCTL_INPUT_STRUCT *wrq, INT apidx
+ 			}
+ 		break;
+ 
++		case CLI_EVENT:
++		case CLI_STATUS_RSP:
++		case CHANLOAD_STATUS_RSP:
++		case INF_STATUS_RSP:
++		case TABLE_INFO:
++		case ENTRY_LIST:
++		case REJECT_EVENT:
++			/* Keenetic bndstrg may echo driver→daemon events back via ioctl */
++			break;
++
+ 		default:
+ 		MTWF_DBG(pAd, DBG_CAT_ALL, DBG_SUBCAT_ALL, DBG_LVL_WARN, "unknown action code. (%d)\n", msg->Action);
+ 		break;
