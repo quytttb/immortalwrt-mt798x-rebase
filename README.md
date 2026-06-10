@@ -15,7 +15,6 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | USB | Không | Không |
 | LED | Đỏ / xanh (WAN + Internet) | RGB (đỏ / xanh / xanh dương) |
 | IP LAN mặc định | `192.168.10.1` | `192.168.2.1` |
-| Branch | [`viettel-nr3053`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-nr3053) | [`viettel-vht-32x6`](https://github.com/quytttb/immortalwrt-mt798x-rebase/tree/viettel-vht-32x6) |
 | Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
 ---
@@ -27,7 +26,7 @@ Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build, đã `make menuconfig` / fe
 ### NR3053
 
 ```bash
-git checkout viettel-nr3053
+git checkout 25.12
 ./scripts/prepare-viettel-nr3053-config.sh
 make -j$(nproc)
 # hoặc: ./scripts/build-viettel-nr3053-firmware.sh
@@ -36,7 +35,7 @@ make -j$(nproc)
 ### VHT-32X6
 
 ```bash
-git checkout viettel-vht-32x6
+git checkout 25.12
 ./scripts/prepare-vht-32x6-config.sh
 make -j$(nproc)
 # hoặc: ./scripts/build-vht32x6-firmware.sh
@@ -69,15 +68,9 @@ Tóm tắt nhanh:
 
 ---
 
-## Cấu trúc branch
+## Branch
 
-| Branch | Mục đích |
-|--------|----------|
-| `25.12` | Đồng bộ upstream + README/tài liệu fork (branch này) |
-| `viettel-nr3053` | Mã nguồn + PR cho NR3053 |
-| `viettel-vht-32x6` | Mã nguồn + PR cho VHT-32X6 |
-
-Nên merge PR **#50 trước #51** trên upstream để tránh conflict file dùng chung (`filogic.mk`, `02_network`, …).
+Hỗ trợ NR3053 và VHT-32X6 nằm trên branch **`25.12`** (branch này).
 
 ---
 
