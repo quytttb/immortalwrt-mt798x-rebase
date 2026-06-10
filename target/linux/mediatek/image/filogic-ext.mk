@@ -124,6 +124,61 @@ define Device/sl_3000-emmc
 endef
 TARGET_DEVICES += sl_3000-emmc
 
+define Device/viettel_nr3053
+  DEVICE_VENDOR := Viettel
+  DEVICE_MODEL := NR3053
+  DEVICE_DTS := mt7981b-viettel-nr3053
+  DEVICE_DTS_DIR := ../dts-ext
+  SUPPORTED_DEVICES := viettel,nr3053
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 229376k
+  KERNEL_IN_UBI := 1
+  UBOOTENV_IN_UBI := 1
+  IMAGES := sysupgrade.itb
+  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
+  KERNEL := kernel-bin | gzip
+  KERNEL_INITRAMFS := kernel-bin | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
+  IMAGE/sysupgrade.itb := append-kernel | \
+	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
+	append-metadata
+  DEVICE_PACKAGES := default-settings-vn luci-app-argon-config bndstrg \
+	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
+  ARTIFACTS := preloader.bin bl31-uboot.fip
+  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
+  ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_nr3053
+endef
+TARGET_DEVICES += viettel_nr3053
+
+define Device/vht_32x6
+  DEVICE_VENDOR := Viettel
+  DEVICE_MODEL := VHT-32X6V1
+  DEVICE_DTS := mt7981b-viettel-vht-32x6
+  DEVICE_DTS_DIR := ../dts-ext
+  SUPPORTED_DEVICES := viettel,vht-32x6
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_IN_UBI := 1
+  UBOOTENV_IN_UBI := 1
+  IMAGES := sysupgrade.itb
+  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
+  KERNEL := kernel-bin | gzip
+  KERNEL_INITRAMFS := kernel-bin | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
+  IMAGE/sysupgrade.itb := append-kernel | \
+	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
+	append-metadata
+  DEVICE_PACKAGES := default-settings-vn luci-app-argon-config bndstrg \
+	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
+  ARTIFACTS := preloader.bin bl31-uboot.fip
+  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
+  ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot vht_32x6
+endef
+TARGET_DEVICES += vht_32x6
+
 define Device/wirelesstag_zx7981pd-ubootmod
   DEVICE_VENDOR := Wireless-Tag
   DEVICE_MODEL := ZX7981PD
@@ -203,58 +258,3 @@ define Device/xiaomi_redmi-router-ax6000-mtkuboot
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += xiaomi_redmi-router-ax6000-mtkuboot
-
-define Device/viettel_nr3053
-  DEVICE_VENDOR := Viettel
-  DEVICE_MODEL := NR3053
-  DEVICE_DTS := mt7981b-viettel-nr3053
-  DEVICE_DTS_DIR := ../dts-ext
-  SUPPORTED_DEVICES := viettel,nr3053
-  UBINIZE_OPTS := -E 5
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  IMAGE_SIZE := 229376k
-  KERNEL_IN_UBI := 1
-  UBOOTENV_IN_UBI := 1
-  IMAGES := sysupgrade.itb
-  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
-  KERNEL := kernel-bin | gzip
-  KERNEL_INITRAMFS := kernel-bin | lzma | \
-	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
-  IMAGE/sysupgrade.itb := append-kernel | \
-	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
-	append-metadata
-  DEVICE_PACKAGES := default-settings-vn luci-app-argon-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
-  ARTIFACTS := preloader.bin bl31-uboot.fip
-  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
-  ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_nr3053
-endef
-TARGET_DEVICES += viettel_nr3053
-
-define Device/vht_32x6
-  DEVICE_VENDOR := Viettel
-  DEVICE_MODEL := VHT-32X6V1
-  DEVICE_DTS := mt7981b-viettel-vht-32x6
-  DEVICE_DTS_DIR := ../dts-ext
-  SUPPORTED_DEVICES := viettel,vht-32x6
-  UBINIZE_OPTS := -E 5
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  KERNEL_IN_UBI := 1
-  UBOOTENV_IN_UBI := 1
-  IMAGES := sysupgrade.itb
-  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
-  KERNEL := kernel-bin | gzip
-  KERNEL_INITRAMFS := kernel-bin | lzma | \
-	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
-  IMAGE/sysupgrade.itb := append-kernel | \
-	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
-	append-metadata
-  DEVICE_PACKAGES := default-settings-vn luci-app-argon-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
-  ARTIFACTS := preloader.bin bl31-uboot.fip
-  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
-  ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot vht_32x6
-endef
-TARGET_DEVICES += vht_32x6

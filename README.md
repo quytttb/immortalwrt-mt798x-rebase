@@ -13,8 +13,8 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
 | Cổng LAN | 3 × LAN + 1 × WAN | 3 × LAN + 1 × WAN |
 | USB | Không | Không |
-| LED | Đỏ / xanh (WAN + Internet) | RGB (đỏ / xanh / xanh dương) |
-| IP LAN mặc định | `192.168.10.1` | `192.168.2.1` |
+| LED | Đỏ / xanh (trạng thái hệ thống) | RGB (boot / running / upgrade) |
+| IP LAN mặc định | `192.168.1.1` | `192.168.1.1` |
 | Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
 ---
@@ -32,16 +32,23 @@ git checkout 25.12
 ./scripts/feeds update -a && ./scripts/feeds install -a   # lần đầu
 ```
 
-Chọn router, chạy script `prepare` tương ứng rồi build:
-
-| Router | Script prepare | Rebuild ITB (sau khi đã build lần đầu) |
-|--------|----------------|----------------------------------------|
-| NR3053 | `./scripts/prepare-viettel-nr3053-config.sh` | `./scripts/build-viettel-nr3053-firmware.sh` |
-| VHT-32X6 | `./scripts/prepare-vht-32x6-config.sh` | `./scripts/build-vht32x6-firmware.sh` |
+Chọn target và device trong menuconfig, rồi build:
 
 ```bash
-./scripts/prepare-viettel-nr3053-config.sh   # hoặc prepare-vht-32x6-config.sh
+cp defconfig/mt7981-ax3000.config .config
+make defconfig
+make menuconfig
+# Target System → MediaTek Ralink ARM
+#Subtarget → Filogic
+#Target Profile → Viettel NR3053 hoặc Viettel VHT-32X6V1
 make -j$(nproc)
+```
+
+Build một device cụ thể (nhanh hơn full tree):
+
+```bash
+make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_nr3053
+# hoặc DEVICE=vht_32x6
 ```
 
 **Artifact** (`bin/targets/mediatek/filogic/`):
