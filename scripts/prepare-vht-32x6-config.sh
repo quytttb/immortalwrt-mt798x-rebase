@@ -17,5 +17,9 @@ sed -i "s/^# ${TARGET} is not set$/${TARGET}=y/" "$CFG"
 
 make -C "$OWRT" defconfig
 
+# Single-profile build: DEVICE_PACKAGES are not merged without TARGET_PER_DEVICE_ROOTFS.
+sed -i 's/^CONFIG_PACKAGE_bndstrg=.*$/CONFIG_PACKAGE_bndstrg=y/' "$CFG"
+grep -q '^CONFIG_PACKAGE_bndstrg=y' "$CFG" || echo 'CONFIG_PACKAGE_bndstrg=y' >> "$CFG"
+
 echo "[+] .config sẵn sàng: TARGET=vht_32x6 (filogic)"
 grep -E "^(CONFIG_TARGET_PROFILE|${TARGET})=" "$CFG" | head -3
