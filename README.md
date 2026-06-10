@@ -21,34 +21,41 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ## Build firmware
 
-Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build, đã `make menuconfig` / feeds theo hướng dẫn upstream.
+Mã nguồn và hỗ trợ cả hai router nằm trên branch **`25.12`**.
 
-### NR3053
-
-```bash
-git checkout 25.12
-./scripts/prepare-viettel-nr3053-config.sh
-make -j$(nproc)
-# hoặc: ./scripts/build-viettel-nr3053-firmware.sh
-```
-
-### VHT-32X6
+Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build; lần đầu cần cập nhật feeds theo hướng dẫn upstream.
 
 ```bash
+git clone https://github.com/quytttb/immortalwrt-mt798x-rebase.git
+cd immortalwrt-mt798x-rebase
 git checkout 25.12
-./scripts/prepare-vht-32x6-config.sh
+./scripts/feeds update -a && ./scripts/feeds install -a   # lần đầu
+```
+
+Chọn router, chạy script `prepare` tương ứng rồi build:
+
+| Router | Script prepare | Rebuild ITB (sau khi đã build lần đầu) |
+|--------|----------------|----------------------------------------|
+| NR3053 | `./scripts/prepare-viettel-nr3053-config.sh` | `./scripts/build-viettel-nr3053-firmware.sh` |
+| VHT-32X6 | `./scripts/prepare-vht-32x6-config.sh` | `./scripts/build-vht32x6-firmware.sh` |
+
+```bash
+./scripts/prepare-viettel-nr3053-config.sh   # hoặc prepare-vht-32x6-config.sh
 make -j$(nproc)
-# hoặc: ./scripts/build-vht32x6-firmware.sh
 ```
 
-**Artifact** (cả hai máy):
+**Artifact** (`bin/targets/mediatek/filogic/`):
+
+| Router | `<device>` trong tên file |
+|--------|---------------------------|
+| NR3053 | `viettel_nr3053` |
+| VHT-32X6 | `vht_32x6` |
 
 ```
-bin/targets/mediatek/filogic/
-  immortalwrt-mediatek-filogic-<device>-preloader.bin
-  immortalwrt-mediatek-filogic-<device>-bl31-uboot.fip
-  immortalwrt-mediatek-filogic-<device>-squashfs-sysupgrade.itb
-  immortalwrt-mediatek-filogic-<device>-initramfs-recovery.itb
+immortalwrt-mediatek-filogic-<device>-preloader.bin
+immortalwrt-mediatek-filogic-<device>-bl31-uboot.fip
+immortalwrt-mediatek-filogic-<device>-squashfs-sysupgrade.itb
+immortalwrt-mediatek-filogic-<device>-initramfs-recovery.itb
 ```
 
 ---
@@ -65,12 +72,6 @@ Tóm tắt nhanh:
 2. **Test không ghi NAND:** boot initramfs qua TFTP (bootmenu mục **[2]**).
 3. **Cài vĩnh viễn:** ghi `sysupgrade.itb` qua TFTP (bootmenu mục **[5]**) hoặc `sysupgrade` từ Linux.
 4. UART 115200 8N1 nếu cần debug / recovery.
-
----
-
-## Branch
-
-Hỗ trợ NR3053 và VHT-32X6 nằm trên branch **`25.12`** (branch này).
 
 ---
 
