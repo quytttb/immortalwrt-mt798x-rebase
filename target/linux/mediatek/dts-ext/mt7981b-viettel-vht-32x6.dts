@@ -61,7 +61,6 @@
 		led_status: led_power {
 			color = <LED_COLOR_ID_RED>;
 			function = LED_FUNCTION_POWER;
-			default-state = "on";
 			gpios = <&pio 5 GPIO_ACTIVE_LOW>;
 		};
 
