@@ -13,11 +13,10 @@
 
 	aliases {
 		label-mac-device = &gmac0;
+
+		led-boot = &red_led;
+
 		serial0 = &uart0;
-		led-boot = &led_red;
-		led-failsafe = &led_red;
-		led-running = &led_green;
-		led-upgrade = &led_green;
 	};
 
 	chosen {
@@ -51,15 +50,13 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_green: led-0 {
-			color = <LED_COLOR_ID_GREEN>;
-			function = LED_FUNCTION_STATUS;
+		green_led: green {
+			label = "nr3053:green";
 			gpios = <&pio 4 GPIO_ACTIVE_LOW>;
 		};
 
-		led_red: led-1 {
-			color = <LED_COLOR_ID_RED>;
-			function = LED_FUNCTION_STATUS;
+		red_led: red {
+			label = "nr3053:red";
 			gpios = <&pio 6 GPIO_ACTIVE_LOW>;
 		};
 	};

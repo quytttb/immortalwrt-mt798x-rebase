@@ -13,7 +13,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
 | Cổng LAN | 3 × LAN + 1 × WAN | 2 × LAN + 1 × WAN |
 | USB | Không | Không |
-| LED | Đỏ / xanh (trạng thái hệ thống) | RGB (boot / running / upgrade) |
+| LED | Xanh WAN có link / đỏ không link | Đỏ nguồn, xanh WAN online, xanh dương TX |
 | IP LAN mặc định | `192.168.1.1` | `192.168.1.1` |
 | Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
