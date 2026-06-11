@@ -1,5 +1,4 @@
 #!/bin/sh
-# Viettel fork: one WAN status color at a time (carrier only, no ping).
 
 [ "$INTERFACE" = wan ] || exit 0
 
@@ -9,48 +8,12 @@ case "$ACTION" in
 esac
 
 . /lib/functions.sh
-. /lib/functions/leds.sh
+. /lib/viettel-wan-led.sh
 
-case "$(board_name)" in
-viettel,nr3053)
-	GREEN="nr3053:green"
-	RED="nr3053:red"
-	;;
-viettel,vht-32x6)
-	GREEN="green:wan-online"
-	RED="red:power"
-	BLUE="blue:tx"
-	;;
-*)
-	exit 0
-	;;
-esac
+viettel_wan_led_supported || exit 0
 
-viettel_wan_led_off() {
-	led_off "$GREEN"
-	led_off "$RED"
-	[ -n "$BLUE" ] && led_off "$BLUE"
-}
+[ "$ACTION" = ifdown ] && viettel_wan_led_set down && exit 0
 
-viettel_wan_led_up() {
-	viettel_wan_led_off
-	led_on "$GREEN"
-}
-
-viettel_wan_led_down() {
-	viettel_wan_led_off
-	led_on "$RED"
-}
-
-if [ "$ACTION" = ifdown ]; then
-	viettel_wan_led_down
-	exit 0
-fi
-
-if ip link show dev wan 2>/dev/null | grep -q 'LOWER_UP'; then
-	viettel_wan_led_up
-else
-	viettel_wan_led_down
-fi
+viettel_wan_led_update
 
 exit 0

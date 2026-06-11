@@ -15,6 +15,9 @@
 		label-mac-device = &gmac0;
 
 		led-boot = &red_led;
+		led-failsafe = &red_led;
+		led-running = &green_led;
+		led-upgrade = &green_led;
 
 		serial0 = &uart0;
 	};

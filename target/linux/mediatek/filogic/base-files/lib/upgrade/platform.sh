@@ -431,6 +431,10 @@ platform_pre_upgrade() {
 	buffalo,wsr-6000ax8)
 		buffalo_initial_setup
 		;;
+	viettel,nr3053|viettel,vht-32x6)
+		. /lib/viettel-wan-led.sh
+		viettel_wan_led_suspend
+		;;
 	xiaomi,mi-router-ax3000t|\
 	xiaomi,mi-router-wr30u-stock|\
 	xiaomi,redmi-router-ax6000-stock)

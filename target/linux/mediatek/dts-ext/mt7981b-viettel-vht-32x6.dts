@@ -16,7 +16,8 @@
 
 		led-boot = &led_status;
 		led-failsafe = &led_status;
-		led-upgrade = &led_status;
+		led-running = &led_internet;
+		led-upgrade = &led_tx;
 
 		serial0 = &uart0;
 	};

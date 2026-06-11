@@ -1,14 +1,11 @@
 #!/bin/sh
 
 . /lib/functions.sh
+. /lib/viettel-wan-led.sh
 
-case "$(board_name)" in
-viettel,nr3053|viettel,vht-32x6) ;;
-*) exit 0 ;;
-esac
+viettel_wan_led_supported || exit 0
 
 /etc/init.d/viettel-wan-led enable
-
-INTERFACE=wan ACTION=ifupdate sh /etc/hotplug.d/iface/90-viettel-wan-led
+viettel_wan_led_update
 
 exit 0

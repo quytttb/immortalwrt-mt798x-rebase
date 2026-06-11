@@ -1,43 +1,20 @@
 #!/bin/sh /etc/rc.common
-# Re-apply Viettel WAN LEDs after netifd brings up interfaces.
 
 START=99
 STOP=10
 
-viettel_wan_led_apply() {
-	INTERFACE=wan ACTION=ifupdate sh /etc/hotplug.d/iface/90-viettel-wan-led
-}
-
 start() {
 	. /lib/functions.sh
+	. /lib/viettel-wan-led.sh
 
-	case "$(board_name)" in
-	viettel,nr3053|viettel,vht-32x6) ;;
-	*) return 0 ;;
-	esac
-
-	viettel_wan_led_apply
+	viettel_wan_led_supported || return 0
+	viettel_wan_led_update
 }
 
 stop() {
 	. /lib/functions.sh
+	. /lib/viettel-wan-led.sh
 
-	case "$(board_name)" in
-	viettel,nr3053|viettel,vht-32x6) ;;
-	*) return 0 ;;
-	esac
-
-	. /lib/functions/leds.sh
-
-	case "$(board_name)" in
-	viettel,nr3053)
-		led_off nr3053:green
-		led_on nr3053:red
-		;;
-	viettel,vht-32x6)
-		led_off green:wan-online
-		led_off blue:tx
-		led_on red:power
-		;;
-	esac
+	viettel_wan_led_supported || return 0
+	viettel_wan_led_suspended || viettel_wan_led_set down
 }
