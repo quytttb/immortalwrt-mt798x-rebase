@@ -53,7 +53,7 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_internet {
+		led_internet: led_internet {
 			color = <LED_COLOR_ID_GREEN>;
 			function = LED_FUNCTION_WAN_ONLINE;
 			gpios = <&pio 8 GPIO_ACTIVE_LOW>;
@@ -65,7 +65,7 @@
 			gpios = <&pio 5 GPIO_ACTIVE_LOW>;
 		};
 
-		led_tx {
+		led_tx: led_tx {
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_TX;
 			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
