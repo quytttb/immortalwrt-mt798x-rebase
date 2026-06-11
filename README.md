@@ -11,7 +11,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | SoC | MediaTek MT7981B | MediaTek MT7981B |
 | RAM | 512 MB DDR3 | 128 MB DDR3 |
 | Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
-| Cổng LAN | 3 × LAN + 1 × WAN | 3 × LAN + 1 × WAN |
+| Cổng LAN | 3 × LAN + 1 × WAN | 2 × LAN + 1 × WAN |
 | USB | Không | Không |
 | LED | Đỏ / xanh (trạng thái hệ thống) | RGB (boot / running / upgrade) |
 | IP LAN mặc định | `192.168.1.1` | `192.168.1.1` |
@@ -19,16 +19,27 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ---
 
+## Cấu trúc nhánh
+
+| Nhánh | Mục đích |
+|-------|----------|
+| **`main`** | Fork đầy đủ: cả hai router, band steering (`bndstrg`), README/docs tiếng Việt — **dùng để build flash** |
+| **`25.12`** | Mirror [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (`25.12`), không patch Viettel |
+| **`viettel-nr3053`** | PR upstream NR3053 only |
+| **`viettel-vht-32x6`** | PR upstream VHT-32X6 only |
+
+---
+
 ## Build firmware
 
-Mã nguồn và hỗ trợ cả hai router nằm trên branch **`25.12`**.
+Build firmware đầy đủ tính năng từ branch **`main`**.
 
 Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build; lần đầu cần cập nhật feeds theo hướng dẫn upstream.
 
 ```bash
 git clone https://github.com/quytttb/immortalwrt-mt798x-rebase.git
 cd immortalwrt-mt798x-rebase
-git checkout 25.12
+git checkout main
 ./scripts/feeds update -a && ./scripts/feeds install -a   # lần đầu
 ```
 
@@ -93,4 +104,6 @@ Tóm tắt nhanh:
 ## Đóng góp
 
 - Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
-- Patch device nên gửi qua PR vào `chasey-dev:25.12`, giữ diff tách theo từng thiết bị.
+- Patch upstream: nhánh `viettel-nr3053` hoặc `viettel-vht-32x6` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
+- Tính năng fork (bndstrg, v.v.): chỉ trên `main`.
+
