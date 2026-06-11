@@ -1,0 +1,20 @@
+#!/bin/sh
+
+uci -q get system.@imm_init[0] > "/dev/null" 2>&1 || uci -q add system imm_init > "/dev/null" 2>&1
+
+if ! uci -q get system.@imm_init[0].system_vn > "/dev/null" 2>&1; then
+	uci -q batch <<-EOF
+		set system.@system[0].timezone="ICT-7"
+		set system.@system[0].zonename="Asia/Ho_Chi_Minh"
+
+		delete system.ntp.server
+		add_list system.ntp.server="pool.ntp.org"
+		add_list system.ntp.server="time.google.com"
+		add_list system.ntp.server="vn.pool.ntp.org"
+
+		set system.@imm_init[0].system_vn="1"
+		commit system
+	EOF
+fi
+
+exit 0

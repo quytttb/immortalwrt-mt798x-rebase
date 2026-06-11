@@ -26,6 +26,12 @@ define Package/default-settings-chn
   DEPENDS:=+default-settings +@LUCI_LANG_zh_Hans +luci-i18n-base-zh-cn
 endef
 
+define Package/default-settings-vn
+  $(Package/default-settings)
+  TITLE+= (Optimize for VN users)
+  DEPENDS:=+default-settings
+endef
+
 define Build/Compile
 endef
 
@@ -39,5 +45,11 @@ define Package/default-settings-chn/install
 	$(INSTALL_BIN) ./files/99-default-settings-chinese $(1)/etc/uci-defaults/
 endef
 
+define Package/default-settings-vn/install
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/99-default-settings-vietnam $(1)/etc/uci-defaults/
+endef
+
 $(eval $(call BuildPackage,default-settings))
 $(eval $(call BuildPackage,default-settings-chn))
+$(eval $(call BuildPackage,default-settings-vn))
