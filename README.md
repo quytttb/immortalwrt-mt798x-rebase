@@ -49,13 +49,13 @@ Chọn target và device trong menuconfig, rồi build:
 cp defconfig/mt7981-ax3000.config .config
 make defconfig
 make menuconfig
-# Target System → MediaTek Ralink ARM
-#Subtarget → Filogic
-#Target Profile → Viettel NR3053 hoặc Viettel VHT-32X6V1
+# Target System → MediaTek ARM
+# Subtarget → Filogic
+# Target Profile → Viettel NR3053 hoặc Viettel VHT-32X6V1
 make -j$(nproc)
 ```
 
-Build một device cụ thể (nhanh hơn full tree):
+Chỉ chạy bước tạo file image (nhanh hơn lệnh `make` ở trên vì bỏ qua việc biên dịch lại package). Lưu ý lệnh này sẽ đóng gói file cho **tất cả** các device đang được chọn trong `.config`:
 
 ```bash
 make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_nr3053
