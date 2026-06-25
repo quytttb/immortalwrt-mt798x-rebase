@@ -28,8 +28,14 @@ jobs:
       - name: ruff (unlock Python scripts)
         run: ruff check scripts/unlock/
 
-      - name: Verify Viettel device configs exist
+      - name: Verify Viettel-only defconfig
         run: |
-          grep -q "viettel_nr3053" defconfig/mt7981-ax3000.config
-          grep -q "vht_32x6" defconfig/mt7981-ax3000.config
-          echo "Viettel device configs OK."
+          enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' defconfig/viettel-only.config)
+          if [ "$enabled" -ne 2 ]; then
+            echo "::error::viettel-only.config must enable exactly 2 devices, got $enabled" >&2
+            exit 1
+          fi
+          grep -q "viettel_nr3053" defconfig/viettel-only.config
+          grep -q "vht_32x6" defconfig/viettel-only.config
+          ! grep -q "DEVICE_xiaomi" defconfig/viettel-only.config
+          echo "Viettel-only defconfig OK (NR3053 + VHT-32X6)."

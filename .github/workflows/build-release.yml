@@ -65,19 +65,24 @@ jobs:
           path: |
             staging_dir
             dl
-          key: immortalwrt-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
+          key: immortalwrt-viettel-only-ubuntu2404-${{ hashFiles('feeds.conf.default', 'defconfig/viettel-only.config') }}-v1
           restore-keys: |
-            immortalwrt-filogic-ubuntu2404-
+            immortalwrt-viettel-only-ubuntu2404-
 
       - name: Update and install feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Prepare .config
+      - name: Prepare .config (Viettel NR3053 + VHT-32X6 only)
         run: |
-          cp defconfig/mt7981-ax3000.config .config
+          cp defconfig/viettel-only.config .config
           make defconfig
+          enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' .config)
+          if [ "$enabled" -ne 2 ]; then
+            echo "::error::Expected exactly 2 Viettel devices in .config, got $enabled" >&2
+            exit 1
+          fi
 
       - name: Build firmware
         run: |
@@ -89,10 +94,23 @@ jobs:
       - name: Collect firmware artifacts
         run: |
           mkdir -p dist
-          cp bin/targets/mediatek/filogic/*viettel_nr3053* dist/ 2>/dev/null || true
-          cp bin/targets/mediatek/filogic/*vht_32x6* dist/ 2>/dev/null || true
-          cp bin/targets/mediatek/filogic/sha256sums dist/ 2>/dev/null || true
+          shopt -s nullglob
+          for pattern in '*viettel_nr3053*' '*vht_32x6*'; do
+            cp bin/targets/mediatek/filogic/$pattern dist/ 2>/dev/null || true
+          done
+          for f in bin/targets/mediatek/filogic/*; do
+            base=$(basename "$f")
+            case "$base" in
+              *viettel_nr3053*|*vht_32x6*|profiles.json|version.buildinfo|config.buildinfo|feeds.buildinfo|sha256sums|packages|kmods|u-boot-*)
+                ;;
+              *)
+                echo "::error::Unexpected firmware artifact (not NR3053/32X6): $base" >&2
+                exit 1
+                ;;
+            esac
+          done
           ls -la dist/
+          test "$(ls -1 dist/ | wc -l)" -ge 1
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4

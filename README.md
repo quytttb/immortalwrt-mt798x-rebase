@@ -46,6 +46,15 @@ git checkout main
 Chọn target và device trong menuconfig, rồi build:
 
 ```bash
+# Khuyến nghị: chỉ build NR3053 + VHT-32X6 (dùng trong CI)
+cp defconfig/viettel-only.config .config
+make defconfig
+make -j$(nproc)
+```
+
+Hoặc dùng defconfig đầy đủ nhiều thiết bị (build lâu hơn):
+
+```bash
 cp defconfig/mt7981-ax3000.config .config
 make defconfig
 make menuconfig
