@@ -29,6 +29,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Maximize build disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force 2>/dev/null || true
+          df -h /
+
       - name: Read version
         id: meta
         run: echo "version=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
@@ -84,20 +93,11 @@ jobs:
 
       - name: Build firmware
         run: |
-          make -j$(nproc) V=sc 2>&1 | tee /tmp/build.log || {
+          df -h /
+          make -j$(nproc) V=s || {
             echo "::warning::Parallel build failed, retrying with -j1..."
-            make -j1 V=sc 2>&1 | tail -200
+            make -j1 V=s 2>&1 | tail -200
           }
-
-      - name: Report cache sizes
-        if: always()
-        run: |
-          echo "=== staging_dir/host ==="
-          du -sh staging_dir/host 2>/dev/null || echo "(empty)"
-          echo "=== staging_dir/toolchain-* ==="
-          du -sh staging_dir/toolchain-aarch64_cortex-a53_gcc-* 2>/dev/null || echo "(empty)"
-          echo "=== dl ==="
-          du -sh dl 2>/dev/null || echo "(empty)"
 
       - name: Collect firmware artifacts
         run: |
@@ -116,3 +116,15 @@ jobs:
           path: dist/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Free disk before cache save
+        if: always()
+        run: |
+          echo "=== Before cleanup ==="
+          df -h /
+          du -sh build_dir bin tmp staging_dir dl 2>/dev/null || true
+          rm -rf build_dir bin tmp logs feeds
+          rm -rf staging_dir/target-* staging_dir/packages
+          echo "=== After cleanup (keep host + toolchain + dl for cache) ==="
+          df -h /
+          du -sh staging_dir/host staging_dir/toolchain-* dl 2>/dev/null || true
