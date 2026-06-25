@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: ShellCheck (project scripts)
+        run: |
+          find scripts/unlock/ -name "*.sh" -exec shellcheck --severity=warning {} +
+
+      - name: Install ruff
+        run: pip install --quiet ruff
+
+      - name: ruff (unlock Python scripts)
+        run: ruff check scripts/unlock/
+
+      - name: Verify Viettel device configs exist
+        run: |
+          grep -q "viettel_nr3053" defconfig/mt7981-ax3000.config
+          grep -q "vht_32x6" defconfig/mt7981-ax3000.config
+          echo "Viettel device configs OK."

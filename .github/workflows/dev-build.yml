@@ -1,0 +1,87 @@
+name: Dev Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package/**"
+      - "target/**"
+      - "include/**"
+      - "defconfig/**"
+      - "feeds.conf.default"
+      - "Makefile"
+      - "rules.mk"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: dev-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-firmware:
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: meta
+        run: echo "version=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential clang flex bison g++ gawk gettext git \
+            libncurses5-dev libssl-dev python3 python3-setuptools \
+            rsync unzip zlib1g-dev file wget curl libelf-dev \
+            subversion swig time
+
+      - name: Restore toolchain + download cache
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            staging_dir
+            dl
+          key: immortalwrt-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
+          restore-keys: |
+            immortalwrt-filogic-ubuntu2404-
+
+      - name: Update and install feeds
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Prepare .config
+        run: |
+          cp defconfig/mt7981-ax3000.config .config
+          make defconfig
+
+      - name: Build firmware
+        run: |
+          make -j$(nproc) V=sc 2>&1 | tee /tmp/build.log || {
+            echo "::warning::Parallel build failed, retrying with -j1..."
+            make -j1 V=sc 2>&1 | tail -200
+          }
+
+      - name: Collect firmware artifacts
+        run: |
+          mkdir -p dist
+          cp bin/targets/mediatek/filogic/*viettel_nr3053* dist/ 2>/dev/null || true
+          cp bin/targets/mediatek/filogic/*vht_32x6* dist/ 2>/dev/null || true
+          cp bin/targets/mediatek/filogic/sha256sums dist/ 2>/dev/null || true
+          ls -la dist/
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: immortalwrt-filogic-dev-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
