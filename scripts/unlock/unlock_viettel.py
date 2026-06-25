@@ -19,7 +19,6 @@ import hmac
 import gzip
 import tarfile
 import io
-import json
 import sys
 import time
 import socket
@@ -639,7 +638,7 @@ def main():
         print(f"  Port {port:5d} ({name}): {s}")
 
     # --- Step 2: Login ---
-    print(f"\n[2/7] Logging in as admin...")
+    print("\n[2/7] Logging in as admin...")
     result = login(default_https_router, "admin", args.password)
     if "result" not in result or "token" not in result.get("result", {}):
         print(f"  Login FAILED: {result}")
@@ -650,7 +649,7 @@ def main():
 
     # --- Step 3: Download config ---
     if args.config_input:
-        print(f"\n[3/7] Đọc config backup từ file...")
+        print("\n[3/7] Đọc config backup từ file...")
         try:
             with open(args.config_input, "rb") as inf:
                 config_bin = inf.read()
@@ -668,7 +667,7 @@ def main():
         config_cgi_url = None
         print(f"  Đã đọc {len(config_bin)} bytes từ {args.config_input!r}")
     else:
-        print(f"\n[3/7] Downloading config backup...")
+        print("\n[3/7] Downloading config backup...")
         config_bin, config_cgi_url = download_config(ip, token, verbose=args.verbose)
 
     base_url = (
@@ -685,12 +684,12 @@ def main():
         print(f"  Downloaded {len(config_bin)} bytes")
 
     # --- Step 4: Modify config ---
-    print(f"\n[4/7] Modifying config (enable SSH/Telnet, set root password)...")
+    print("\n[4/7] Modifying config (enable SSH/Telnet, set root password)...")
     new_config = modify_config(config_bin, args.root_password)
     print(f"  New config: {len(new_config)} bytes")
 
     # --- Step 5: Upload config ---
-    print(f"\n[5/7] Uploading modified config...")
+    print("\n[5/7] Uploading modified config...")
     status, resp = upload_config(config_cgi, token, new_config)
     print(f"  Upload HTTP {status}")
 
@@ -700,7 +699,7 @@ def main():
         sys.exit(1)
 
     # --- Step 6: Reboot ---
-    print(f"\n[6/7] Rebooting router...")
+    print("\n[6/7] Rebooting router...")
     try:
         api_call(base_url, "MGMT.reboot", token=token)
     except Exception:
@@ -720,7 +719,7 @@ def main():
         time.sleep(10)
 
     # --- Step 7: Setup SSH via Telnet ---
-    print(f"\n[7/7] Setting up SSH via Telnet...")
+    print("\n[7/7] Setting up SSH via Telnet...")
     time.sleep(5)
     if check_port(ip, 23):
         print("  Telnet port open, configuring SSH...")
@@ -738,19 +737,19 @@ def main():
         print("=" * 60)
         print(f"\n  Root password: {args.root_password}")
         if ssh_ok:
-            print(f"\n  SSH:")
+            print("\n  SSH:")
             print(f"    ssh root@{ip}")
             print(f"    Password: {args.root_password}")
         if telnet_ok:
-            print(f"\n  Telnet:")
+            print("\n  Telnet:")
             print(f"    telnet {ip}")
             print(f"    Login: root / {args.root_password}")
 
         if not ssh_ok and telnet_ok:
-            print(f"\n  SSH chua mo? Dang nhap Telnet va chay:")
-            print(f"    rm -f /etc/dropbear/dropbear_rsa_host_key")
-            print(f"    dropbearkey -t rsa -s 2048 -f /etc/dropbear/dropbear_rsa_host_key")
-            print(f"    dropbear -p 22")
+            print("\n  SSH chua mo? Dang nhap Telnet va chay:")
+            print("    rm -f /etc/dropbear/dropbear_rsa_host_key")
+            print("    dropbearkey -t rsa -s 2048 -f /etc/dropbear/dropbear_rsa_host_key")
+            print("    dropbear -p 22")
     else:
         print("  Ports are still closed. Router may still be booting.")
         print("  Wait a few minutes and try:")
