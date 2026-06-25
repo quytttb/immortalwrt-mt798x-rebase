@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Maximize build disk space
         run: |
@@ -69,7 +69,8 @@ jobs:
             subversion swig time
 
       - name: Restore toolchain cache
-        uses: actions/cache@v4
+        id: cache-toolchain
+        uses: actions/cache/restore@v4
         with:
           path: |
             staging_dir/host
@@ -77,16 +78,15 @@ jobs:
           key: openwrt-toolchain-filogic-aarch64-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
           restore-keys: |
             openwrt-toolchain-filogic-aarch64-ubuntu2404-
-          save-always: true
 
       - name: Restore download cache
-        uses: actions/cache@v4
+        id: cache-dl
+        uses: actions/cache/restore@v4
         with:
           path: dl
           key: openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
           restore-keys: |
             openwrt-dl-filogic-ubuntu2404-
-          save-always: true
 
       - name: Update and install feeds
         run: |
@@ -122,7 +122,7 @@ jobs:
           test "$(ls -1 dist/ | wc -l)" -ge 1
 
       - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: immortalwrt-filogic-${{ needs.prepare.outputs.version }}
           path: dist/
@@ -141,6 +141,22 @@ jobs:
           df -h /
           du -sh staging_dir/host staging_dir/toolchain-* dl 2>/dev/null || true
 
+      - name: Save toolchain cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            staging_dir/host
+            staging_dir/toolchain-aarch64_cortex-a53_gcc-*
+          key: ${{ steps.cache-toolchain.outputs.cache-primary-key }}
+
+      - name: Save download cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: dl
+          key: ${{ steps.cache-dl.outputs.cache-primary-key }}
+
 
   release:
     needs: [prepare, build-firmware]
@@ -149,7 +165,7 @@ jobs:
       contents: write
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: release-assets
           merge-multiple: true

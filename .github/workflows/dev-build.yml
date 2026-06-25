@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Maximize build disk space
         run: |
@@ -54,7 +54,7 @@ jobs:
       # Cache toolchain riêng: host tools + cross-compiler (ít thay đổi, ~2GB)
       - name: Restore toolchain cache
         id: cache-toolchain
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             staging_dir/host
@@ -62,18 +62,15 @@ jobs:
           key: openwrt-toolchain-filogic-aarch64-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
           restore-keys: |
             openwrt-toolchain-filogic-aarch64-ubuntu2404-
-          save-always: true
 
-      # Cache dl riêng: source tarballs (chỉ tăng theo package mới, ~1-3GB)
       - name: Restore download cache
         id: cache-dl
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: dl
           key: openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
           restore-keys: |
             openwrt-dl-filogic-ubuntu2404-
-          save-always: true
 
       - name: Update and install feeds
         run: |
@@ -110,7 +107,7 @@ jobs:
           test "$(ls -1 dist/ | wc -l)" -ge 1
 
       - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: immortalwrt-filogic-dev-${{ github.sha }}
           path: dist/
@@ -128,3 +125,19 @@ jobs:
           echo "=== After cleanup (keep host + toolchain + dl for cache) ==="
           df -h /
           du -sh staging_dir/host staging_dir/toolchain-* dl 2>/dev/null || true
+
+      - name: Save toolchain cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            staging_dir/host
+            staging_dir/toolchain-aarch64_cortex-a53_gcc-*
+          key: ${{ steps.cache-toolchain.outputs.cache-primary-key }}
+
+      - name: Save download cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: dl
+          key: ${{ steps.cache-dl.outputs.cache-primary-key }}
