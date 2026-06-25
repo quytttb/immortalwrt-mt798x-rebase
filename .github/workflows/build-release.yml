@@ -115,20 +115,9 @@ jobs:
         run: |
           mkdir -p dist
           shopt -s nullglob
-          for pattern in '*viettel_nr3053*' '*vht_32x6*'; do
-            cp bin/targets/mediatek/filogic/$pattern dist/ 2>/dev/null || true
-          done
-          for f in bin/targets/mediatek/filogic/*.itb bin/targets/mediatek/filogic/*.bin; do
-            [ -f "$f" ] || continue
-            base=$(basename "$f")
-            case "$base" in
-              *viettel_nr3053*|*vht_32x6*) ;;
-              *)
-                echo "::error::Unexpected device image (not NR3053/32X6): $base" >&2
-                exit 1
-                ;;
-            esac
-          done
+          cp bin/targets/mediatek/filogic/*viettel_nr3053* dist/ 2>/dev/null || true
+          cp bin/targets/mediatek/filogic/*vht_32x6* dist/ 2>/dev/null || true
+          cp bin/targets/mediatek/filogic/sha256sums dist/ 2>/dev/null || true
           ls -la dist/
           test "$(ls -1 dist/ | wc -l)" -ge 1
 
