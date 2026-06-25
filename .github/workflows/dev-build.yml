@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Maximize build disk space
         run: |
@@ -54,7 +54,7 @@ jobs:
       # Cache toolchain riêng: host tools + cross-compiler (ít thay đổi, ~2GB)
       - name: Restore toolchain cache
         id: cache-toolchain
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             staging_dir/host
@@ -65,7 +65,7 @@ jobs:
 
       - name: Restore download cache
         id: cache-dl
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: dl
           key: openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
@@ -107,7 +107,7 @@ jobs:
           test "$(ls -1 dist/ | wc -l)" -ge 1
 
       - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: immortalwrt-filogic-dev-${{ github.sha }}
           path: dist/
@@ -128,7 +128,7 @@ jobs:
 
       - name: Save toolchain cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             staging_dir/host
@@ -137,7 +137,7 @@ jobs:
 
       - name: Save download cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: dl
           key: ${{ steps.cache-dl.outputs.cache-primary-key }}
