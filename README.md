@@ -30,6 +30,13 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ---
 
+## Tải bản đã build (Release)
+
+Nếu bạn không muốn tự build, có thể tải firmware được build tự động (có sẵn giao diện hiện đại như Aurora) tại trang **[Releases](../../releases)** của repository.
+Mỗi bản release sẽ có đầy đủ các file `.itb` cần thiết để cài đặt.
+
+---
+
 ## Build firmware
 
 Build firmware đầy đủ tính năng từ branch **`main`**.
