@@ -95,7 +95,8 @@ jobs:
 
       - name: Clone custom packages
         run: |
-          git clone https://github.com/eamonxg/luci-theme-aurora.git package/luci-theme-aurora
+          git clone --depth 1 https://github.com/eamonxg/luci-theme-aurora.git package/luci-theme-aurora
+          rm -rf package/luci-theme-aurora/.git
 
       - name: Prepare .config (Viettel NR3053 + VHT-32X6 only)
         run: |
