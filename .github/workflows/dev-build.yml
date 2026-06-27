@@ -78,6 +78,10 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+      - name: Clone custom packages
+        run: |
+          git clone https://github.com/eamonxg/luci-theme-aurora.git package/luci-theme-aurora
+
       - name: Prepare .config (Viettel NR3053 + VHT-32X6 only)
         run: |
           cp defconfig/viettel-only.config .config
