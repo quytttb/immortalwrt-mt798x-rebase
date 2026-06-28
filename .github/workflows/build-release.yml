@@ -181,7 +181,7 @@ jobs:
         run: find release-assets -type f -ls
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           name: ImmortalWrt ${{ needs.prepare.outputs.version }} — NR3053 & VHT-32X6
