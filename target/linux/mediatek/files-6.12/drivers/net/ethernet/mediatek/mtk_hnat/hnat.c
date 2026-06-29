@@ -18,6 +18,7 @@
 #include <linux/module.h>
 #include <linux/netdevice.h>
 #include <linux/of_device.h>
+#include <linux/of_platform.h>
 #include <linux/platform_device.h>
 #include <linux/reset.h>
 #include <linux/rtnetlink.h>
@@ -210,22 +211,41 @@ static int mtk_set_ppe_pse_port_state(u32 ppe_id, bool up)
 	return 0;
 }
 
-void set_gmac_ppe_fwd(int id, int enable)
+void set_gmac_ppe_fwd(int port, int enable)
 {
+	struct mtk_eth *eth = hnat_priv->eth;
 	void __iomem *reg;
+	int gmac_id;
 	u32 val;
 
-	reg = hnat_priv->fe_base +
-		((id == NR_GMAC1_PORT) ? GDMA1_FWD_CFG :
-		 (id == NR_GMAC2_PORT) ? GDMA2_FWD_CFG : GDMA3_FWD_CFG);
+	switch (port) {
+	case NR_GMAC1_PORT:
+		reg = hnat_priv->fe_base + GDMA1_FWD_CFG;
+		gmac_id = MTK_GMAC1_ID;
+		break;
+	case NR_GMAC2_PORT:
+		reg = hnat_priv->fe_base + GDMA2_FWD_CFG;
+		gmac_id = MTK_GMAC2_ID;
+		break;
+	case NR_GMAC3_PORT:
+		reg = hnat_priv->fe_base + GDMA3_FWD_CFG;
+		gmac_id = MTK_GMAC3_ID;
+		break;
+	default:
+		return;
+	}
+
+	/* Skip GMACs that mtk_eth doesn't own (e.g. disabled in DT). */
+	if (!eth || !eth->mac[gmac_id])
+		return;
 
 	if (enable) {
 #if defined(CONFIG_MEDIATEK_NETSYS_V2) || defined(CONFIG_MEDIATEK_NETSYS_V3)
 		if (l4s_toggle)
 			cr_set_field(reg, GDM_ALL_FRC_MASK, BITS_GDM_ALL_FRC_P_TDMA);
-		else if (CFG_PPE_NUM >= 3 && id == NR_GMAC3_PORT)
+		else if (CFG_PPE_NUM >= 3 && eth->mac[gmac_id]->ppe_idx == 2)
 			cr_set_field(reg, GDM_ALL_FRC_MASK, BITS_GDM_ALL_FRC_P_PPE2);
-		else if (CFG_PPE_NUM >= 2 && id == NR_GMAC2_PORT)
+		else if (CFG_PPE_NUM >= 2 && eth->mac[gmac_id]->ppe_idx == 1)
 			cr_set_field(reg, GDM_ALL_FRC_MASK, BITS_GDM_ALL_FRC_P_PPE1);
 		else
 			cr_set_field(reg, GDM_ALL_FRC_MASK, BITS_GDM_ALL_FRC_P_PPE);
@@ -235,20 +255,19 @@ void set_gmac_ppe_fwd(int id, int enable)
 		return;
 	}
 
-	/*disabled */
-	val = readl(reg);
-#if defined(CONFIG_MEDIATEK_NETSYS_V2) || defined(CONFIG_MEDIATEK_NETSYS_V3)
-	if ((CFG_PPE_NUM >= 2 &&
-	    ((val & GDM_ALL_FRC_MASK) == BITS_GDM_ALL_FRC_P_PPE1 ||
-	     (val & GDM_ALL_FRC_MASK) == BITS_GDM_ALL_FRC_P_PPE2)))
+	/* Disable: revert any HNAT-managed forward target back to CPU/PDMA. */
+	val = readl(reg) & GDM_ALL_FRC_MASK;
+	switch (val) {
+	case BITS_GDM_ALL_FRC_P_PPE:
+	case BITS_GDM_ALL_FRC_P_PPE1:
+	case BITS_GDM_ALL_FRC_P_PPE2:
+	case BITS_GDM_ALL_FRC_P_TDMA:
 		cr_set_field(reg, GDM_ALL_FRC_MASK,
 			     BITS_GDM_ALL_FRC_P_CPU_PDMA);
-#endif
-
-	if ((val & GDM_ALL_FRC_MASK) == BITS_GDM_ALL_FRC_P_PPE)
-		cr_set_field(reg, GDM_ALL_FRC_MASK,
-				 BITS_GDM_ALL_FRC_P_CPU_PDMA);
-
+		break;
+	default:
+		return;
+	}
 }
 
 int entry_mac_cmp(struct foe_entry *entry, u8 *mac, enum entry_cmp_flags flags)
@@ -951,8 +970,9 @@ static irqreturn_t hnat_handle_fe_irq2(int irq, void *priv)
 		pr_warn("Failed to dump ppe entry %d_%d!\n", ppe_id, fcs->entry);
 
 	return IRQ_HANDLED;
-#endif
+#else
 	return IRQ_NONE;
+#endif
 }
 
 void __hnat_cache_clr(u32 ppe_id)
@@ -1519,6 +1539,8 @@ static int hnat_probe(struct platform_device *pdev)
 	struct resource *res;
 	const char *name;
 	struct device_node *np;
+	struct device_node *eth_np;
+	struct platform_device *eth_pdev;
 	unsigned int val;
 	struct property *prop;
 	struct extdev_entry *ext_entry;
@@ -1542,6 +1564,27 @@ static int hnat_probe(struct platform_device *pdev)
 
 	hnat_priv->dev = &pdev->dev;
 	np = hnat_priv->dev->of_node;
+
+	eth_np = of_parse_phandle(np, "mtketh-soc", 0);
+	if (!eth_np) {
+		dev_err(&pdev->dev, "missing mtketh-soc phandle\n");
+		err = -EINVAL;
+		goto err_out2;
+	}
+
+	eth_pdev = of_find_device_by_node(eth_np);
+	of_node_put(eth_np);
+	if (!eth_pdev) {
+		err = -EPROBE_DEFER;
+		goto err_out2;
+	}
+
+	hnat_priv->eth = platform_get_drvdata(eth_pdev);
+	if (!hnat_priv->eth) {
+		put_device(&eth_pdev->dev);
+		err = -EPROBE_DEFER;
+		goto err_out2;
+	}
 
 	err = of_property_read_string(np, "mtketh-wan", &name);
 	if (err < 0)
@@ -1718,6 +1761,7 @@ static int hnat_probe(struct platform_device *pdev)
 	hnat_flow_entry_teardown_enable();
 
 	INIT_LIST_HEAD(&hnat_priv->xlat.map_list);
+	INIT_LIST_HEAD(&hnat_priv->mcast_blist_list);
 
 	return 0;
 
@@ -1803,7 +1847,7 @@ static const struct mtk_hnat_data hnat_data_v5 = {
 	.num_of_sch = 4,
 	.whnat = true,
 	.per_flow_accounting = true,
-	.mcast = false,
+	.mcast = true,
 	.version = MTK_HNAT_V3,
 };
 
