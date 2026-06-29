@@ -116,7 +116,7 @@
  			status = "disabled";
  		};
  
-@@ -616,47 +628,51 @@
+@@ -617,47 +629,51 @@
  			ext-devices-prefix = "wwan", "usb", "eth";
  		};
  
@@ -190,7 +190,7 @@
  			reg = <0 0x18000000 0 0x1000000>,
  			      <0 0x10003000 0 0x1000>,
  			      <0 0x11d10000 0 0x1000>;
-@@ -669,6 +685,7 @@
+@@ -670,6 +686,7 @@
  				     <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
  				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
  				     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;

@@ -62,7 +62,7 @@
  static int __hnat_setting_read(struct seq_file *m, void *private, u32 ppe_id)
  {
  	struct mtk_hnat *h = hnat_priv;
-@@ -3801,6 +3856,8 @@ int hnat_init_debugfs(struct mtk_hnat *h
+@@ -4084,6 +4139,8 @@ int hnat_init_debugfs(struct mtk_hnat *h
  			    &cpu_reason_fops);
  	debugfs_create_file("hnat_entry", 0444, root, h,
  			    &hnat_entry_fops);

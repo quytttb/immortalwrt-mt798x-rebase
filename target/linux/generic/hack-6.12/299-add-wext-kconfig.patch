@@ -21,7 +21,7 @@
  
  config CFG80211
  	tristate "cfg80211 - wireless configuration API"
-@@ -208,7 +208,7 @@ config CFG80211_WEXT_EXPORT
+@@ -218,7 +218,7 @@ config CFG80211_KUNIT_TEST
  endif # CFG80211
  
  config LIB80211
@@ -30,7 +30,7 @@
  	default n
  	help
  	  This options enables a library of common routines used
-@@ -217,17 +217,17 @@ config LIB80211
+@@ -227,17 +227,17 @@ config LIB80211
  	  Drivers should select this themselves if needed.
  
  config LIB80211_CRYPT_WEP
