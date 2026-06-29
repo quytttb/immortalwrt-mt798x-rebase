@@ -12,6 +12,11 @@
 #define MAX_MCAST_ENTRY 64
 #define MAX_MCAST_PORT	5
 
+#define INVLD_IDX		(-1)
+#define HNAT_NPU_ENTRY_MC	(30)
+#define FOE_TS_WRAP_THRESHOLD	(0x3000)
+#define FOE_TS_MAX_DIFF		(20)
+
 struct ppe_mcast_list {
 	struct list_head list;  /* Protected by rwlock */
 	u16 vid; /* vlan id */
@@ -19,20 +24,33 @@ struct ppe_mcast_list {
 	u8 mc_port; /* multicast port */
 };
 
+struct ppe_mcast_member {
+	struct list_head list;
+	u32 ifindex;
+};
+
 struct ppe_mcast_group {
-	u16 vid;
-	u8 dmac[ETH_ALEN]; /* multicast mac addr */
-	u8 if_num[MAX_MCAST_PORT]; /* num of if added to multi group. */
-	u8 mc_port; /* 1:forward to cpu,2:forward to GDMA1,3:forward to GDMA2 */
-	bool valid;
+	u8 mac[ETH_ALEN];
+	struct list_head members;
+	int mtbl_idx;
+	int ppe_id;
+	int foe_idx;
+	struct list_head list;
+	u32 psebmp;
+	__be32 dip;	/*stream dip*/
+	__be32 sip;	/*server ip*/
+	struct in6_addr dip6;
+	struct in6_addr sip6;
+	bool offload;
+	bool is_ipv4;
+	u32 npu_grp_idx;
 };
 
 struct ppe_mcast_table {
 	struct workqueue_struct *queue;
 	struct work_struct work;
 	struct socket *msock;
-	struct ppe_mcast_group mtbl[MAX_MCAST_ENTRY];
-	struct list_head mlist;
+	struct list_head groups;
 	u8 max_entry;
 	rwlock_t mcast_lock; /* Protect list and mc_port field */
 };
@@ -46,7 +64,11 @@ struct ppe_mcast_h {
 			u32 mc_px_en : 5;
 			u32 mc_mpre_sel : 2; /* 0=01:00, 1=33:33 */
 			u32 mc_vid_cmp: 1;
-			u32 mc_px_qos_en : 5;
+			u32 mc_p4_q : 1;
+			u32 mc_p0_q : 1;
+			u32 mc_p1_q : 1;
+			u32 mc_p2_q : 1;
+			u32 mc_p3_q : 1;
 			u32 mc_qos_qid : 4;
 		} info;
 	} u;
@@ -61,12 +83,42 @@ enum ppe_mcast_port {
 	MCAST_TO_PDMA,
 	MCAST_TO_GDMA1,
 	MCAST_TO_GDMA2,
-	MCAST_TO_QDMA,
+	MCAST_TO_TDMA,
 };
 
 enum hnat_mcast_mode {
 	HNAT_MCAST_MODE_MULTI = 0,
 	HNAT_MCAST_MODE_UNI,
+};
+
+struct mcast_offload_info {
+	union {
+		__be32 ip;
+		struct in6_addr ipv6;
+	} dst;
+	union {
+		__be32 ip;
+		struct in6_addr ipv6;
+	} src;
+	u32 dest;
+	u8 daddr[ETH_ALEN];
+	u8 pqid;
+	u8 dsa_port;
+	bool is_ipv6;	/* ipv4 or ipv6 */
+	bool m2u_en;
+	u32 npu_grp_idx;
+};
+
+enum hnat_npu_mcast_dest {
+	HNAT_NPU_MCAST_DEST_SWITCH = 0,
+	HNAT_NPU_MCAST_DEST_LAN,
+	HNAT_NPU_MCAST_DEST_MAX,
+};
+
+struct npu_hnat_mcast_ops {
+	int (*npu_mcast_client_insert)(struct mcast_offload_info *hnat_mcast_params);
+	int (*npu_mcast_client_delete)(struct mcast_offload_info *hnat_mcast_params);
+	int (*npu_mcast_client_update)(struct mcast_offload_info *hnat_mcast_params);
 };
 
 #define IS_MCAST_MULTI_MODE (hnat_priv->data->mcast && mcast_mode == HNAT_MCAST_MODE_MULTI)
@@ -79,6 +131,14 @@ enum hnat_mcast_mode {
 
 int hnat_mcast_enable(u32 ppe_id);
 int hnat_mcast_disable(void);
-bool hnat_is_mcast_uni(struct sk_buff *skb);
+void hnat_mcast_ifdown_handle(int ifindex);
+int mtk_npu_hnat_mcast_ops_register(struct npu_hnat_mcast_ops *hnat_mcast_ops);
+void hnat_notify_mcast_sw_path(int group_idx);
+void hnat_notify_mcast_hw_path(int group_idx);
+int hnat_mcast_blist_handle(u8 *ip, u32 mask, bool add, bool is_ipv4);
+int hnat_mcast_offload_handle(bool enable);
+int hnat_register_pcie_link_hook(bool (*hook_func)(bool up));
+void hnat_unregister_pcie_link_hook(void);
+extern bool (*hnat_mcast_eth_ext_link_handle)(bool up);
 
 #endif
