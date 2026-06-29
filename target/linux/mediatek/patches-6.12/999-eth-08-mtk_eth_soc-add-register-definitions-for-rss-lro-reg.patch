@@ -1,9 +1,10 @@
 ---
-[v1] net: ethernet: mtk_eth_soc: add register definitions for RSS and LRO
+[v2] net: ethernet: mtk_eth_soc: add register definitions for RSS and LRO
 
 Add register offset definitions and data structures for RSS (Receive Side Scaling)
 and LRO (Large Receive Offload) features.
 ---
+v2: Add LRO auto-learn refresh timer register definitions.
 v1: Add register definitions for RSS and LRO.
 ---
 
@@ -20,7 +21,11 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
 
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -61,13 +61,18 @@ static const struct mtk_reg_map mtk_reg_
+@@ -58,16 +58,22 @@ static const struct mtk_reg_map mtk_reg_
+ 	.tx_irq_mask		= 0x1a1c,
+ 	.tx_irq_status		= 0x1a18,
+ 	.pdma = {
++		.lro_alt_timer	= 0x001c,
  		.rx_ptr		= 0x0900,
  		.rx_cnt_cfg	= 0x0904,
  		.pcrx_ptr	= 0x0908,
@@ -39,7 +44,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
  	},
  	.qdma = {
  		.qtx_cfg	= 0x1800,
-@@ -125,6 +130,7 @@ static const struct mtk_reg_map mt7986_r
+@@ -125,6 +131,7 @@ static const struct mtk_reg_map mt7986_r
  	.tx_irq_mask		= 0x461c,
  	.tx_irq_status		= 0x4618,
  	.pdma = {
@@ -47,11 +52,12 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
  		.rx_ptr		= 0x4100,
  		.rx_cnt_cfg	= 0x4104,
  		.pcrx_ptr	= 0x4108,
-@@ -135,6 +141,12 @@ static const struct mtk_reg_map mt7986_r
+@@ -135,6 +142,13 @@ static const struct mtk_reg_map mt7986_r
  		.irq_mask	= 0x4228,
  		.adma_rx_dbg0	= 0x4238,
  		.int_grp	= 0x4250,
 +		.int_grp3	= 0x422c,
++		.lro_alt_timer	= 0x001c,
 +		.lro_ctrl_dw0	= 0x4180,
 +		.lro_alt_score_delta	= 0x424c,
 +		.lro_rx1_dly_int	= 0x4270,
@@ -60,7 +66,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
  	},
  	.qdma = {
  		.qtx_cfg	= 0x4400,
-@@ -183,10 +195,21 @@ static const struct mtk_reg_map mt7988_r
+@@ -183,10 +197,22 @@ static const struct mtk_reg_map mt7988_r
  		.glo_cfg	= 0x6a04,
  		.rst_idx	= 0x6a08,
  		.delay_irq	= 0x6a0c,
@@ -72,6 +78,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
 +		.int_grp3	= 0x6a58,
 +		.tx_delay_irq	= 0x6ab0,
 +		.rx_delay_irq	= 0x6ac0,
++		.lro_alt_timer	= 0x6c00,
 +		.lro_ctrl_dw0	= 0x6c08,
 +		.lro_alt_score_delta	= 0x6c1c,
 +		.lro_ring_dip_dw0	= 0x6c14,
@@ -84,7 +91,17 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
  		.qtx_cfg	= 0x4400,
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -1213,16 +1213,29 @@ struct mtk_reg_map {
+@@ -100,9 +100,6 @@
+ #define MTK_GDM1_AF		BIT(28)
+ #define MTK_GDM2_AF		BIT(29)
+ 
+-/* PDMA HW LRO Alter Flow Timer Register */
+-#define MTK_PDMA_LRO_ALT_REFRESH_TIMER	0x1c
+-
+ /* Frame Engine Interrupt Grouping Register */
+ #define MTK_FE_INT_GRP		0x20
+ 
+@@ -1213,16 +1210,30 @@ struct mtk_reg_map {
  	u32	tx_irq_mask;
  	u32	tx_irq_status;
  	struct {
@@ -112,6 +129,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add register definitions for rss
 +		u32	int_grp3;		/* interrupt group3 */
 +		u32	tx_delay_irq;		/* tx delay interrupt */
 +		u32	rx_delay_irq;		/* rx delay interrupt */
++		u32	lro_alt_timer;		/* lro auto-learn refresh timer */
 +		u32	lro_ctrl_dw0;		/* lro ctrl dword0 */
 +		u32	lro_alt_score_delta;	/* lro auto-learn score delta */
 +		u32	lro_rx1_dly_int;	/* lro rx ring1 delay interrupt */

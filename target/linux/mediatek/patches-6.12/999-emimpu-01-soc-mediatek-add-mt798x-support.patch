@@ -38,10 +38,10 @@ index 6830512848fd..61b737685cb7 100644
 +obj-$(CONFIG_MTK_EMIMPU) += mtk-emimpu.o
 diff --git a/drivers/soc/mediatek/mtk-emimpu.c b/drivers/soc/mediatek/mtk-emimpu.c
 new file mode 100644
-index 000000000000..3342d6051651
+index 000000000000..e47f0f7d09e8
 --- /dev/null
 +++ b/drivers/soc/mediatek/mtk-emimpu.c
-@@ -0,0 +1,206 @@
+@@ -0,0 +1,207 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2026 MediaTek Inc.
@@ -181,7 +181,8 @@ index 000000000000..3342d6051651
 +	{
 +		.compatible = "mediatek,mt7986-emi",
 +		.data = &emimpu_mt7986,
-+	},
++	}, {
++	}
 +};
 +MODULE_DEVICE_TABLE(of, mtk_emimpu_dt_match);
 +
