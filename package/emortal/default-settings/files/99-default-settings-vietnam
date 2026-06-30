@@ -12,6 +12,9 @@ if ! uci -q get system.@imm_init[0].system_vn > "/dev/null" 2>&1; then
 		add_list system.ntp.server="time.google.com"
 		add_list system.ntp.server="vn.pool.ntp.org"
 
+		set luci.main.lang="vi"
+		commit luci
+
 		set system.@imm_init[0].system_vn="1"
 		commit system
 	EOF
@@ -21,17 +24,6 @@ fi
 if uci -q get upnpd.config > /dev/null; then
 	uci -q set upnpd.config.enabled='1'
 	uci -q commit upnpd
-fi
-
-# Enable BBR via TurboACC
-if uci -q get turboacc.config > /dev/null; then
-	uci -q set turboacc.config.bbr_cca='1'
-	uci -q commit turboacc
-fi
-
-if ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf 2>/dev/null; then
-	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
-	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 fi
 
 exit 0

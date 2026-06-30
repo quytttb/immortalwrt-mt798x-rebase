@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=default-settings
-PKG_RELEASE:=29
+PKG_RELEASE:=30
 
 PKG_LICENSE:=GPL-2.0-only
 
@@ -29,7 +29,7 @@ endef
 define Package/default-settings-vn
   $(Package/default-settings)
   TITLE+= (Optimize for VN users)
-  DEPENDS:=+default-settings
+  DEPENDS:=+default-settings +@LUCI_LANG_vi +luci-i18n-base-vi
 endef
 
 define Build/Compile
@@ -48,6 +48,7 @@ endef
 define Package/default-settings-vn/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/99-default-settings-vietnam $(1)/etc/uci-defaults/
+	$(INSTALL_BIN) ./files/zz-viettel-turboacc-bbr $(1)/etc/uci-defaults/
 endef
 
 $(eval $(call BuildPackage,default-settings))

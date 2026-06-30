@@ -1,0 +1,17 @@
+#!/bin/sh
+# Runs after etc/uci-defaults/turboacc (alphabetically: turboacc < zz-*)
+
+uci -q set turboacc.config.tcpcca='bbr'
+uci -q commit turboacc
+
+sysctl -w net.core.default_qdisc=fq >/dev/null 2>&1
+sysctl -w net.ipv4.tcp_congestion_control=bbr >/dev/null 2>&1
+
+if ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf 2>/dev/null; then
+	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+fi
+
+/etc/init.d/turboacc restart >/dev/null 2>&1
+
+exit 0
