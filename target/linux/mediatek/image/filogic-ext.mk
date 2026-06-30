@@ -144,11 +144,11 @@ define Device/viettel_nr3053
   IMAGE/sysupgrade.itb := append-kernel | \
 	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
 	append-metadata
-  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_nr3053
+  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
+	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
 endef
 TARGET_DEVICES += viettel_nr3053
 
@@ -171,11 +171,11 @@ define Device/vht_32x6
   IMAGE/sysupgrade.itb := append-kernel | \
 	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
 	append-metadata
-  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot vht_32x6
+  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
+	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
 endef
 TARGET_DEVICES += vht_32x6
 
@@ -258,3 +258,22 @@ define Device/xiaomi_redmi-router-ax6000-mtkuboot
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += xiaomi_redmi-router-ax6000-mtkuboot
+
+define Device/zhao_7981r128-mtkuboot
+  DEVICE_VENDOR := ZHAO
+  DEVICE_MODEL := 7981r128
+  DEVICE_VARIANT := (MTK U-Boot layout)
+  DEVICE_DTS := mt7981b-zhao-7981r128-mtkuboot
+  DEVICE_DTS_DIR := ../dts-ext
+  SUPPORTED_DEVICES := zhao,7981r128
+  DEVICE_PACKAGES := kmod-usb3 kmod-sfp kmod-i2c-gpio automount f2fsck mkf2fs
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 114688k
+  KERNEL_IN_UBI := 1
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += zhao_7981r128-mtkuboot

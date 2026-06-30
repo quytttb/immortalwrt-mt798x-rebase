@@ -139,12 +139,6 @@ struct hnat_desc {
 #define skb_hnat_is_sp(skb) (((struct hnat_desc *)((skb)->head))->is_sp)
 #define skb_hnat_hf(skb) (((struct hnat_desc *)((skb)->head))->hf)
 #define skb_hnat_amsdu(skb) (((struct hnat_desc *)((skb)->head))->amsdu)
-#define skb_hnat_ppe2(skb)						\
-	((skb_hnat_sport(skb) == NR_GMAC3_PORT) && (CFG_PPE_NUM >= 3))
-#define skb_hnat_ppe1(skb)						\
-	((skb_hnat_sport(skb) == NR_GMAC2_PORT) && (CFG_PPE_NUM >= 2))
-#define skb_hnat_ppe(skb)						\
-	(skb_hnat_ppe2(skb) ? 2 : (skb_hnat_ppe1(skb) ? 1 : 0))
 #define headroom_iface(h) (h.iface)
 #define headroom_ppe1(h)						\
 		((headroom_iface(h) == FOE_MAGIC_GE_LAN2 ||		\

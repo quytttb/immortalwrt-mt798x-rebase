@@ -1,10 +1,13 @@
 ---
-[v13] net: ethernet: mtk_eth_soc: support proprietary debugfs
+[v15] net: ethernet: mtk_eth_soc: support proprietary debugfs
 
 Add comprehensive proprietary debugfs support for MTK Ethernet driver. This
 provides extensive debugging interfaces for register access, statistics,
 configuration inspection, and hardware state monitoring.
 ---
+v15: Add QDMA queue bytes count statistics by reading QTX_HEAD and QTX_TAIL
+     registers.
+v14: Add gdm_ppe_cfg debugfs to override GMAC->PPE mapping.
 v13: Refactor esw_cnt command to ensure that they can read the GDM and
      MT753x MIB counters.
 v12: Refactor mac_cnt and xfi_cnt commands to ensure that they can read the
@@ -52,7 +55,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
  mtk_eth-$(CONFIG_NET_MEDIATEK_SOC_WED) += mtk_wed_debugfs.o
 --- /dev/null
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_dbg.c
-@@ -0,0 +1,2818 @@
+@@ -0,0 +1,2933 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + *   Copyright (C) 2025 MediaTek Inc.
@@ -269,11 +272,12 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
 +	long id = qdma_ctx->id;
 +	char *buf;
 +	unsigned int len = 0, buf_len = 1500;
-+	u32 qtx_sch, qtx_cfg;
++	u32 qtx_sch, qtx_cfg, qtx_head, qtx_tail;
 +	int scheduler;
 +	int min_rate_en, min_rate, min_rate_exp;
 +	int max_rate_en, max_weight, max_rate, max_rate_exp;
 +	ssize_t ret_cnt;
++	u64 bytes;
 +
 +	buf = kzalloc(buf_len, GFP_KERNEL);
 +	if (!buf)
@@ -324,8 +328,15 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
 +				       (id % MTK_QTX_PER_PAGE) * MTK_QTX_OFFSET);
 +		qtx_sch = mtk_r32(eth, soc->reg_map->qdma.qtx_sch +
 +				       (id % MTK_QTX_PER_PAGE) * MTK_QTX_OFFSET);
++		qtx_head = mtk_r32(eth, soc->reg_map->qdma.qtx_cfg + 0x8 +
++				       (id % MTK_QTX_PER_PAGE) * MTK_QTX_OFFSET);
++		qtx_tail = mtk_r32(eth, soc->reg_map->qdma.qtx_cfg + 0xc +
++				       (id % MTK_QTX_PER_PAGE) * MTK_QTX_OFFSET);
++		bytes = qtx_head + ((u64)qtx_tail << 32);
 +		len += scnprintf(buf + len, buf_len - len,
 +				 "packet count: %u\n", qtx_cfg);
++		len += scnprintf(buf + len, buf_len - len,
++				 "bytes count: %llu\n", bytes);
 +		len += scnprintf(buf + len, buf_len - len,
 +				 "packet drop: %u\n\n", qtx_sch);
 +
@@ -2663,6 +2674,111 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
 +	.release = single_release,
 +};
 +
++static int mtk_gdm_ppe_cfg_show(struct seq_file *m, void *v)
++{
++	struct mtk_eth *eth = m->private;
++	struct mtk_mac *mac;
++	int i;
++
++	seq_puts(m, "gmac	ppe\n");
++	for (i = 0; i < MTK_MAX_DEVS; i++) {
++		mac = eth->mac[i];
++		if (!mac)
++			continue;
++
++		seq_printf(m, "%4d	%3u\n", mac->id, mac->ppe_idx);
++	}
++
++	return 0;
++}
++
++static int mtk_gdm_ppe_cfg_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, mtk_gdm_ppe_cfg_show, inode->i_private);
++}
++
++static ssize_t mtk_gdm_ppe_cfg_write(struct file *file, const char __user *buffer,
++				     size_t count, loff_t *data)
++{
++	struct seq_file *m = file->private_data;
++	struct mtk_eth *eth = m->private;
++	const u32 *gdma_to_ppe = eth->soc->reg_map->gdma_to_ppe;
++	unsigned int nr_ppe = ARRAY_SIZE(eth->soc->reg_map->gdma_to_ppe);
++	struct mtk_mac *mac;
++	char val_str[16] = {0};
++	char buf[32] = {0};
++	unsigned int gmac_id, i;
++	u32 gdm_config, val;
++
++	if (count >= sizeof(buf) || copy_from_user(buf, buffer, count))
++		return -EFAULT;
++
++	/* Accepted forms:
++	 *   "<gmac_id> <ppe_idx>"   e.g. "0 1"
++	 *   "<gmac_id> 0xVVVV"      raw gdma_to_ppe[] value, hex with 0x prefix
++	 *   "<gmac_id> VVVV"        raw gdma_to_ppe[] value, hex without 0x (e.g. "3333")
++	 */
++	if (sscanf(buf, "%u %15s", &gmac_id, val_str) != 2) {
++		pr_warn("usage: echo <gmac_id> <ppe_idx> > gdm_ppe_cfg\n");
++		return -EINVAL;
++	}
++
++	if (kstrtou32(val_str, 0, &val)) {
++		pr_warn("invalid value %s\n", val_str);
++		return -EINVAL;
++	}
++
++	if (gmac_id >= MTK_MAX_DEVS || !eth->mac[gmac_id]) {
++		pr_warn("invalid gmac_id %u\n", gmac_id);
++		return -EINVAL;
++	}
++
++	if (!eth->soc->offload_version) {
++		pr_warn("SoC has no PPE offload support\n");
++		return -EINVAL;
++	}
++
++	mac = eth->mac[gmac_id];
++
++	/* If val isn't a valid ppe_idx, treat it as a raw gdma_to_ppe[]
++	 * entry. Re-parse as hex when the 0x prefix was omitted.
++	 */
++	if (val >= nr_ppe || !gdma_to_ppe[val]) {
++		/* No "0x" prefix: re-parse the input as hex. */
++		if (strncasecmp(val_str, "0x", 2) &&
++		    kstrtou32(val_str, 16, &val)) {
++			pr_warn("invalid value %s\n", val_str);
++			return -EINVAL;
++		}
++
++		for (i = 0; i < nr_ppe; i++) {
++			if (val == gdma_to_ppe[i])
++				break;
++		}
++
++		if (i == nr_ppe) {
++			pr_warn("0x%x does not map to any PPE\n", val);
++			return -EINVAL;
++		}
++		val = i;
++	}
++
++	mac->ppe_idx = val;
++	gdm_config = eth->l4s_toggle ? MTK_GDMA_TO_TDMA : gdma_to_ppe[val];
++	mtk_m32(eth, 0xffff, gdm_config, MTK_GDMA_FWD_CFG(mac->id));
++
++	return count;
++}
++
++static const struct file_operations mtk_eth_debugfs_gdm_ppe_cfg_fops = {
++	.owner = THIS_MODULE,
++	.open = mtk_gdm_ppe_cfg_open,
++	.read = seq_read,
++	.write = mtk_gdm_ppe_cfg_write,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
 +static int mtk_eth_procfs_init(struct mtk_eth *eth)
 +{
 +	static const struct proc_ops mtk_eth_procfs_dbg_regs_fops = {
@@ -2786,6 +2902,8 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
 +			    eth, &mtk_eth_debugfs_c22_phyregs_fops);
 +	debugfs_create_file("reset", 0444, eth->debugfs->root,
 +			    eth, &mtk_eth_debugfs_reset_fops);
++	debugfs_create_file("gdm_ppe_cfg", 0644, eth->debugfs->root,
++			    eth, &mtk_eth_debugfs_gdm_ppe_cfg_fops);
 +	if (mt7530_is_exist(eth)) {
 +		debugfs_create_file("mt7530sw_regs", 0444,
 +				    eth->debugfs->root, eth,
@@ -3568,7 +3686,41 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
  		skb_record_rx_queue(skb, 0);
  		napi_gro_receive(napi, skb);
  
-@@ -5861,6 +5884,12 @@ static void mtk_restore_qdma_cfg(struct
+@@ -4606,9 +4629,7 @@ static int mtk_open(struct net_device *d
+ 	struct mtk_mac *mac = netdev_priv(dev);
+ 	struct mtk_eth *eth = mac->hw;
+ 	struct mtk_mac *target_mac;
+-	int i, err, ppe_num;
+-
+-	ppe_num = eth->soc->ppe_num;
++	int i, err;
+ 
+ 	/* we run 2 netdevs on the same dma ring so we only bring it up once */
+ 	if (!refcount_read(&eth->dma_refcnt)) {
+@@ -4633,19 +4654,10 @@ static int mtk_open(struct net_device *d
+ 				continue;
+ 
+ 			target_mac = netdev_priv(eth->netdev[i]);
+-			if (!soc->offload_version) {
+-				target_mac->ppe_idx = 0;
++			if (!soc->offload_version)
+ 				gdm_config = MTK_GDMA_TO_PDMA;
+-			} else if (ppe_num >= 3 && target_mac->id == 2) {
+-				target_mac->ppe_idx = 2;
+-				gdm_config = soc->reg_map->gdma_to_ppe[2];
+-			} else if (ppe_num >= 2 && target_mac->id == 1) {
+-				target_mac->ppe_idx = 1;
+-				gdm_config = soc->reg_map->gdma_to_ppe[1];
+-			} else {
+-				target_mac->ppe_idx = 0;
+-				gdm_config = soc->reg_map->gdma_to_ppe[0];
+-			}
++			else
++				gdm_config = soc->reg_map->gdma_to_ppe[target_mac->ppe_idx];
+ 
+ 			if (eth->l4s_toggle)
+ 				gdm_config = MTK_GDMA_TO_TDMA;
+@@ -5861,6 +5873,12 @@ static void mtk_restore_qdma_cfg(struct
  			reg_map->qdma.tx_sch_rate + 0x4);
  }
  
@@ -3581,7 +3733,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
  static void mtk_prepare_for_reset(struct mtk_eth *eth)
  {
  	struct mtk_mac *mac;
-@@ -6453,6 +6482,7 @@ static const struct net_device_ops mtk_n
+@@ -6453,6 +6471,7 @@ static const struct net_device_ops mtk_n
  	.ndo_set_mac_address	= mtk_set_mac_address,
  	.ndo_validate_addr	= eth_validate_addr,
  	.ndo_eth_ioctl		= mtk_do_ioctl,
@@ -3589,6 +3741,24 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: support proprietary debugfs
  	.ndo_change_mtu		= mtk_change_mtu,
  	.ndo_tx_timeout		= mtk_tx_timeout,
  	.ndo_get_stats64        = mtk_get_stats64,
+@@ -6731,6 +6750,17 @@ static int mtk_add_mac(struct mtk_eth *e
+ 	mac->id = id;
+ 	mac->hw = eth;
+ 	mac->of_node = np;
++
++	/* Default GMAC->PPE mapping; overridable via gdm_ppe_cfg debugfs. */
++	if (!eth->soc->offload_version)
++		mac->ppe_idx = 0;
++	else if (eth->soc->ppe_num >= 3 && id == 2)
++		mac->ppe_idx = 2;
++	else if (eth->soc->ppe_num >= 2 && id == 1)
++		mac->ppe_idx = 1;
++	else
++		mac->ppe_idx = 0;
++
+ 	pcs_np = of_parse_phandle(mac->of_node, "pcs-handle", 0);
+ 	if (pcs_np) {
+ 		mac->sgmii_pcs = mtk_pcs_lynxi_get(eth->dev, pcs_np);
 @@ -7333,6 +7363,8 @@ static int mtk_probe(struct platform_dev
  			goto err_deinit_ppe;
  	}

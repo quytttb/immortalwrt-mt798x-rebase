@@ -35,6 +35,7 @@ int debug_level;
 int dbg_cpu_reason;
 int mcast_mode;
 int hook_toggle;
+int mcast_hook_toggle;
 int mape_toggle;
 int qos_toggle;
 int qos_dl_toggle = 1;
@@ -1246,7 +1247,6 @@ static int hnat_nf_acct_update(struct mtk_hnat *h, u32 ppe_id,
 
 struct hnat_accounting *hnat_get_count(struct mtk_hnat *h, u32 ppe_id,
 				       u32 index, struct hnat_accounting *diff)
-
 {
 	u64 bytes, packets;
 
@@ -2353,93 +2353,78 @@ static const struct file_operations hnat_setting_fops = {
 	.release = single_release,
 };
 
-static int __mcast_table_dump(struct seq_file *m, void *private, u32 ppe_id)
+static void print_hw_mcast(struct ppe_mcast_group *group)
 {
-	struct mtk_hnat *h = hnat_priv;
+	void __iomem *reg_h, *reg_l;
+	int idx = group->mtbl_idx;
 	struct ppe_mcast_h mcast_h;
 	struct ppe_mcast_l mcast_l;
-	u8 i, max;
-	void __iomem *reg;
+	u32 ppse;
 
-	if (ppe_id >= CFG_PPE_NUM)
-		return -EINVAL;
+	if (idx == -1)
+		return;
 
-	if (!h->pmcast)
-		return 0;
-
-	max = h->pmcast->max_entry;
-	pr_info("============================\n");
-	pr_info("PPE_ID = %d\n", ppe_id);
-	pr_info("[ID]: MAC | VID | PortMask | QosPortMask\n");
-	for (i = 0; i < max; i++) {
-		if (i < 0x10) {
-			reg = h->ppe_base[ppe_id] + PPE_MCAST_H_0 + i * 8;
-			mcast_h.u.value = readl(reg);
-			reg = h->ppe_base[ppe_id] + PPE_MCAST_L_0 + i * 8;
-			mcast_l.addr = readl(reg);
-		} else {
-			reg = hnat_priv->ppe_base[ppe_id] + PPE_MCAST_H_10 + (i - 0x10) * 8;
-			mcast_h.u.value = readl(reg);
-			reg = hnat_priv->ppe_base[ppe_id] + PPE_MCAST_L_10 + (i - 0x10) * 8;
-			mcast_l.addr = readl(reg);
-		}
-		if (mcast_l.addr == 0)
-			continue;
-		pr_info("[%d]: %08x %d %c%c%c%c%c %c%c%c%c%c (QID=%d, mc_mpre_sel=%d)\n",
-			i,
-			mcast_l.addr,
-			mcast_h.u.info.mc_vid,
-			(mcast_h.u.info.mc_px_en & 0x10) ? '1' : '-',
-			(mcast_h.u.info.mc_px_en & 0x08) ? '1' : '-',
-			(mcast_h.u.info.mc_px_en & 0x04) ? '1' : '-',
-			(mcast_h.u.info.mc_px_en & 0x02) ? '1' : '-',
-			(mcast_h.u.info.mc_px_en & 0x01) ? '1' : '-',
-			(mcast_h.u.info.mc_px_qos_en & 0x10) ? '1' : '-',
-			(mcast_h.u.info.mc_px_qos_en & 0x08) ? '1' : '-',
-			(mcast_h.u.info.mc_px_qos_en & 0x04) ? '1' : '-',
-			(mcast_h.u.info.mc_px_qos_en & 0x02) ? '1' : '-',
-			(mcast_h.u.info.mc_px_qos_en & 0x01) ? '1' : '-',
-			mcast_h.u.info.mc_qos_qid +
-			((mcast_h.u.info.mc_qos_qid64) << 4),
-			mcast_h.u.info.mc_mpre_sel);
+	if (idx < 0x10) {
+		reg_h = hnat_priv->ppe_base[group->ppe_id] + PPE_MCAST_H_0 + (idx * 8);
+		reg_l = hnat_priv->ppe_base[group->ppe_id] + PPE_MCAST_L_0 + (idx * 8);
+	} else {
+		reg_h = hnat_priv->ppe_base[group->ppe_id] + PPE_MCAST_H_10 + ((idx - 0x10) * 8);
+		reg_l = hnat_priv->ppe_base[group->ppe_id] + PPE_MCAST_L_10 + ((idx - 0x10) * 8);
 	}
 
-	return 0;
-}
+	mcast_h.u.value = readl(reg_h);
+	mcast_l.addr = readl(reg_l);
+	ppse = readl(hnat_priv->ppe_base[group->ppe_id] + PPE_MCAST_PPSE);
+	pr_info("========================================\n");
+	pr_info("PPE[%d] Multicast Entry[%02d]\n", group->ppe_id, idx);
+	pr_info("========================================\n");
 
-static void __mcast_list_dump(struct seq_file *m, void *private)
-{
-	struct ppe_mcast_list *entry;
-	struct list_head *head = &hnat_priv->pmcast->mlist;
-	u8 i = 0;
+	pr_info("  Registers:\n");
+	pr_info("    H = 0x%08x\n", mcast_h.u.value);
+	pr_info("    L = 0x%08x (MAC addr)\n", mcast_l.addr);
 
-	pr_info("============================\n");
-	pr_info("[ID]: MAC | VID | Port\n");
-	list_for_each_entry_rcu(entry, head, list) {
-		if (IS_MCAST_PORT_GDM(entry->mc_port))
-			pr_info("[%d]: mac:%pM vid:%d to GDM%d\n",
-				i++,
-				entry->dmac,
-				entry->vid,
-				(entry->mc_port == BIT(MCAST_TO_GDMA1)) ? 1 :
-				(entry->mc_port == BIT(MCAST_TO_GDMA2)) ? 2 : 3);
-	}
+	pr_info("  VLAN:\n");
+	pr_info("    VID     = %d\n", mcast_h.u.info.mc_vid);
+	pr_info("    VID_CMP = %d\n", mcast_h.u.info.mc_vid_cmp);
+
+	pr_info("  Port Enable:\n");
+	pr_info("    P4:%d, P0:%d, P1:%d, P2:%d, P3:%d\n",
+		(mcast_h.u.info.mc_px_en & 0x1) ? 1 : 0,
+		(mcast_h.u.info.mc_px_en & 0x2) ? 1 : 0,
+		(mcast_h.u.info.mc_px_en & 0x4) ? 1 : 0,
+		(mcast_h.u.info.mc_px_en & 0x8) ? 1 : 0,
+		(mcast_h.u.info.mc_px_en & 0x10) ? 1 : 0);
+
+	pr_info("  QoS Enable:\n");
+	pr_info("    P0_Q:%d, P1_Q:%d, P2_Q:%d, P3_Q:%d, P4_Q:%d\n",
+		mcast_h.u.info.mc_p0_q,
+		mcast_h.u.info.mc_p1_q,
+		mcast_h.u.info.mc_p2_q,
+		mcast_h.u.info.mc_p3_q,
+		mcast_h.u.info.mc_p4_q);
+
+	pr_info("  Config:\n");
+	pr_info("    MAC_PREFIX_SEL = %d (%s)\n",
+		mcast_h.u.info.mc_mpre_sel,
+		mcast_h.u.info.mc_mpre_sel == 0 ? "01:00:5e (IPv4)" : "33:33 (IPv6)");
+	pr_info("    QoS_QID	    = %d\n",
+		mcast_h.u.info.mc_qos_qid + (mcast_h.u.info.mc_qos_qid64 << 4));
+	pr_info("    PPSE=0x%08x (p0:%d p1:%d p2:%d p3:%d p4:%d)\n", ppse,
+		(ppse >> 0)&0xf, (ppse >> 4)&0xf, (ppse >> 8)&0xf,
+		(ppse >> 12)&0xf, (ppse >> 16)&0xf);
+
 }
 
 static int mcast_table_dump(struct seq_file *m, void *private)
 {
-	int i;
+	struct ppe_mcast_group *group;
 
-	pr_info("MCAST_MODE: %s\n",
-		IS_MCAST_MULTI_MODE ? "MULTI" :
-		IS_MCAST_UNI_MODE ? "UNI" : "NONE");
-
-	if (IS_MCAST_MULTI_MODE) {
-		for (i = 0; i < CFG_PPE_NUM; i++)
-			__mcast_table_dump(m, private, i);
-	} else if (IS_MCAST_UNI_MODE) {
-		__mcast_list_dump(m, private);
+	pr_info("==== PPE Multicast Group List ====\n");
+	list_for_each_entry(group, &hnat_priv->pmcast->groups, list) {
+		if (group->ppe_id != -1)
+			print_hw_mcast(group);
 	}
+	pr_info("==================================\n");
 
 	return 0;
 }
@@ -2663,6 +2648,47 @@ static const struct file_operations hnat_hook_toggle_fops = {
 	.read = seq_read,
 	.llseek = seq_lseek,
 	.write = hnat_hook_toggle_write,
+	.release = single_release,
+};
+
+static int hnat_mcast_hook_toggle_read(struct seq_file *m, void *private)
+{
+	pr_info("value=%d, mcast hook is %s now!\n",
+		mcast_hook_toggle, (mcast_hook_toggle) ? "enabled" : "disabled");
+
+	return 0;
+}
+
+static int hnat_mcast_hook_toggle_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, hnat_mcast_hook_toggle_read, file->private_data);
+}
+
+static ssize_t hnat_mcast_hook_toggle_write(struct file *file, const char __user *buffer,
+					    size_t count, loff_t *data)
+{
+	char buf[8] = {0};
+	int len = count;
+
+	if ((len > 8) || copy_from_user(buf, buffer, len))
+		return -EFAULT;
+
+	if (buf[0] == '1' && !mcast_hook_toggle) {
+		pr_info("mcast hook is going to be enabled !\n");
+		hnat_mcast_offload_handle(true);
+	} else if (buf[0] == '0' && mcast_hook_toggle) {
+		pr_info("mcast hook is going to be disabled !\n");
+		hnat_mcast_offload_handle(false);
+	}
+
+	return len;
+}
+
+static const struct file_operations hnat_mcast_hook_toggle_fops = {
+	.open = hnat_mcast_hook_toggle_open,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.write = hnat_mcast_hook_toggle_write,
 	.release = single_release,
 };
 
@@ -2963,6 +2989,263 @@ static const struct file_operations hnat_xlat_cfg_fops = {
 	.read = seq_read,
 	.llseek = seq_lseek,
 	.write = hnat_xlat_cfg_write,
+	.release = single_release,
+};
+
+static int hnat_mcast_blist_read(struct seq_file *m, void *private)
+{
+	struct mtk_hnat *h = hnat_priv;
+	struct mcast_blist_data *mcast = NULL;
+	struct ppe_mcast_table *pmcast = hnat_priv->pmcast;
+
+	pr_info("MTK HNAT Mcast Black List\n");
+	if (!pmcast)
+		return -1;
+
+	read_lock_bh(&pmcast->mcast_lock);
+	list_for_each_entry(mcast, &h->mcast_blist_list, list) {
+		if (mcast->is_ipv4)
+			pr_info("IPv4: %pI4 mask:%x\n", &mcast->ipv4, mcast->mask);
+		else
+			pr_info("IPv6: %pI6\n", &mcast->ipv6);
+	}
+	read_unlock_bh(&pmcast->mcast_lock);
+
+	return 0;
+}
+
+static int hnat_mcast_blist_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, hnat_mcast_blist_read, file->private_data);
+}
+
+static ssize_t hnat_mcast_blist_write(struct file *file, const char __user *buffer,
+				      size_t count, loff_t *data)
+{
+	struct mtk_hnat *h = hnat_priv;
+	int len = count;
+	char buf[256] = {0}, v4_str[65] = {0}, v6_str[65] = {0};
+	struct mcast_blist_data *m = NULL, *mcast = NULL, *next = NULL;
+	struct ppe_mcast_table *pmcast = hnat_priv->pmcast;
+	struct in6_addr ipv6;
+	u32 ipv4;
+
+	if (!pmcast)
+		return -1;
+
+	if ((len > sizeof(buf)) || copy_from_user(buf, buffer, len))
+		return -EFAULT;
+
+	if (!strncmp(buf, "ipv4 add", 8)) {
+		if (sscanf(buf, "ipv4 add %64s\n", v4_str) != 1) {
+			pr_info("input error\n");
+			return -1;
+		}
+
+		in4_pton(v4_str, -1, (u8 *)&ipv4, -1, NULL);
+
+		read_lock_bh(&pmcast->mcast_lock);
+		list_for_each_entry(m, &h->mcast_blist_list, list) {
+			if (m->ipv4 == ipv4) {
+				pr_info("this ip already added.\n");
+				read_unlock_bh(&pmcast->mcast_lock);
+				return len;
+			}
+		}
+		read_unlock_bh(&pmcast->mcast_lock);
+
+		mcast = kzalloc(sizeof(struct mcast_blist_data), GFP_KERNEL);
+		if (!mcast)
+			return -ENOMEM;
+
+		mcast->is_ipv4 = true;
+		mcast->ipv4 = ipv4;
+
+		write_lock_bh(&pmcast->mcast_lock);
+		list_add(&mcast->list, &h->mcast_blist_list);
+		write_unlock_bh(&pmcast->mcast_lock);
+
+		pr_info("add mcast ip: %pI4\n", &mcast->ipv4);
+	} else if (!strncmp(buf, "ipv6 add", 8)) {
+		if (sscanf(buf, "ipv6 add %64s\n", v6_str) != 1) {
+			pr_info("input error\n");
+			return -1;
+		}
+
+		in6_pton(v6_str, -1, (u8 *)&ipv6, -1, NULL);
+
+		read_lock_bh(&pmcast->mcast_lock);
+		list_for_each_entry(m, &h->mcast_blist_list, list) {
+			if (ipv6_addr_equal(&m->ipv6, &ipv6)) {
+				pr_info("this ip already added.\n");
+				read_unlock_bh(&pmcast->mcast_lock);
+				return len;
+			}
+		}
+		read_unlock_bh(&pmcast->mcast_lock);
+
+		mcast = kzalloc(sizeof(struct mcast_blist_data), GFP_KERNEL);
+		if (!mcast)
+			return -ENOMEM;
+
+		mcast->is_ipv4 = false;
+		memcpy(&mcast->ipv6, &ipv6, sizeof(struct in6_addr));
+
+		write_lock_bh(&pmcast->mcast_lock);
+		list_add(&mcast->list, &h->mcast_blist_list);
+		write_unlock_bh(&pmcast->mcast_lock);
+
+		pr_info("add mcast ip: %pI6\n", &mcast->ipv6);
+	} else if (!strncmp(buf, "ipv4 del", 8)) {
+		if (sscanf(buf, "ipv4 del %64s\n", v4_str) != 1) {
+			pr_info("input error\n");
+			return -1;
+		}
+
+		in4_pton(v4_str, -1, (u8 *)&ipv4, -1, NULL);
+
+		write_lock_bh(&pmcast->mcast_lock);
+		list_for_each_entry_safe(m, next, &h->mcast_blist_list, list) {
+			if (ipv4 == m->ipv4) {
+				list_del(&m->list);
+				kfree(m);
+				pr_info("ipv4 del: %s\n", v4_str);
+				write_unlock_bh(&pmcast->mcast_lock);
+				return len;
+			}
+		}
+		write_unlock_bh(&pmcast->mcast_lock);
+
+		pr_info("not found: %s\n", v4_str);
+	} else if (!strncmp(buf, "ipv6 del", 8)) {
+		if (sscanf(buf, "ipv6 del %64s\n", v6_str) != 1) {
+			pr_info("input error\n");
+			return -1;
+		}
+
+		in6_pton(v6_str, -1, (u8 *)&ipv6, -1, NULL);
+
+		write_lock_bh(&pmcast->mcast_lock);
+		list_for_each_entry_safe(m, next, &h->mcast_blist_list, list) {
+			if (ipv6_addr_equal(&ipv6, &m->ipv6)) {
+				list_del(&m->list);
+				kfree(m);
+				pr_info("ipv6 del: %s\n", v6_str);
+				write_unlock_bh(&pmcast->mcast_lock);
+				return len;
+			}
+		}
+		write_unlock_bh(&pmcast->mcast_lock);
+
+		pr_info("not found: %s\n", v6_str);
+	} else {
+		pr_info("input error\n");
+		return -1;
+	}
+
+	return len;
+}
+
+static const struct file_operations hnat_mcast_blist_fops = {
+	.open = hnat_mcast_blist_open,
+	.read = seq_read,
+	.llseek = seq_lseek,
+	.write = hnat_mcast_blist_write,
+	.release = single_release,
+};
+
+static int hnat_mcast_group_mem_info(struct ppe_mcast_group *group)
+{
+	struct ppe_mcast_table *pmcast = hnat_priv->pmcast;
+	struct ppe_mcast_member *member;
+	struct net_device *dev = NULL;
+	bool is_ipv6;
+	u16 mac_prefix;
+
+	if (!pmcast)
+		return -EINVAL;
+
+	mac_prefix = (group->mac[0] << 8) | group->mac[1];
+	is_ipv6 = !ipv6_addr_any(&group->dip6);
+	if (is_ipv6 != (mac_prefix == 0x3333)) {
+		pr_warn("HNAT: Group protocol mismatch - MAC suggests %s but IP is %s\n",
+			(mac_prefix == 0x3333) ? "IPv6" : "IPv4",
+			is_ipv6 ? "IPv6" : "IPv4");
+		is_ipv6 = (mac_prefix == 0x3333);
+	}
+
+	pr_info("\n");
+	pr_info("========================================\n");
+	pr_info("  Multicast Group Information\n");
+	pr_info("========================================\n");
+	pr_info("  Type:     %s\n", is_ipv6 ? "IPv6" : "IPv4");
+	pr_info("  MAC:      %pM\n", group->mac);
+
+	if (is_ipv6) {
+		pr_info("  DIP:      %pI6c\n", &group->dip6);
+		pr_info("  SIP:      %pI6c\n", &group->sip6);
+	} else {
+		pr_info("  DIP:      %pI4\n", &group->dip);
+		pr_info("  SIP:      %pI4\n", &group->sip);
+	}
+	pr_info("  PPE ID:   %d\n", group->ppe_id);
+	pr_info("  FOE idx:  %d\n", group->foe_idx);
+	pr_info("  NPU GRP ID:   %d\n", group->npu_grp_idx);
+	pr_info("  MTBL idx: %d\n", group->mtbl_idx);
+	pr_info("  PSE BMP:  0x%08x\n", group->psebmp);
+	pr_info("  HW accel: %s\n", group->offload ? "enabled" : "disabled");
+	pr_info("----------------------------------------\n");
+	pr_info("  Members:\n");
+
+	list_for_each_entry(member, &group->members, list) {
+		dev = dev_get_by_index(&init_net, member->ifindex);
+		if (dev) {
+			pr_info("    - %-16s (ifindex: %d)\n",
+			dev->name, dev->ifindex);
+			dev_put(dev);
+		} else {
+			pr_info("    - <unknown>          (ifindex: %d)\n",
+			member->ifindex);
+		}
+	}
+	pr_info("========================================\n\n");
+
+return 0;
+}
+
+static int hnat_mcast_grp_member_dump(void)
+{
+	struct ppe_mcast_table *pmcast = hnat_priv->pmcast;
+	struct ppe_mcast_group *group, *tmp;
+
+	if (!pmcast)
+		return -1;
+
+	read_lock_bh(&pmcast->mcast_lock);
+	list_for_each_entry_safe(group, tmp, &pmcast->groups, list) {
+		hnat_mcast_group_mem_info(group);
+	}
+	read_unlock_bh(&pmcast->mcast_lock);
+
+	return 0;
+}
+
+static int hnat_mcast_member_read(struct seq_file *m, void *private)
+{
+	hnat_mcast_grp_member_dump();
+
+	return 0;
+}
+
+static int hnat_mcast_member_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, hnat_mcast_member_read, file->private_data);
+}
+
+static const struct file_operations hnat_mcast_member_fops = {
+	.open = hnat_mcast_member_open,
+	.read = seq_read,
+	.llseek = seq_lseek,
 	.release = single_release,
 };
 
@@ -3799,6 +4082,12 @@ int hnat_init_debugfs(struct mtk_hnat *h)
 			    &hnat_mcast_fops);
 	debugfs_create_file("hook_toggle", 0444, root, h,
 			    &hnat_hook_toggle_fops);
+	debugfs_create_file("mcast_hook_toggle", 0444, root, h,
+			    &hnat_mcast_hook_toggle_fops);
+	debugfs_create_file("mcast_blist", 0444, root, h,
+			    &hnat_mcast_blist_fops);
+	debugfs_create_file("mcast_member", 0444, root, h,
+			    &hnat_mcast_member_fops);
 	debugfs_create_file("mape_toggle", 0444, root, h,
 			    &hnat_mape_toggle_fops);
 	debugfs_create_file("qos_toggle", 0444, root, h,

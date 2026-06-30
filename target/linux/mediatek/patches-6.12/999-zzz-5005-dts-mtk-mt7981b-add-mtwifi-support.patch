@@ -51,7 +51,7 @@
  		};
  
  		eth: ethernet@15100000 {
-@@ -579,27 +581,24 @@
+@@ -580,27 +582,24 @@
  		};
  
  		wo_dlm0: syscon@151e8000 {
@@ -87,7 +87,7 @@
  		sgmiisys0: syscon@10060000 {
  			compatible = "mediatek,mt7981-sgmiisys_0", "mediatek,mt7986-sgmiisys_0", "syscon";
  			reg = <0 0x10060000 0 0x1000>;
-@@ -663,6 +662,10 @@
+@@ -664,6 +663,10 @@
  			compatible = "mediatek,mt7981-consys";
  			reg = <0 0x10000000 0 0x8600000>;
  			memory-region = <&wmcpu_emi>;
@@ -98,7 +98,7 @@
  		};
  
  		xhci: usb@11200000 {
-@@ -749,7 +752,8 @@
+@@ -750,7 +753,8 @@
  		};
  
  		wifi: wifi@18000000 {
@@ -108,7 +108,7 @@
  			pinctrl-0 = <&wifi_dbdc_pins>;
  			pinctrl-names = "dbdc";
  			reg = <0 0x18000000 0 0x1000000>,
-@@ -764,6 +768,7 @@
+@@ -765,6 +769,7 @@
  			clock-names = "mcu", "ap2conn";
  			resets = <&watchdog MT7986_TOPRGU_CONSYS_SW_RST>;
  			reset-names = "consys";

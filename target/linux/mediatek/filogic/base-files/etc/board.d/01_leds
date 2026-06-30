@@ -132,6 +132,9 @@ livinet,zr-3020-ubootmod)
 	ucidef_set_led_netdev "wlan2g" "WLAN2G" "blue:wlan2g" "phy0-ap0"
 	ucidef_set_led_netdev "wlan5g" "WLAN5G" "blue:wlan5g" "phy1-ap0"
 	;;
+huasifei,wh3000r-nand)
+	ucidef_set_led_netdev "wan" "WAN" "blue:wan-online" "wan" "link"
+	;;
 iptime,ax3000q)
 	ucidef_set_led_netdev "wan" "WAN" "amber:wan" "wan" "link tx rx"
 	;;
@@ -339,7 +342,6 @@ tplink,tl-7dr7250-v1)
 	ucidef_set_led_netdev "lan3" "LAN3" "mdio-bus:0f:green:lan" "lan3"
 	;;
 wavlink,wl-wn536ax6-a)
-	ucidef_set_led_netdev "wifi" "wifi" "blue:wlan" "phy1-ap0" "link"
 	ucidef_set_led_netdev "wan" "wan" "blue:wan" "eth1" "link tx rx"
 	;;
 wavlink,wl-wn551x3)
@@ -372,9 +374,16 @@ zbtlink,zbt-z8103ax|\
 zbtlink,zbt-z8103ax-c)
 	ucidef_set_led_netdev "wan" "wan" "green:wan" "eth1" "link tx rx"
 	;;
+zbtlink,zbt-z8106ax-s|\
 zbtlink,zbt-z8106ax-t)
 	ucidef_set_led_netdev "wan" "wan" "amber:wan" "eth1" "link tx rx"
 	ucidef_set_led_netdev "mobile" "mobile" "green:mobile" "wwan" "link tx rx"
+	;;
+zhao,7981r128)
+	ucidef_set_led_netdev "lan" "LAN" "LAN" "lan2"
+	ucidef_set_led_netdev "sfp" "SFP" "SFP" "eth1"
+	ucidef_set_led_netdev "wlan2g" "WIFI2G" "WIFI2G" "ra0"
+	ucidef_set_led_netdev "wlan5g" "WIFI5G" "WIFI5G" "rax0"
 	;;
 zyxel,ex5601-t0-stock|\
 zyxel,ex5601-t0-ubootmod)
