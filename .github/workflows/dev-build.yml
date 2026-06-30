@@ -85,6 +85,10 @@ jobs:
           git clone --depth 1 https://github.com/eamonxg/luci-app-aurora-config.git package/luci-app-aurora-config
           rm -rf package/luci-app-aurora-config/.git
 
+      - name: Apply custom translations
+        run: |
+          cp custom-files/vi-upnp.po feeds/luci/applications/luci-app-upnp/po/vi/upnp.po
+
       - name: Prepare .config (Viettel NR3053 + VHT-32X6 only)
         run: |
           cp defconfig/viettel-only.config .config
