@@ -2,3 +2,8 @@
 *.patch whitespace=-indent-with-non-tab,-space-before-tab,-tab-in-indent,-trailing-space
 *.dts text eol=lf
 *.dts[io] text eol=lf
+
+# Fork-specific files: always keep fork version on merge
+target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts  merge=ours
+target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts merge=ours
+README.md                                                 merge=ours
