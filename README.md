@@ -96,20 +96,13 @@ cd immortalwrt-mt798x-rebase
 git checkout main
 ```
 
-**Bước chuẩn bị (giống với CI):** feeds, Aurora theme, bản dịch UPnP, defconfig:
+**Build đầy đủ (giống CI):**
 
 ```bash
-bash scripts/prepare-build.sh            # dùng defconfig/viettel-only.config
+bash scripts/build-viettel.sh
 ```
 
-**Build:**
-
-```bash
-make download -j8
-make -j$(nproc) V=s
-```
-
-Script `prepare-build.sh` làm đúng các bước CI làm: feeds, clone Aurora, copy `vi-upnp.po`, copy `99-viettel-custom-defaults`, load `defconfig/viettel-only.config`. Firmware local và CI sẽ có cùng thành phần.
+Script này làm toàn bộ: feeds, clone Aurora, copy bản dịch, defconfig, `make download`, `make`, và copy firmware ra thư mục `dist/`. Kết quả giống hệt bản từ GitHub Actions.
 
 Chỉ chạy bước tạo file image (nhanh hơn, bỏ qua biên dịch lại package):
 

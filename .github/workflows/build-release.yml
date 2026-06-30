@@ -91,24 +91,11 @@ jobs:
       - name: Prepare build (feeds, Aurora, translations, defconfig)
         run: bash scripts/prepare-build.sh defconfig/viettel-only.config
 
-      - name: Build firmware
-        run: |
-          df -h /
-          make download -j8 || make download -j1 V=s
-          make -j$(nproc) V=s || {
-            echo "::warning::Parallel build failed, retrying with -j1..."
-            make -j1 V=s 2>&1 | tail -200
-          }
+      - name: Build firmware and collect artifacts
+        run: bash scripts/build-viettel.sh defconfig/viettel-only.config
 
-      - name: Collect firmware artifacts
-        run: |
-          mkdir -p dist
-          shopt -s nullglob
-          cp bin/targets/mediatek/filogic/*viettel_nr3053* dist/ 2>/dev/null || true
-          cp bin/targets/mediatek/filogic/*viettel_32x6* dist/ 2>/dev/null || true
-          cp bin/targets/mediatek/filogic/sha256sums dist/ 2>/dev/null || true
-          ls -la dist/
-          test "$(ls -1 dist/ | wc -l)" -ge 1
+      - name: Verify artifacts exist
+        run: test "$(ls -1 dist/ | wc -l)" -ge 1
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v7
