@@ -25,8 +25,8 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 |-------|----------|
 | **`main`** | Fork đầy đủ: cả hai router, band steering (`bndstrg`), README/docs tiếng Việt — **dùng để build flash** |
 | **`25.12`** | Mirror [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (`25.12`), không patch Viettel |
-| **`viettel-nr3053`** | PR upstream NR3053 only |
-| **`viettel-32x6`** | PR upstream 32X6 only |
+
+NR3053 và 32X6 đã merge vào upstream (`chasey-dev:25.12`). Các nhánh PR cũ (`viettel-nr3053`, `viettel-32x6`) đã xóa — không còn cần thiết.
 
 ---
 
@@ -151,6 +151,6 @@ Tóm tắt nhanh:
 ## Đóng góp
 
 - Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
-- Patch upstream: nhánh `viettel-nr3053` hoặc `viettel-32x6` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
+- Patch upstream: tạo nhánh mới từ `origin/25.12` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
 - Tính năng fork (bndstrg, v.v.): chỉ trên `main`.
 
