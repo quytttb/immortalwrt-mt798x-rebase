@@ -77,9 +77,6 @@ mediatek_setup_interfaces()
 	viettel,nr3053)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" wan
 		;;
-	viettel,vht-32x6)
-		ucidef_set_interfaces_lan_wan "lan1 lan2" wan
-		;;
 	asus,tuf-ax4200|\
 	iptime,ax3000sm|\
 	iptime,ax7800m-6e|\
@@ -146,6 +143,9 @@ mediatek_setup_interfaces()
 	widelantech,wap430x|\
 	zyxel,nwa50ax-pro)
 		ucidef_set_interface_lan "eth0"
+		;;
+	viettel,32x6)
+		ucidef_set_interfaces_lan_wan "lan1 lan2" wan
 		;;
 	wirelesstag,zx7981pd-ubootmod)
 		ucidef_set_interfaces_lan_wan "lan1 lan2" wan
