@@ -216,7 +216,8 @@ mediatek_setup_interfaces()
 	tplink,tl-xdr6086|\
 	wavlink,wl-wn551x3|\
 	wavlink,wl-wn586x3|\
-	wavlink,wl-wn586x3b)
+	wavlink,wl-wn586x3b|\
+	zhao,7981r128)
 		ucidef_set_interfaces_lan_wan "lan1 lan2" eth1
 		;;
 	tplink,archer-ax80-v1|\
@@ -361,6 +362,11 @@ mediatek_setup_macs()
 		;;
 	yuncore,ax835)
 		label_mac=$(mtd_get_mac_binary "Factory" 0x4)
+		;;
+	zhao,7981r128)
+		lan_mac=$(mtd_get_mac_binary "Factory" 0x04)
+		wan_mac=$(macaddr_add "$lan_mac" 1)
+		label_mac=$lan_mac
 		;;
 	esac
 

@@ -370,6 +370,12 @@ zbtlink,zbt-z8106ax-t)
 	ucidef_set_led_netdev "wan" "wan" "amber:wan" "eth1" "link tx rx"
 	ucidef_set_led_netdev "mobile" "mobile" "green:mobile" "wwan" "link tx rx"
 	;;
+zhao,7981r128)
+	ucidef_set_led_netdev "lan" "LAN" "LAN" "lan2"
+	ucidef_set_led_netdev "sfp" "SFP" "SFP" "eth1"
+	ucidef_set_led_netdev "wlan2g" "WIFI2G" "WIFI2G" "ra0"
+	ucidef_set_led_netdev "wlan5g" "WIFI5G" "WIFI5G" "rax0"
+	;;
 zyxel,ex5601-t0-stock|\
 zyxel,ex5601-t0-ubootmod)
 	ucidef_set_led_netdev "lan1" "LAN1" "mdio-bus:05:green:lan" "lan1" "link tx rx"
