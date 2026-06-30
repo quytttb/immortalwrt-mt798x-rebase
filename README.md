@@ -30,6 +30,37 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ---
 
+## Đồng bộ upstream
+
+Fork `main` định kỳ merge từ [chasey-dev/25.12](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/tree/25.12). Một số file fork **cố ý khác upstream** (LED DTS, `DEVICE_PACKAGES`, README) nên đã được tách riêng để tránh conflict mỗi lần sync.
+
+**Cách sync (khuyến nghị):**
+
+```bash
+git checkout main
+./scripts/sync-upstream.sh          # mặc định: remote origin, branch 25.12
+# hoặc chỉ định remote/branch khác:
+./scripts/sync-upstream.sh origin 25.12
+git push quytttb main
+```
+
+Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và báo lỗi nếu còn conflict chưa giải quyết.
+
+**File fork-only cần biết:**
+
+| File | Vai trò |
+|------|---------|
+| `target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts` | LED layout fork (tích hợp `viettel-wan-led.sh`) |
+| `target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts` | LED layout fork (`nr3053:green` / `nr3053:red`) |
+| `target/linux/mediatek/image/filogic-ext-viettel-fork.mk` | `DEVICE_PACKAGES` riêng cho NR3053 và 32X6 |
+| `.gitattributes` | `merge=ours` cho 2 DTS + README — **không phải** `.gitignore`; file vẫn track và CI build bình thường |
+
+`filogic-ext.mk` giữ định nghĩa device theo upstream (không `DEVICE_PACKAGES`). File `filogic-ext-viettel-fork.mk` load sau (thứ tự alphabet) và override khi build.
+
+**Lưu ý khi upstream sửa Viettel:** nếu upstream đổi partition layout, image format, hoặc artifact của NR3053/32X6, cần cập nhật thủ công `filogic-ext-viettel-fork.mk`. Nếu upstream fix bug trong DTS (MAC, partition, EEPROM), kiểm tra diff upstream và cherry-pick hunk cần thiết — `.gitattributes` sẽ giữ bản fork khi merge.
+
+---
+
 ## Tải bản đã build (Release)
 
 Nếu bạn không muốn tự build, có thể tải firmware được build tự động (có sẵn giao diện hiện đại như Aurora) tại trang **[Releases](../../releases)** của repository.
