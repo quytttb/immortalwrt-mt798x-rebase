@@ -19,6 +19,21 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ---
 
+## Tính năng fork (branch `main`)
+
+| Tính năng | Nơi cấu hình |
+|-----------|----------------|
+| **LED riêng** (DTS + script WAN) | `dts-ext/mt7981b-viettel-*.dts`, `viettel-wan-led.sh`, `01_leds` |
+| **Gói firmware** (Aurora, TurboACC, UPnP, bndstrg, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
+| **Mặc định VN** (timezone, UPnP, BBR) | `package/emortal/default-settings` (`default-settings-vn`) |
+| **Theme Aurora + config** | Clone CI: `luci-theme-aurora`, `luci-app-aurora-config` |
+| **Defconfig build** | `defconfig/viettel-only.config` (TurboACC, UPnP vi, Aurora, …) |
+| **Dịch UPnP tiếng Việt** | `custom-files/vi-upnp.po` (CI inject vào build) |
+
+`filogic-ext-viettel-fork.mk` được `include` sau `filogic-ext.mk` trong `target/linux/mediatek/image/Makefile` — override `DEVICE_PACKAGES` mà không conflict upstream.
+
+---
+
 ## Cấu trúc nhánh
 
 | Nhánh | Mục đích |
@@ -53,6 +68,7 @@ Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và bá
 | `target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts` | LED layout fork (tích hợp `viettel-wan-led.sh`) |
 | `target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts` | LED layout fork (`nr3053:green` / `nr3053:red`) |
 | `target/linux/mediatek/image/filogic-ext-viettel-fork.mk` | `DEVICE_PACKAGES` riêng cho NR3053 và 32X6 |
+| `target/linux/mediatek/image/Makefile` | `include filogic-ext-viettel-fork.mk` (sau `filogic-ext.mk`) |
 | `.gitattributes` | `merge=ours` cho 2 DTS + README — **không phải** `.gitignore`; file vẫn track và CI build bình thường |
 
 `filogic-ext.mk` giữ định nghĩa device theo upstream (không `DEVICE_PACKAGES`). File `filogic-ext-viettel-fork.mk` load sau (thứ tự alphabet) và override khi build.

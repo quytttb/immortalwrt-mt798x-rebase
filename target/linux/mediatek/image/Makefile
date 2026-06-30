@@ -40,6 +40,7 @@ endef
 
 include $(SUBTARGET).mk
 include filogic-ext.mk
+include filogic-ext-viettel-fork.mk
 
 define Image/Build
 	$(call Image/Build/$(1),$(1))
