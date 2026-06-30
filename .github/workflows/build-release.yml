@@ -106,7 +106,7 @@ jobs:
           mkdir -p package/base-files/files/etc/uci-defaults
           cp custom-files/99-viettel-custom-defaults package/base-files/files/etc/uci-defaults/99-viettel-custom-defaults
 
-      - name: Prepare .config (Viettel NR3053 + VHT-32X6 only)
+      - name: Prepare .config (Viettel NR3053 + 32X6 only)
         run: |
           cp defconfig/viettel-only.config .config
           make defconfig
@@ -130,7 +130,7 @@ jobs:
           mkdir -p dist
           shopt -s nullglob
           cp bin/targets/mediatek/filogic/*viettel_nr3053* dist/ 2>/dev/null || true
-          cp bin/targets/mediatek/filogic/*vht_32x6* dist/ 2>/dev/null || true
+          cp bin/targets/mediatek/filogic/*viettel_32x6* dist/ 2>/dev/null || true
           cp bin/targets/mediatek/filogic/sha256sums dist/ 2>/dev/null || true
           ls -la dist/
           test "$(ls -1 dist/ | wc -l)" -ge 1
@@ -191,21 +191,21 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
-          name: ImmortalWrt ${{ needs.prepare.outputs.version }} — NR3053 & VHT-32X6
+          name: ImmortalWrt ${{ needs.prepare.outputs.version }} — NR3053 & 32X6
           generate_release_notes: true
           make_latest: true
           overwrite_files: true
           body: |
             ## ImmortalWrt ${{ needs.prepare.outputs.version }}
 
-            ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và VHT-32X6V1.
+            ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6V1.
 
             | Thiết bị | File | Cách dùng |
             |----------|------|-----------|
             | Viettel NR3053 | `*viettel_nr3053*-sysupgrade.itb` | sysupgrade / TFTP |
             | Viettel NR3053 (recovery) | `*viettel_nr3053*-initramfs-recovery.itb` | UART / TFTP recovery |
-            | Viettel VHT-32X6V1 | `*vht_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
-            | Viettel VHT-32X6V1 (recovery) | `*vht_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
+            | Viettel 32X6V1 | `*viettel_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
+            | Viettel 32X6V1 (recovery) | `*viettel_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
 
             Built from tag `${{ needs.prepare.outputs.tag }}`.
           files: |

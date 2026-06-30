@@ -36,6 +36,6 @@ jobs:
             exit 1
           fi
           grep -q "viettel_nr3053" defconfig/viettel-only.config
-          grep -q "vht_32x6" defconfig/viettel-only.config
+          grep -q "viettel_32x6" defconfig/viettel-only.config
           ! grep -q "DEVICE_xiaomi" defconfig/viettel-only.config
-          echo "Viettel-only defconfig OK (NR3053 + VHT-32X6)."
+          echo "Viettel-only defconfig OK (NR3053 + 32X6)."
