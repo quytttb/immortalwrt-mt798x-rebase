@@ -6,7 +6,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ## Router được hỗ trợ
 
-| | **Viettel NR3053** | **Viettel VHT-32X6V1** |
+| | **Viettel NR3053** | **Viettel 32X6V1** |
 |---|---|---|
 | SoC | MediaTek MT7981B | MediaTek MT7981B |
 | RAM | 512 MB DDR3 | 128 MB DDR3 |
@@ -26,7 +26,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | **`main`** | Fork đầy đủ: cả hai router, band steering (`bndstrg`), README/docs tiếng Việt — **dùng để build flash** |
 | **`25.12`** | Mirror [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (`25.12`), không patch Viettel |
 | **`viettel-nr3053`** | PR upstream NR3053 only |
-| **`viettel-vht-32x6`** | PR upstream VHT-32X6 only |
+| **`viettel-32x6`** | PR upstream 32X6 only |
 
 ---
 
@@ -53,7 +53,7 @@ git checkout main
 Chọn target và device trong menuconfig, rồi build:
 
 ```bash
-# Khuyến nghị: chỉ build NR3053 + VHT-32X6 (dùng trong CI)
+# Khuyến nghị: chỉ build NR3053 + 32X6 (dùng trong CI)
 cp defconfig/viettel-only.config .config
 make defconfig
 make -j$(nproc)
@@ -67,7 +67,7 @@ make defconfig
 make menuconfig
 # Target System → MediaTek ARM
 # Subtarget → Filogic
-# Target Profile → Viettel NR3053 hoặc Viettel VHT-32X6V1
+# Target Profile → Viettel NR3053 hoặc Viettel 32X6V1
 make -j$(nproc)
 ```
 
@@ -75,7 +75,7 @@ Chỉ chạy bước tạo file image (nhanh hơn lệnh `make` ở trên vì b�
 
 ```bash
 make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_nr3053
-# hoặc DEVICE=vht_32x6
+# hoặc DEVICE=viettel_32x6
 ```
 
 **Artifact** (`bin/targets/mediatek/filogic/`):
@@ -83,7 +83,7 @@ make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_n
 | Router | `<device>` trong tên file |
 |--------|---------------------------|
 | NR3053 | `viettel_nr3053` |
-| VHT-32X6 | `vht_32x6` |
+| 32X6 | `viettel_32x6` |
 
 ```
 immortalwrt-mediatek-filogic-<device>-preloader.bin
@@ -120,6 +120,6 @@ Tóm tắt nhanh:
 ## Đóng góp
 
 - Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
-- Patch upstream: nhánh `viettel-nr3053` hoặc `viettel-vht-32x6` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
+- Patch upstream: nhánh `viettel-nr3053` hoặc `viettel-32x6` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
 - Tính năng fork (bndstrg, v.v.): chỉ trên `main`.
 
