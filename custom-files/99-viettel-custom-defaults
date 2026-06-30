@@ -1,0 +1,20 @@
+#!/bin/sh
+# 1. Enable UPnP by default
+if uci -q get upnpd.config > /dev/null; then
+	uci -q set upnpd.config.enabled='1'
+	uci -q commit upnpd
+fi
+
+# 2. Set BBR as default congestion control (TurboACC)
+if uci -q get turboacc.config > /dev/null; then
+	uci -q set turboacc.config.bbr_cca='1'
+	uci -q commit turboacc
+fi
+
+# 3. Fallback: enforce BBR in sysctl if not already present
+if ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf 2>/dev/null; then
+	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+fi
+
+exit 0
