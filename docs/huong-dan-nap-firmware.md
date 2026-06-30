@@ -14,7 +14,7 @@
 - [Viettel NR3053](#viettel-nr3053)
   - [Tuỳ chọn A — Boot RAM (test, không ghi NAND)](#nr3053-tuỳ-chọn-a--boot-ram-test-không-ghi-nand)
   - [Tuỳ chọn B — Cài đặt vĩnh viễn vào NAND](#nr3053-tuỳ-chọn-b--cài-đặt-vĩnh-viễn-vào-nand)
-- [Viettel 32X6V1](#viettel-32x6v1)
+- [Viettel 32X6](#viettel-32x6)
   - [Tuỳ chọn A — Boot RAM (test, không ghi NAND)](#32x6-tuỳ-chọn-a--boot-ram-test-không-ghi-nand)
   - [Tuỳ chọn B — Cài đặt vĩnh viễn vào NAND](#32x6-tuỳ-chọn-b--cài-đặt-vĩnh-viễn-vào-nand)
 - [Cập nhật U-Boot (nâng cấp từ ROM khác)](#cập-nhật-u-boot-nâng-cấp-từ-rom-khác)
@@ -269,7 +269,7 @@ Lần đầu U-Boot chạy `_firstboot`: đọc MAC từ Factory (`offset 0x4`),
 
 ---
 
-## Viettel 32X6V1
+## Viettel 32X6
 
 > **GPIO LED thực tế (đã verify):** Power/WPS GPIO 5, Internet GPIO **9** (không phải 8), WiFi 2.4G/5G GPIO 34/35. Không có cổng USB (giống NR3053).
 

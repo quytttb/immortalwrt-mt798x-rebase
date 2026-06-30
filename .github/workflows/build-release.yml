@@ -198,14 +198,14 @@ jobs:
           body: |
             ## ImmortalWrt ${{ needs.prepare.outputs.version }}
 
-            ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6V1.
+            ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6.
 
             | Thiết bị | File | Cách dùng |
             |----------|------|-----------|
             | Viettel NR3053 | `*viettel_nr3053*-sysupgrade.itb` | sysupgrade / TFTP |
             | Viettel NR3053 (recovery) | `*viettel_nr3053*-initramfs-recovery.itb` | UART / TFTP recovery |
-            | Viettel 32X6V1 | `*viettel_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
-            | Viettel 32X6V1 (recovery) | `*viettel_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
+            | Viettel 32X6 | `*viettel_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
+            | Viettel 32X6 (recovery) | `*viettel_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
 
             Built from tag `${{ needs.prepare.outputs.tag }}`.
           files: |

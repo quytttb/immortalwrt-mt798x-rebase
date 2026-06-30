@@ -6,7 +6,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ## Router được hỗ trợ
 
-| | **Viettel NR3053** | **Viettel 32X6V1** |
+| | **Viettel NR3053** | **Viettel 32X6** |
 |---|---|---|
 | SoC | MediaTek MT7981B | MediaTek MT7981B |
 | RAM | 512 MB DDR3 | 128 MB DDR3 |
@@ -67,7 +67,7 @@ make defconfig
 make menuconfig
 # Target System → MediaTek ARM
 # Subtarget → Filogic
-# Target Profile → Viettel NR3053 hoặc Viettel 32X6V1
+# Target Profile → Viettel NR3053 hoặc Viettel 32X6
 make -j$(nproc)
 ```
 

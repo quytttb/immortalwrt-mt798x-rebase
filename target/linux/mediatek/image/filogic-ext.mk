@@ -126,13 +126,14 @@ TARGET_DEVICES += sl_3000-emmc
 
 define Device/viettel_32x6
   DEVICE_VENDOR := Viettel
-  DEVICE_MODEL := 32X6V1
+  DEVICE_MODEL := 32X6
   DEVICE_DTS := mt7981b-viettel-32x6
   DEVICE_DTS_DIR := ../dts-ext
   SUPPORTED_DEVICES := viettel,32x6
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
+  IMAGE_SIZE := 114688k
   KERNEL_IN_UBI := 1
   UBOOTENV_IN_UBI := 1
   IMAGES := sysupgrade.itb
