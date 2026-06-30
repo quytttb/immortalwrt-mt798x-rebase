@@ -14,34 +14,30 @@ Merge Official Source
 Signed-off-by: Tianling Shen <cnsztl@immortalwrt.org>
 ```
 
-### MTK OpenWrt Feeds: [8b882e5](https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/8b882e59cf7123f3138153e5db7a18873dee6f71)
+### MTK OpenWrt Feeds: [0a3ac21](https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/0a3ac21dccc74e12d2b1263a636085c9fd532dd5)
 
 ```
-[][kernel-6.12][common][eth][Fix the issue where the esw_cnt debug command cannot read the MIB]
+[][HIGH][kernel/kernel-6.12][mt7988/87][eth][Fix incorrect HW LRO auto-learn refresh timer register]
 
 [Description]
-Fix the issue where the esw_cnt debug command cannot read the MIB.
+Fix incorrect HW LRO auto-learn refresh timer register.
 
-[Root Cause]
-Both the GDM and MT753x counters are cleared each time the kernel
-executes mtk_esw_cnt_read(). However, when running the cat esw_cnt
-debug command, the kernel may invoke mtk_esw_cnt_read() multiple times,
-not just once. As a result, GDM and MT753x counter data may be lost
-during the execution of the esw_cnt debug command.
+The original auto-learn refresh timer register is only applicable to
+LROv1. MT7988 uses LROv2, and the register is not shared between the
+two versions. As a result, the intended configuration value was never
+written to the correct register, causing offloaded flows to take at
+least 30 seconds to age out.
 
-[Solution]
-We save the GDM counters in mtk_esw_cnt_open() and move the Switch
-counters clear to mtk_esw_cnt_release().
+Without this patch, candidate flows must wait at least 30 seconds
+before they have a chance to be offloaded, instead of the expected
+1 second.
 
-[How to Verify]
-N/A
-
-[Info to Customer]
+[Release-log]
 N/A
 
 
-Change-Id: Idb28da45ee92f07ad64ad00206388e0ac06c9f19
-Reviewed-on: https://gerrit.mediatek.inc/c/openwrt/feeds/mtk_openwrt_feeds/+/12183429
+Change-Id: I8da166f9b8a70809279493f3fc91975a86e53f84
+Reviewed-on: https://gerrit.mediatek.inc/c/openwrt/feeds/mtk_openwrt_feeds/+/12273616
 ```
 
 ### l1parser: [081bb31](https://github.com/chasey-dev/l1parser/commit/081bb31211efc74594d25bfd1bb5811f3408a205)
