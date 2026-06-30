@@ -88,37 +88,30 @@ Mỗi bản release sẽ có đầy đủ các file `.itb` cần thiết để c
 
 Build firmware đầy đủ tính năng từ branch **`main`**.
 
-Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build; lần đầu cần cập nhật feeds theo hướng dẫn upstream.
+Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build.
 
 ```bash
 git clone https://github.com/quytttb/immortalwrt-mt798x-rebase.git
 cd immortalwrt-mt798x-rebase
 git checkout main
-./scripts/feeds update -a && ./scripts/feeds install -a   # lần đầu
 ```
 
-Chọn target và device trong menuconfig, rồi build:
+**Bước chuẩn bị (giống với CI):** feeds, Aurora theme, bản dịch UPnP, defconfig:
 
 ```bash
-# Khuyến nghị: chỉ build NR3053 + 32X6 (dùng trong CI)
-cp defconfig/viettel-only.config .config
-make defconfig
-make -j$(nproc)
+bash scripts/prepare-build.sh            # dùng defconfig/viettel-only.config
 ```
 
-Hoặc dùng defconfig đầy đủ nhiều thiết bị (build lâu hơn):
+**Build:**
 
 ```bash
-cp defconfig/mt7981-ax3000.config .config
-make defconfig
-make menuconfig
-# Target System → MediaTek ARM
-# Subtarget → Filogic
-# Target Profile → Viettel NR3053 hoặc Viettel 32X6
-make -j$(nproc)
+make download -j8
+make -j$(nproc) V=s
 ```
 
-Chỉ chạy bước tạo file image (nhanh hơn lệnh `make` ở trên vì bỏ qua việc biên dịch lại package). Lưu ý lệnh này sẽ đóng gói file cho **tất cả** các device đang được chọn trong `.config`:
+Script `prepare-build.sh` làm đúng các bước CI làm: feeds, clone Aurora, copy `vi-upnp.po`, copy `99-viettel-custom-defaults`, load `defconfig/viettel-only.config`. Firmware local và CI sẽ có cùng thành phần.
+
+Chỉ chạy bước tạo file image (nhanh hơn, bỏ qua biên dịch lại package):
 
 ```bash
 make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_nr3053

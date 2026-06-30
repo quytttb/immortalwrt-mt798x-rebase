@@ -88,33 +88,8 @@ jobs:
           restore-keys: |
             openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-
 
-      - name: Update and install feeds
-        run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-
-      - name: Clone custom packages
-        run: |
-          git clone --depth 1 https://github.com/eamonxg/luci-theme-aurora.git package/luci-theme-aurora
-          rm -rf package/luci-theme-aurora/.git
-          git clone --depth 1 https://github.com/eamonxg/luci-app-aurora-config.git package/luci-app-aurora-config
-          rm -rf package/luci-app-aurora-config/.git
-
-      - name: Apply custom translations and defaults
-        run: |
-          cp custom-files/vi-upnp.po feeds/luci/applications/luci-app-upnp/po/vi/upnp.po
-          mkdir -p package/base-files/files/etc/uci-defaults
-          cp custom-files/99-viettel-custom-defaults package/base-files/files/etc/uci-defaults/99-viettel-custom-defaults
-
-      - name: Prepare .config (Viettel NR3053 + 32X6 only)
-        run: |
-          cp defconfig/viettel-only.config .config
-          make defconfig
-          enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' .config)
-          if [ "$enabled" -ne 2 ]; then
-            echo "::error::Expected exactly 2 Viettel devices in .config, got $enabled" >&2
-            exit 1
-          fi
+      - name: Prepare build (feeds, Aurora, translations, defconfig)
+        run: bash scripts/prepare-build.sh defconfig/viettel-only.config
 
       - name: Build firmware
         run: |
