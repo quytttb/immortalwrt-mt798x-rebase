@@ -88,12 +88,18 @@ Mỗi bản release sẽ có đầy đủ các file `.itb` cần thiết để c
 
 Build firmware đầy đủ tính năng từ branch **`main`**.
 
-Yêu cầu: Linux, đủ RAM/disk cho OpenWrt build.
+Yêu cầu: Ubuntu/Debian (hoặc tương đương), đủ RAM/disk cho OpenWrt build.
 
 ```bash
 git clone https://github.com/quytttb/immortalwrt-mt798x-rebase.git
 cd immortalwrt-mt798x-rebase
 git checkout main
+```
+
+**Lần đầu build (cài dependency hệ thống):**
+
+```bash
+bash scripts/install-deps.sh
 ```
 
 **Build đầy đủ (giống CI):**
