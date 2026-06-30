@@ -147,8 +147,6 @@ define Device/viettel_32x6
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_32x6
-  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
 endef
 TARGET_DEVICES += viettel_32x6
 
@@ -175,8 +173,6 @@ define Device/viettel_nr3053
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_nr3053
-  DEVICE_PACKAGES := default-settings-vn luci-app-aurora-config bndstrg \
-	-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
 endef
 TARGET_DEVICES += viettel_nr3053
 
