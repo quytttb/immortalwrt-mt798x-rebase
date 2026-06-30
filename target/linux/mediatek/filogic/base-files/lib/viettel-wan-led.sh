@@ -2,7 +2,7 @@
 
 viettel_wan_led_supported() {
 	case "$(board_name)" in
-	viettel,nr3053|viettel,vht-32x6) return 0 ;;
+	viettel,nr3053|viettel,32x6) return 0 ;;
 	esac
 	return 1
 }
@@ -17,7 +17,7 @@ _viettel_wan_led_names() {
 		GREEN=nr3053:green
 		RED=nr3053:red
 		;;
-	viettel,vht-32x6)
+	viettel,32x6)
 		GREEN=green:wan-online
 		RED=red:power
 		BLUE=blue:tx
