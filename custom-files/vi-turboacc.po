@@ -1,0 +1,174 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Viettel fork\n"
+"Language-Team: Vietnamese\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:91
+msgid "Acceleration Status"
+msgstr "Trạng thái tăng tốc"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:191
+msgid "Boardcom_FULLCONE_NAT"
+msgstr "Boardcom_FULLCONE_NAT (ít tốn CPU hơn)"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:151
+msgid "Bridge Acceleration"
+msgstr "Tăng tốc bridge"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:95
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:99
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:103
+msgid "Collecting data..."
+msgstr "Đang thu thập dữ liệu…"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:120
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:188
+msgid "Disable"
+msgstr "Tắt"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:57
+msgid "Disabled"
+msgstr "Đã tắt"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:159
+msgid "Enable IPv6 Acceleration."
+msgstr "Bật tăng tốc IPv6."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:152
+msgid ""
+"Enable bridge acceleration (may be functional conflict with bridge-mode VPN "
+"server)."
+msgstr ""
+"Bật tăng tốc bridge (có thể xung đột với VPN server ở chế độ bridge)."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:183
+msgid "HNAT bind rate threshold (pps)"
+msgstr "Ngưỡng tốc độ bind HNAT (pps)"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:247
+msgid "Enable HNAT counter update"
+msgstr "Bật cập nhật bộ đếm HNAT"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:184
+msgid "The smaller the threshold, the easier it is for the connection to be accelerated."
+msgstr "Ngưỡng càng thấp, kết nối càng dễ được tăng tốc."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:248
+msgid "Update HNAT counter to nf_conntrack. May impact performance."
+msgstr "Cập nhật bộ đếm HNAT vào nf_conntrack. Có thể ảnh hưởng hiệu năng."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:124
+msgid "Fast classifier"
+msgstr "Fast classifier"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:136
+msgid "Fast classifier connection manager for the shortcut forwarding engine."
+msgstr "Trình quản lý kết nối fast classifier cho shortcut forwarding engine (SFE)."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:94
+msgid "FastPath Engine"
+msgstr "FastPath Engine"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:118
+msgid "Fastpath engine"
+msgstr "Fastpath engine"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:122
+msgid "Flow offloading"
+msgstr "Flow offloading"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:98
+msgid "Full Cone NAT"
+msgstr "Full Cone NAT"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:186
+msgid "Full cone NAT"
+msgstr "Full cone NAT"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:187
+msgid "Full cone NAT (NAT1) can improve gaming performance effectively."
+msgstr "Full cone NAT (NAT1) có thể cải thiện hiệu năng chơi game."
+
+#: applications/luci-app-turboacc/root/usr/share/rpcd/acl.d/luci-app-turboacc.json:3
+msgid "Grant UCI access for luci-app-turboacc"
+msgstr "Cấp quyền truy cập UCI cho luci-app-turboacc."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:145
+msgid "Hardware flow offloading"
+msgstr "Tăng tốc phần cứng (flow offloading)"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:158
+msgid "IPv6 acceleration"
+msgstr "Tăng tốc IPv6"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:128
+msgid "MediaTek HNAT"
+msgstr "MediaTek HNAT"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:140
+msgid "MediaTek's open source hardware offloading engine."
+msgstr "Engine tăng tốc phần cứng mã nguồn mở của MediaTek."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:74
+msgid "Open source flow offloading engine (fast path or hardware NAT)."
+msgstr "Engine flow offloading mã nguồn mở (fast path hoặc hardware NAT)."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:179
+msgid "Redirect to wireless settings"
+msgstr "Chuyển tới cài đặt Wi-Fi"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:146
+msgid "Requires hardware NAT support. Implemented at least for mt7621."
+msgstr "Cần hỗ trợ hardware NAT. Đã triển khai ít nhất cho mt7621."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:126
+msgid "SFE connection manager"
+msgstr "SFE connection manager"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:138
+msgid "Simple connection manager for the shortcut forwarding engine."
+msgstr "Trình quản lý kết nối đơn giản cho shortcut forwarding engine (SFE)."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:134
+msgid "Software based offloading for routing/NAT."
+msgstr "Tăng tốc routing/NAT bằng phần mềm."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:102
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:195
+msgid "TCP CCA"
+msgstr "Thuật toán điều khiển tắc nghẽn TCP"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:196
+msgid "TCP congestion control algorithm."
+msgstr "Thuật toán điều khiển tắc nghẽn TCP."
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:119
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:142
+msgid "The offloading engine for routing/NAT."
+msgstr "Engine tăng tốc cho routing/NAT."
+
+#: applications/luci-app-turboacc/root/usr/share/luci/menu.d/luci-app-turboacc.json:3
+msgid "TurboACC"
+msgstr "Tăng tốc mạng"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:73
+msgid "TurboACC settings"
+msgstr "Cài đặt tăng tốc mạng"
+
+#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:190
+msgid "XT_FULLCONE_NAT"
+msgstr "XT_FULLCONE_NAT (tương thích tốt hơn)"
+
+msgid "Apply this setting after reboot."
+msgstr "Áp dụng cài đặt này sau khi khởi động lại."
+
+msgid "Number of HNAT PPE"
+msgstr "Số lượng HNAT PPE"
+
+msgid "Bind Entries"
+msgstr "Số kết nối đã bind"

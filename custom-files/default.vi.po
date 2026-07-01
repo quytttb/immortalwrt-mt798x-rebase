@@ -1,0 +1,110 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: vi\n"
+
+msgid "Processor"
+msgstr "Bộ xử lý"
+
+msgid "Architecture"
+msgstr "Kiến trúc"
+
+msgid "CPU Temperature"
+msgstr "Nhiệt độ CPU"
+
+msgid "CPU Info"
+msgstr "Thông tin CPU"
+
+msgid "CPU Model"
+msgstr "Model CPU"
+
+msgid "CPU frequency"
+msgstr "Tần số CPU"
+
+msgid "RAM frequency"
+msgstr "Tần số RAM"
+
+msgid "Flash Size"
+msgstr "Dung lượng flash"
+
+msgid "Free Memory"
+msgstr "Bộ nhớ trống"
+
+msgid "RUNNING"
+msgstr "Đang chạy"
+
+msgid "NOT RUNNING"
+msgstr "Không chạy"
+
+msgid "ZRam Settings"
+msgstr "Cài đặt ZRam"
+
+msgid "ZRam Compression Algorithm"
+msgstr "Thuật toán nén ZRam"
+
+msgid "ZRam Compression Streams"
+msgstr "Luồng nén ZRam"
+
+msgid "ZRam Size"
+msgstr "Kích thước ZRam"
+
+msgid "Size of the ZRam device in megabytes"
+msgstr "Dung lượng ZRam (MB); để trống để hệ thống tự quản lý"
+
+msgid "Number of parallel threads used for compression"
+msgstr "Số luồng CPU song song dùng để nén"
+
+msgid "Swap"
+msgstr "Bộ nhớ ảo"
+
+msgid "Base Setting"
+msgstr "Cài đặt cơ bản"
+
+msgid "Log"
+msgstr "Nhật ký"
+
+msgid "NAS"
+msgstr "Lưu trữ mạng"
+
+msgid "Force 40MHz mode"
+msgstr "Bắt buộc băng thông 40MHz"
+
+msgid ""
+"Always use 40MHz channels even if the secondary channel overlaps. Using this "
+"option does not comply with IEEE 802.11n-2009!"
+msgstr ""
+"Luôn dùng kênh 40MHz kể cả khi kênh phụ chồng lấn. Tùy chọn này có thể không "
+"tương thích phần cứng và không tuân IEEE 802.11n-2009!"
+
+msgid "Ethernet Information"
+msgstr "Thông tin Ethernet"
+
+msgid "Ethernet Name"
+msgstr "Tên cổng"
+
+msgid "Link Status"
+msgstr "Trạng thái liên kết"
+
+msgid "Speed"
+msgstr "Tốc độ"
+
+msgid "Duplex"
+msgstr "Chế độ duplex"
+
+msgid "Link Up"
+msgstr "Đã kết nối"
+
+msgid "Link Down"
+msgstr "Ngắt kết nối"
+
+msgid "Full Duplex"
+msgstr "Full duplex"
+
+msgid "Half Duplex"
+msgstr "Half duplex"
+
+msgid "Allow AP mode to disconnect STAs based on low ACK condition"
+msgstr "Cho phép AP ngắt client khi tín hiệu ACK yếu"
+
+msgid "Temperature"
+msgstr "Nhiệt độ"

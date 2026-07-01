@@ -1,0 +1,41 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Target Wake Time"
+msgstr "Target Wake Time (TWT)"
+
+msgid "MU-MIMO DL"
+msgstr "MU-MIMO xuống (DL)"
+
+msgid "MU-MIMO UL"
+msgstr "MU-MIMO lên (UL)"
+
+msgid "OFDMA DL"
+msgstr "OFDMA xuống (DL)"
+
+msgid "OFDMA UL"
+msgstr "OFDMA lên (UL)"
+
+msgid "A-MSDU"
+msgstr "Gộp MSDU (A-MSDU)"
+
+msgid "Auto Block ACK"
+msgstr "Tự động Block ACK"
+
+msgid "U-APSD"
+msgstr "Chế độ tiết kiệm điện U-APSD"
+
+msgid "Kick low RSSI station threshold"
+msgstr "Ngưỡng loại client tín hiệu yếu"
+
+msgid "Station associate threshold"
+msgstr "Ngưỡng cho phép client kết nối"
+
+msgid "Wireless HWNAT"
+msgstr "Tăng tốc phần cứng Wi-Fi"
+
+msgid "Wireless configuration error"
+msgstr "Lỗi cấu hình Wi-Fi"
+
+msgid "At least one MBSSID needs to be reserved"
+msgstr "Cần giữ lại ít nhất một MBSSID"
