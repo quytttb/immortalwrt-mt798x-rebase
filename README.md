@@ -24,7 +24,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | Tính năng | Nơi cấu hình |
 |-----------|----------------|
 | **LED riêng** (DTS + script WAN) | `dts-ext/mt7981b-viettel-*.dts`, `viettel-wan-led.sh`, `01_leds` |
-| **Gói firmware** (Aurora, TurboACC, UPnP, bndstrg, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
+| **Gói firmware** (Aurora, TurboACC, UPnP, bndstrg, nlbwmon, DDNS, WireGuard, Adblock, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
 | **Mặc định VN** (timezone, UPnP, BBR) | `package/emortal/default-settings` (`default-settings-vn`) |
 | **Theme Aurora + config** | Clone CI: `luci-theme-aurora`, `luci-app-aurora-config` |
 | **Defconfig build** | `defconfig/viettel-only.config` (TurboACC, UPnP vi, Aurora, …) |
@@ -138,6 +138,10 @@ immortalwrt-mediatek-filogic-<device>-initramfs-recovery.itb
 Hướng dẫn chi tiết (TFTP, U-Boot bootmenu, UART, sysupgrade NAND):
 
 **[docs/huong-dan-nap-firmware.md](docs/huong-dan-nap-firmware.md)**
+
+Cấu hình WireGuard, DDNS, Adblock, nlbwmon:
+
+**[docs/huong-dan-tinh-nang-mo-rong.md](docs/huong-dan-tinh-nang-mo-rong.md)**
 
 Tóm tắt nhanh:
 
