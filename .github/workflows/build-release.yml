@@ -153,16 +153,27 @@ jobs:
 
             ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6.
 
-            | Thiết bị | File | Cách dùng |
-            |----------|------|-----------|
-            | Viettel NR3053 | `*viettel_nr3053*-sysupgrade.itb` | sysupgrade / TFTP |
-            | Viettel NR3053 (recovery) | `*viettel_nr3053*-initramfs-recovery.itb` | UART / TFTP recovery |
-            | Viettel NR3053 (U-Boot) | `*viettel_nr3053*-bl31-uboot.fip` | Nâng cấp U-Boot (bootmenu [7]) |
-            | Viettel NR3053 (BL2) | `*viettel_nr3053*-preloader.bin` | Nâng cấp BL2 (bootmenu [8], rủi ro cao) |
-            | Viettel 32X6 | `*viettel_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
-            | Viettel 32X6 (recovery) | `*viettel_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
-            | Viettel 32X6 (U-Boot) | `*viettel_32x6*-bl31-uboot.fip` | Nâng cấp U-Boot (bootmenu [7]) |
-            | Viettel 32X6 (BL2) | `*viettel_32x6*-preloader.bin` | Nâng cấp BL2 (bootmenu [8], rủi ro cao) |
+            Mỗi thiết bị có **4 file firmware** + `sha256sums`:
+
+            ### Viettel NR3053
+
+            | File | Thành phần | Cách dùng |
+            |------|------------|-----------|
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | BL31 + U-Boot (FIP) | Nâng cấp U-Boot (bootmenu [7]) |
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-preloader.bin` | BL2 preloader | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
+
+            ### Viettel 32X6
+
+            | File | Thành phần | Cách dùng |
+            |------|------------|-----------|
+            | `immortalwrt-mediatek-filogic-viettel_32x6-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
+            | `immortalwrt-mediatek-filogic-viettel_32x6-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
+            | `immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | BL31 + U-Boot (FIP) | Nâng cấp U-Boot (bootmenu [7]) |
+            | `immortalwrt-mediatek-filogic-viettel_32x6-preloader.bin` | BL2 preloader | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
+
+            Chi tiết nạp firmware: [docs/huong-dan-nap-firmware.md](https://github.com/quytttb/immortalwrt-mt798x-rebase/blob/main/docs/huong-dan-nap-firmware.md)
 
             Built from tag `${{ needs.prepare.outputs.tag }}`.
           files: |
