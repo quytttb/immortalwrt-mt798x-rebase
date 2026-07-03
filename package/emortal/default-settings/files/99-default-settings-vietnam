@@ -30,6 +30,9 @@ for f in /etc/apk/repositories.d/distfeeds.list /etc/opkg/distfeeds.conf; do
 	sed -i.bak \
 		-e "s,https://mirrors.vsean.net/openwrt,$apk_mirror,g" \
 		-e "s,https://mirrors.vsean.net/immortalwrt,$apk_mirror,g" \
+		-e '/\/video\/packages\.adb/d' \
+		-e '/_video /d' \
+		-e '/\/video$/d' \
 		"$f"
 done
 rm -f /var/cache/apk/*.adb /var/cache/apk/*.gz 2>/dev/null

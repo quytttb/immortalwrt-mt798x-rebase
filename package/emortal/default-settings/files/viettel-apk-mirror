@@ -1,25 +1,61 @@
 #!/bin/sh /etc/rc.common
-# Fix broken APK mirrors (mirrors.vsean.net returns 302, busybox wget fails).
+# Fix APK repo list: vsean mirror (302) and unpublished video feed (404).
 
 START=12
 
-viettel_fix_apk_mirrors() {
+viettel_fix_apk_repos() {
 	local f changed=0
 
 	for f in /etc/apk/repositories.d/distfeeds.list /etc/opkg/distfeeds.conf; do
 		[ -f "$f" ] || continue
-		grep -q 'mirrors\.vsean\.net' "$f" 2>/dev/null || continue
-		sed -i \
-			-e 's|https://mirrors.vsean.net/openwrt|https://downloads.immortalwrt.org|g' \
-			-e 's|https://mirrors.vsean.net/immortalwrt|https://downloads.immortalwrt.org|g' \
-			"$f"
-		changed=1
-		logger -t viettel-apk-mirror "Replaced vsean mirror in $f"
+
+		if grep -Eq '/video/packages\.adb|_video |/video$' "$f" 2>/dev/null; then
+			sed -i \
+				-e '/\/video\/packages\.adb/d' \
+				-e '/_video /d' \
+				-e '/\/video$/d' \
+				"$f"
+			changed=1
+			logger -t viettel-apk-mirror "Removed unpublished video feed from $f"
+		fi
+
+		if grep -q 'mirrors\.vsean\.net' "$f" 2>/dev/null; then
+			sed -i \
+				-e 's|https://mirrors.vsean.net/openwrt|https://downloads.immortalwrt.org|g' \
+				-e 's|https://mirrors.vsean.net/immortalwrt|https://downloads.immortalwrt.org|g' \
+				"$f"
+			changed=1
+			logger -t viettel-apk-mirror "Replaced vsean mirror in $f"
+		fi
 	done
 
 	[ "$changed" = 1 ] && rm -f /var/cache/apk/*.adb /var/cache/apk/*.gz 2>/dev/null
 }
 
+# Lock base-files/libc/kernel to the image version (OpenWrt apk world constraints).
+# Without this, LuCI/apk may offer upgrading base-files from the snapshot repo.
+viettel_apk_pin_world() {
+	local pkg installed ver line
+
+	[ -f /etc/apk/world ] || return 0
+
+	for pkg in base-files libc kernel; do
+		installed=$(apk list -I "$pkg" 2>/dev/null | awk '{print $1}' | head -1)
+		[ -n "$installed" ] || continue
+		ver="${installed#${pkg}-}"
+		[ -n "$ver" ] || continue
+		line="${pkg}=${ver}"
+		if grep -q "^${pkg}=" /etc/apk/world 2>/dev/null; then
+			grep -q "^${line}$" /etc/apk/world 2>/dev/null && continue
+			sed -i "s|^${pkg}=.*|${line}|" /etc/apk/world
+		else
+			echo "$line" >> /etc/apk/world
+		fi
+		logger -t viettel-apk-mirror "Pinned ${line}"
+	done
+}
+
 start() {
-	viettel_fix_apk_mirrors
+	viettel_fix_apk_repos
+	viettel_apk_pin_world
 }
