@@ -1461,6 +1461,13 @@ int mtk_npu_hnat_mcast_ops_register(struct npu_hnat_mcast_ops *hnat_mcast_ops)
 }
 EXPORT_SYMBOL(mtk_npu_hnat_mcast_ops_register);
 
+int mtk_npu_hnat_mcast_ops_unregister(void)
+{
+	hnat_mc_ops = NULL;
+	return 0;
+}
+EXPORT_SYMBOL(mtk_npu_hnat_mcast_ops_unregister);
+
 static void hnat_mcast_group_path_switch(int group_idx, bool hw_path)
 {
 	struct ppe_mcast_table *pmcast = hnat_priv->pmcast;

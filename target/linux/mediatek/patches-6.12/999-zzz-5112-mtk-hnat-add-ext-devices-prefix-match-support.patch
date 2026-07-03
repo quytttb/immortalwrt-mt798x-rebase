@@ -39,7 +39,7 @@
  	struct timer_list hnat_mcast_check_timer;
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
-@@ -162,14 +162,32 @@ static inline struct net_device *get_wan
+@@ -163,14 +163,32 @@ static inline struct net_device *get_wan
  	return NULL;
  }
  
@@ -73,7 +73,7 @@
  			dev_hold(dev);
  			ext_entry->dev = dev;
  			pr_info("%s(%s)\n", __func__, dev->name);
-@@ -178,6 +196,26 @@ static inline int extif_set_dev(struct n
+@@ -179,6 +197,26 @@ static inline int extif_set_dev(struct n
  		}
  	}
  
