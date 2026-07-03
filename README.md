@@ -80,7 +80,7 @@ Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và bá
 ## Tải bản đã build (Release)
 
 Nếu bạn không muốn tự build, có thể tải firmware được build tự động (có sẵn giao diện hiện đại như Aurora) tại trang **[Releases](../../releases)** của repository.
-Mỗi bản release sẽ có đầy đủ các file `.itb` cần thiết để cài đặt.
+Mỗi bản release gồm: `sysupgrade.itb`, `initramfs-recovery.itb`, `bl31-uboot.fip`, `preloader.bin` cho từng thiết bị.
 
 ---
 

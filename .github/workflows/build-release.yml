@@ -157,11 +157,16 @@ jobs:
             |----------|------|-----------|
             | Viettel NR3053 | `*viettel_nr3053*-sysupgrade.itb` | sysupgrade / TFTP |
             | Viettel NR3053 (recovery) | `*viettel_nr3053*-initramfs-recovery.itb` | UART / TFTP recovery |
+            | Viettel NR3053 (U-Boot) | `*viettel_nr3053*-bl31-uboot.fip` | Nâng cấp U-Boot (bootmenu [7]) |
+            | Viettel NR3053 (BL2) | `*viettel_nr3053*-preloader.bin` | Nâng cấp BL2 (bootmenu [8], rủi ro cao) |
             | Viettel 32X6 | `*viettel_32x6*-sysupgrade.itb` | sysupgrade / TFTP |
             | Viettel 32X6 (recovery) | `*viettel_32x6*-initramfs-recovery.itb` | UART / TFTP recovery |
+            | Viettel 32X6 (U-Boot) | `*viettel_32x6*-bl31-uboot.fip` | Nâng cấp U-Boot (bootmenu [7]) |
+            | Viettel 32X6 (BL2) | `*viettel_32x6*-preloader.bin` | Nâng cấp BL2 (bootmenu [8], rủi ro cao) |
 
             Built from tag `${{ needs.prepare.outputs.tag }}`.
           files: |
             release-assets/**/*.itb
             release-assets/**/*.bin
+            release-assets/**/*.fip
             release-assets/**/sha256sums
