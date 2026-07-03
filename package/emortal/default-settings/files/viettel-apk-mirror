@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+# Fix broken APK mirrors (mirrors.vsean.net returns 302, busybox wget fails).
+
+START=12
+
+viettel_fix_apk_mirrors() {
+	local f changed=0
+
+	for f in /etc/apk/repositories.d/distfeeds.list /etc/opkg/distfeeds.conf; do
+		[ -f "$f" ] || continue
+		grep -q 'mirrors\.vsean\.net' "$f" 2>/dev/null || continue
+		sed -i \
+			-e 's|https://mirrors.vsean.net/openwrt|https://downloads.immortalwrt.org|g' \
+			-e 's|https://mirrors.vsean.net/immortalwrt|https://downloads.immortalwrt.org|g' \
+			"$f"
+		changed=1
+		logger -t viettel-apk-mirror "Replaced vsean mirror in $f"
+	done
+
+	[ "$changed" = 1 ] && rm -f /var/cache/apk/*.adb /var/cache/apk/*.gz 2>/dev/null
+}
+
+start() {
+	viettel_fix_apk_mirrors
+}

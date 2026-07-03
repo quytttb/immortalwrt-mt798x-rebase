@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=default-settings
-PKG_RELEASE:=30
+PKG_RELEASE:=31
 
 PKG_LICENSE:=GPL-2.0-only
 
@@ -49,6 +49,8 @@ define Package/default-settings-vn/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/99-default-settings-vietnam $(1)/etc/uci-defaults/
 	$(INSTALL_BIN) ./files/zz-viettel-turboacc-bbr $(1)/etc/uci-defaults/
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/viettel-apk-mirror $(1)/etc/init.d/viettel-apk-mirror
 endef
 
 $(eval $(call BuildPackage,default-settings))

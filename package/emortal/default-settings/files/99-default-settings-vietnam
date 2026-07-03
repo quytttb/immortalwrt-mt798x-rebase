@@ -20,6 +20,25 @@ if ! uci -q get system.@imm_init[0].system_vn > "/dev/null" 2>&1; then
 	EOF
 fi
 
+# APK/opkg mirror: official ImmortalWrt only (mirrors.vsean.net breaks apk update).
+apk_mirror="https://downloads.immortalwrt.org"
+uci -q set system.@imm_init[0].apk_mirror="$apk_mirror"
+uci -q commit system
+
+for f in /etc/apk/repositories.d/distfeeds.list /etc/opkg/distfeeds.conf; do
+	[ -f "$f" ] || continue
+	sed -i.bak \
+		-e "s,https://mirrors.vsean.net/openwrt,$apk_mirror,g" \
+		-e "s,https://mirrors.vsean.net/immortalwrt,$apk_mirror,g" \
+		"$f"
+done
+rm -f /var/cache/apk/*.adb /var/cache/apk/*.gz 2>/dev/null
+
+[ -x /etc/init.d/viettel-apk-mirror ] && {
+	/etc/init.d/viettel-apk-mirror enable
+	/etc/init.d/viettel-apk-mirror start
+}
+
 # Enable UPnP by default
 if uci -q get upnpd.config > /dev/null; then
 	uci -q set upnpd.config.enabled='1'

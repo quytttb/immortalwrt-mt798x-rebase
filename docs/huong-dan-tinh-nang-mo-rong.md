@@ -192,6 +192,21 @@ Lần đầu có thể mất vài phút để bắt đầu thu thập số liệ
 | DDNS không cập nhật | Xem `logread \| grep ddns`, kiểm tra token/credentials |
 | Adblock chặn nhầm | Thêm domain vào whitelist |
 | Router chậm sau bật Adblock | Giảm số feed trên 32X6 |
+| `apk update` lỗi wget / vsean | Firmware mới tự sửa mirror → `downloads.immortalwrt.org`; kiểm tra: `cat /etc/apk/repositories.d/distfeeds.list` |
+
+---
+
+## Cài thêm gói qua `apk` (sau khi flash firmware mới)
+
+Firmware fork dùng mirror chính thức ImmortalWrt. Sau flash, chạy:
+
+```bash
+apk update
+apk list | grep <tên-gói>
+apk add <tên-gói>
+```
+
+Gói đã có sẵn trong firmware (nlbwmon, WireGuard, Adblock, …) **không cần** `apk add` lại.
 
 ---
 
