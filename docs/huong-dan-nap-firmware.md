@@ -79,6 +79,35 @@ picocom -b 115200 /dev/ttyUSB0   # hoặc /dev/ttyACM0
 - Cấp quyền serial (nếu cần): `sudo usermod -aG dialout $USER` rồi đăng xuất/đăng nhập lại.
 - **Thoát picocom:** `Ctrl+A` rồi `Ctrl+X`.
 
+**Khi U-Boot vào bình thường:** một terminal picocom là đủ.
+
+#### Bố cục 2 cửa sổ — mtk_uartboot (Linux)
+
+Kẹp **2 terminal** cạnh nhau (tmux split, hoặc 2 tab GNOME Terminal / Konsole):
+
+```
+┌─────────────────────────┬─────────────────────────┐
+│  Terminal 1             │  Terminal 2             │
+│  sudo mtk_uartboot ...  │  sudo picocom -b 115200 │
+│  (đang chạy)            │  /dev/ttyUSB0           │
+│                         │  (lệnh gõ sẵn, chưa Enter)│
+└─────────────────────────┴─────────────────────────┘
+```
+
+| Terminal | Vai trò |
+|----------|---------|
+| **Trái** | `sudo mtk_uartboot --serial /dev/ttyUSB0 ...` |
+| **Phải** | Gõ sẵn `sudo picocom -b 115200 /dev/ttyUSB0` — **chưa Enter** |
+
+**Quy trình:**
+
+1. Terminal 2: gõ sẵn lệnh picocom, **đừng Enter** (hoặc picocom chưa chạy).
+2. Terminal 1: chạy mtk_uartboot → `Handshake...` → cắm nguồn → `FIP received`.
+3. Terminal 1: **`Ctrl+C`**.
+4. Terminal 2: **Enter** ngay (mở picocom trong 1–2 giây).
+
+> Không chạy picocom và mtk_uartboot **cùng lúc** trên `/dev/ttyUSB0` — chỉ luân phiên: tool xong → picocom vào.
+
 ### Windows
 
 #### TFTP server — Tftpd64
@@ -123,19 +152,39 @@ Nếu TFTP timeout: tạm tắt firewall để thử, hoặc thêm rule inbound 
 
 #### UART — PuTTY (Serial)
 
-**Chuẩn bị session PuTTY một lần** (dùng lại sau mỗi lần `mtk_uartboot`):
+**Chuẩn bị session PuTTY một lần** (dùng lại mỗi lần):
 
 1. Cắm USB-TTL, cài driver (CH340/CP2102…) nếu Windows chưa nhận.
 2. **Device Manager → Ports (COM & LPT)** → ghi nhớ số COM (ví dụ `COM3`).
-3. Mở **PuTTY** (chưa cần Open):
+3. Mở **PuTTY**:
    - **Connection type:** Serial
-   - **Serial line:** `COM3` (đúng cổng của bạn)
+   - **Serial line:** `COM3`
    - **Speed:** `115200`
-4. Menu trái: **Connection → Serial** — kiểm tra **Data bits** 8, **Stop bits** 1, **Parity** None, **Flow control** None.
-5. Quay lại **Session** → nhập tên (ví dụ `Viettel-UART`) → **Save**.
+4. **Connection → Serial:** Data bits 8, Stop bits 1, Parity None, Flow control None.
+5. **Session** → tên `Viettel-UART` → **Save**.
 
-> Cáp TTL **3.3 V** — TX/RX **đảo** (TX adapter → RX board).  
-> Sau này chỉ cần chọn session `Viettel-UART` → **Open** (xem mục [mtk_uartboot trên Windows](#mtk_uartboot-trên-windows) — mở PuTTY **sau** khi chạy xong `mtk_uartboot.exe`).
+> Cáp TTL **3.3 V** — TX/RX **đảo**.
+
+**Khi U-Boot vào bình thường** (có dòng autoboot): chỉ cần **một** cửa sổ PuTTY → **Open** → theo dõi log.
+
+#### Bố cục 2 cửa sổ — mtk_uartboot (Windows)
+
+Khi cần **mtk_uartboot**, nên **kẹp 2 cửa sổ cạnh nhau** (Snap Win+← / Win+→):
+
+```
+┌─────────────────────────┬─────────────────────────┐
+│  Cửa sổ 1 — CMD         │  Cửa sổ 2 — PuTTY       │
+│  mtk_uartboot.exe       │  Session Viettel-UART   │
+│  (chiếm COM khi chạy)   │  (chưa bấm Open)        │
+└─────────────────────────┴─────────────────────────┘
+```
+
+| Cửa sổ | Vai trò |
+|--------|---------|
+| **Trái — CMD/PowerShell** | Chạy `mtk_uartboot.exe` |
+| **Phải — PuTTY** | Session đã Save; **chưa Open** cho đến khi mtk_uartboot xong |
+
+> Cùng lúc **chỉ một** chương trình được nối COM. PuTTY **không** Open trong lúc mtk_uartboot chạy; giữ cửa sổ PuTTY bên cạnh để sau `FIP received` bấm **Open** ngay (1–2 giây).
 
 #### mtk_uartboot trên Windows
 
@@ -151,18 +200,18 @@ C:\viettel-uart\
 └── immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip   ← đúng model (NR3053 hoặc 32X6)
 ```
 
-**Thứ tự thao tác** (quan trọng — COM port chỉ một chương trình dùng được):
+**Thứ tự thao tác** (đã kẹp 2 cửa sổ CMD + PuTTY):
 
-| Bước | Việc cần làm |
-|------|----------------|
-| 1 | **Đóng PuTTY** nếu đang mở (serial phải trống). |
-| 2 | **Rút nguồn** router (chưa cắm adapter). |
-| 3 | Mở **CMD** hoặc **PowerShell**, chạy `mtk_uartboot.exe` (xem lệnh bên dưới). |
-| 4 | Khi thấy `Handshake...` → **cắm nguồn** router (hoặc nhấn nút Reset). |
-| 5 | Đợi dòng **`FIP received`** (hoặc tool báo hoàn tất). |
-| 6 | **`Ctrl+C`** đóng `mtk_uartboot` **ngay** (trong ~2–3 giây). |
-| 7 | Mở **PuTTY** → chọn session **`Viettel-UART`** đã lưu → **Open**. |
-| 8 | Thấy log U-Boot → nhấn **phím bất kỳ** khi `Hit any key to stop autoboot` → gõ `bootmenu`. |
+| Bước | Cửa sổ | Việc cần làm |
+|------|--------|----------------|
+| 1 | PuTTY | Session `Viettel-UART` mở sẵn — **chưa** bấm Open |
+| 2 | — | **Rút nguồn** router |
+| 3 | CMD | Chạy `mtk_uartboot.exe` (lệnh bên dưới) |
+| 4 | CMD | `Handshake...` → **cắm nguồn** |
+| 5 | CMD | Đợi **`FIP received`** |
+| 6 | CMD | **`Ctrl+C`** |
+| 7 | PuTTY | Bấm **Open** ngay (1–2 giây) |
+| 8 | PuTTY | Nhấn phím khi `Hit any key to stop autoboot` → `bootmenu` |
 
 **Lệnh CMD** (NR3053 — đổi tên file FIP cho 32X6):
 
@@ -210,9 +259,9 @@ http://192.168.1.1/
 
 Upload file `*-squashfs-sysupgrade.itb`. Dùng Chrome/Edge/Firefox — không cần cài thêm phần mềm.
 
-> ⚠️ **Lưu ý chung (Linux & Windows):** Phải **đóng picocom/PuTTY** trước khi chạy `mtk_uartboot` — cổng serial chỉ một phần mềm dùng được. Sau `FIP received` → **đóng mtk_uartboot** → **rồi mới** mở PuTTY/picocom.
+> ⚠️ **mtk_uartboot:** kẹp 2 cửa sổ (mtk_uartboot + picocom/PuTTY). Cùng lúc chỉ một chương trình chiếm cổng serial; sau `FIP received` → **Ctrl+C** cửa sổ tool → **ngay lập tức** mở picocom/PuTTY ở cửa sổ kia.
 
-- Đọc log boot: nhấn **phím bất kỳ** khi thấy dòng `Hit any key to stop autoboot`.
+- Đọc log boot: nhấn **phím bất kỳ** khi thấy `Hit any key to stop autoboot`.
 - Gõ lệnh U-Boot trực tiếp trong terminal (ví dụ `bootmenu`, `printenv`).
 
 ### Vào U-Boot bootmenu
@@ -303,11 +352,13 @@ picocom -b 115200 /dev/ttyUSB0
 
 Dùng khi chỉ thấy log BootROM hoặc im lặng — không có dòng autoboot.
 
+**Chuẩn bị:** kẹp **2 cửa sổ** — mtk_uartboot (trái) và picocom/PuTTY (phải, chưa kết nối serial). Xem [Bố cục 2 cửa sổ Linux](#bố-cục-2-cửa-sổ--mtk_uartboot-linux) hoặc [Windows](#bố-cục-2-cửa-sổ--mtk_uartboot-windows).
+
 **Linux:**
 
-1. **Đóng picocom** (cổng serial cần trống).
+1. Terminal phải: gõ sẵn `sudo picocom -b 115200 /dev/ttyUSB0` — **chưa Enter**.
 2. **Rút nguồn** router.
-3. Chạy tại **thư mục gốc repo** (hoặc thư mục có file FIP + BL2):
+3. Terminal trái — chạy tại thư mục gốc repo:
 
 ```bash
 chmod +x ../mtk_uart/mtk_uartboot
@@ -318,11 +369,10 @@ sudo ../mtk_uart/mtk_uartboot --serial /dev/ttyUSB0 \
   --aarch64
 ```
 
-4. Khi thấy `Handshake...` → **cắm nguồn** (hoặc nhấn reset).
-5. Đợi **`FIP received`** → **`Ctrl+C`** đóng `mtk_uartboot`.
-6. Mở lại **picocom** (`picocom -b 115200 /dev/ttyUSB0`) — đợi prompt U-Boot.
+4. `Handshake...` → **cắm nguồn** → `FIP received` → **`Ctrl+C`** (terminal trái).
+5. Terminal phải: **Enter** ngay → đợi prompt U-Boot.
 
-**Windows:** xem [mtk_uartboot trên Windows](#mtk_uartboot-trên-windows) — dùng `mtk_uartboot.exe`, sau `FIP received` mở session PuTTY **`Viettel-UART`** đã lưu.
+**Windows:** [mtk_uartboot trên Windows](#mtk_uartboot-trên-windows) — CMD + PuTTY kẹp cạnh nhau; FIP xong thì **Open** PuTTY.
 
 > `mtk_uartboot` chỉ boot U-Boot **trong RAM**, không ghi NAND. Rút điện → router boot lại từ NAND cũ.
 
@@ -459,12 +509,12 @@ picocom -b 115200 /dev/ttyUSB0
 
 **A2 — Brick / không vào U-Boot (mtk_uartboot)**
 
-Dùng khi chỉ thấy log BootROM hoặc im lặng — không có dòng autoboot.
+**Chuẩn bị:** 2 cửa sổ kẹp cạnh nhau (xem mục [Bố cục 2 cửa sổ](#bố-cục-2-cửa-sổ--mtk_uartboot-linux)).
 
 **Linux:**
 
-1. **Đóng picocom** — **rút nguồn** router.
-2. Chạy tại thư mục gốc repo:
+1. Terminal phải: lệnh picocom gõ sẵn, **chưa Enter**. **Rút nguồn** router.
+2. Terminal trái:
 
 ```bash
 chmod +x ../mtk_uart/mtk_uartboot
@@ -475,11 +525,11 @@ sudo ../mtk_uart/mtk_uartboot --serial /dev/ttyUSB0 \
   --aarch64
 ```
 
-3. `Handshake...` → cắm nguồn → `FIP received` → **Ctrl+C** → mở lại **picocom**.
+3. `Handshake...` → cắm nguồn → `FIP received` → **Ctrl+C** → terminal phải **Enter**.
 
-**Windows:** [mtk_uartboot trên Windows](#mtk_uartboot-trên-windows) — file FIP `viettel_32x6-bl31-uboot.fip`, sau đó mở PuTTY session đã lưu.
+**Windows:** [mtk_uartboot trên Windows](#mtk_uartboot-trên-windows) — FIP file `viettel_32x6-bl31-uboot.fip`.
 
-> `mtk_uartboot` chỉ boot U-Boot **trong RAM**, không ghi NAND. **Không dùng** FIP của NR3053 cho 32X6.
+> **Không dùng** FIP của NR3053 cho 32X6. `mtk_uartboot` chỉ boot U-Boot trong RAM.
 
 #### Bước 2 — Boot initramfs từ TFTP
 
@@ -731,15 +781,15 @@ Hoặc trong bootmenu chọn **[8] Load BL2 preloader via TFTP then write to NAN
 - Đúng mức **3.3 V**, không dùng 5 V.
 - Thử cổng khác: Linux `/dev/ttyUSB0`, `/dev/ttyUSB1`; Windows `COM3`, `COM4` (Device Manager).
 - Chạy `mtk_uartboot` **trước**, rồi mới cắm nguồn hoặc nhấn reset.
-- **Đóng PuTTY/picocom** trước khi chạy `mtk_uartboot` (cổng serial chỉ một process).
+- **Kẹp 2 cửa sổ** sẵn: mtk_uartboot + picocom/PuTTY — không mở picocom/PuTTY **trong lúc** mtk_uartboot đang chạy.
 - NR3053 và 32X6 dùng chung BL2 RAM DDR3 (`mt7981-ram-ddr3-bl2.bin` hoặc `bl2.bin` từ build).
 
-**Sau `FIP received` không thấy log U-Boot (Windows):**
+**Sau `FIP received` không thấy log U-Boot:**
 
-1. **`Ctrl+C`** đóng `mtk_uartboot.exe` ngay (trong vài giây).
-2. Mở **PuTTY** session `Viettel-UART` đã cấu hình sẵn — **không** để mtk_uartboot chiếm COM port.
-3. Nếu PuTTY trống: rút nguồn, lặp lại từ đầu.
-4. `mtk_uartboot` và PuTTY **không mở cùng lúc** trên cùng `COMx`.
+1. **`Ctrl+C`** cửa sổ mtk_uartboot ngay.
+2. Cửa sổ kia: **Enter** (picocom) hoặc **Open** (PuTTY) trong **1–2 giây** — đây là lý do nên kẹp 2 cửa sổ từ đầu.
+3. Nếu vẫn trống: rút nguồn, lặp lại.
+4. Hai chương trình **không** cùng chiếm `/dev/ttyUSB0` hoặc `COMx` một lúc.
 
 ### TFTP timeout / không tải được file
 
