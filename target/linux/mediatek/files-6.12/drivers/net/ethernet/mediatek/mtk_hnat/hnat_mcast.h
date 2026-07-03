@@ -133,6 +133,7 @@ int hnat_mcast_enable(u32 ppe_id);
 int hnat_mcast_disable(void);
 void hnat_mcast_ifdown_handle(int ifindex);
 int mtk_npu_hnat_mcast_ops_register(struct npu_hnat_mcast_ops *hnat_mcast_ops);
+int mtk_npu_hnat_mcast_ops_unregister(void);
 void hnat_notify_mcast_sw_path(int group_idx);
 void hnat_notify_mcast_hw_path(int group_idx);
 int hnat_mcast_blist_handle(u8 *ip, u32 mask, bool add, bool is_ipv4);

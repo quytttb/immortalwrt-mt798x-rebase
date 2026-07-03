@@ -32,6 +32,7 @@
 #include "hnat.h"
 
 #include "../mtk_eth_soc.h"
+#include "../mtk_eth_reset.h"
 
 #define do_ge2ext_fast(dev, skb)                                               \
 	((IS_LAN_GRP(dev) || IS_WAN(dev) || IS_PPD(dev)) && \
@@ -465,6 +466,10 @@ int nf_hnat_netdevice_event(struct notifier_block *unused, unsigned long event,
 			hnat_priv->g_ppdev = dev_get_by_name(&init_net, hnat_priv->ppd);
 		if (IS_WAN(dev) && !hnat_priv->g_wandev)
 			hnat_priv->g_wandev = dev_get_by_name(&init_net, hnat_priv->wan);
+		break;
+	case MTK_FE_RESET_NAT_DONE:
+		pr_info("[%s] HNAT driver starts to do warm init !\n", __func__);
+		hnat_warm_init();
 		break;
 	default:
 		break;
@@ -4057,7 +4062,9 @@ static unsigned int mtk_hnat_nf_post_routing(
 			entry->ipv4_hnapt.m_timestamp = foe_timestamp(hnat_priv, true);
 
 		if (entry_hnat_is_bound(entry)) {
-			memset(skb_hnat_info(skb), 0, sizeof(struct hnat_desc));
+			/* unshare if head cloned so sibling clones keep their hnat info */
+			if (!skb_shared(skb) && !skb_cow_head(skb, 0))
+				memset(skb_hnat_info(skb), 0, sizeof(struct hnat_desc));
 
 			return -1;
 		}
