@@ -1,7 +1,7 @@
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
-@@ -34,11 +34,11 @@
- #include "../mtk_eth_soc.h"
+@@ -35,11 +35,11 @@
+ #include "../mtk_eth_reset.h"
  
  #define do_ge2ext_fast(dev, skb)                                               \
 -	((IS_LAN_GRP(dev) || IS_WAN(dev) || IS_PPD(dev)) && \
@@ -14,7 +14,7 @@
  	 (skb_hnat_sport(skb) == NR_PDMA_PORT ||                           \
  	  skb_hnat_sport(skb) == NR_QDMA_PORT) &&                       \
  	  ((get_dev_from_index(skb->vlan_tci & VLAN_VID_MASK)) ||   \
-@@ -956,7 +956,7 @@ static inline void hnat_set_iif(const st
+@@ -961,7 +961,7 @@ static inline void hnat_set_iif(const st
  		skb_hnat_iface(skb) = FOE_MAGIC_GE_LAN;
  	} else if (IS_LAN2(state->in)) {
  		skb_hnat_iface(skb) = FOE_MAGIC_GE_LAN2;
@@ -23,7 +23,7 @@
  		skb_hnat_iface(skb) = FOE_MAGIC_GE_PPD;
  	} else if (IS_EXT(state->in)) {
  		skb_hnat_iface(skb) = FOE_MAGIC_EXT;
-@@ -1257,6 +1257,25 @@ mtk_hnat_ipv6_nf_pre_routing(void *priv,
+@@ -1262,6 +1262,25 @@ mtk_hnat_ipv6_nf_pre_routing(void *priv,
  	if (!skb)
  		goto drop;
  
@@ -49,7 +49,7 @@
  	if (!is_magic_tag_valid(skb))
  		return NF_ACCEPT;
  
-@@ -1341,6 +1360,25 @@ mtk_hnat_ipv4_nf_pre_routing(void *priv,
+@@ -1346,6 +1365,25 @@ mtk_hnat_ipv4_nf_pre_routing(void *priv,
  	if (!skb)
  		goto drop;
  
@@ -75,7 +75,7 @@
  	if (!is_magic_tag_valid(skb))
  		return NF_ACCEPT;
  
-@@ -1470,6 +1508,25 @@ mtk_hnat_br_nf_local_in(void *priv, stru
+@@ -1475,6 +1513,25 @@ mtk_hnat_br_nf_local_in(void *priv, stru
  	if (!skb)
  		goto drop;
  
@@ -101,7 +101,7 @@
  	if (!is_magic_tag_valid(skb))
  		return NF_ACCEPT;
  
-@@ -2803,7 +2860,7 @@ hnat_entry_bind:
+@@ -2808,7 +2865,7 @@ hnat_entry_bind:
  			entry.ipv4_hnapt.act_dp |= dev->ifindex & UDF_PINGPONG_IFIDX;
  		}
  	} else if (IS_EXT(dev) && (FROM_GE_PPD(skb) || FROM_GE_LAN_GRP(skb) ||
@@ -110,7 +110,7 @@
  		if (!hnat_priv->data->whnat && IS_GMAC1_MODE) {
  			entry.bfib1.vpm = 1;
  			entry.bfib1.vlan_layer = 1;
-@@ -3992,6 +4049,10 @@ static unsigned int mtk_hnat_nf_post_rou
+@@ -3997,6 +4054,10 @@ static unsigned int mtk_hnat_nf_post_rou
  		 && (hw_path.flags & BIT(DEV_PATH_TNL))))
  		return 0;
  

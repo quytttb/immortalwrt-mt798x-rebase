@@ -1,6 +1,6 @@
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
-@@ -459,12 +459,19 @@ int nf_hnat_netdevice_event(struct notif
+@@ -460,12 +460,19 @@ int nf_hnat_netdevice_event(struct notif
  			dev_put(dev);
  		}
  
@@ -18,8 +18,8 @@
 +		if (IS_RX_PPD(dev) && !g_rx_ppdev)
 +			g_rx_ppdev = dev_get_by_name(&init_net, hnat_priv->rx_ppd);
  		break;
- 	default:
- 		break;
+ 	case MTK_FE_RESET_NAT_DONE:
+ 		pr_info("[%s] HNAT driver starts to do warm init !\n", __func__);
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat.h
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat.h
 @@ -1060,6 +1060,7 @@ struct mtk_hnat {

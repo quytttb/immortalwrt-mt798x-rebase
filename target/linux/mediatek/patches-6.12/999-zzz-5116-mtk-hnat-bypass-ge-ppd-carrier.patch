@@ -1,6 +1,6 @@
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat_nf_hook.c
-@@ -767,11 +767,64 @@ static void fix_skb_packet_type(struct s
+@@ -772,11 +772,64 @@ static void fix_skb_packet_type(struct s
  	}
  }
  
@@ -65,7 +65,7 @@
  
  		skb_set_network_header(skb, 0);
  		skb_push(skb, ETH_HLEN);
-@@ -788,11 +841,12 @@ static unsigned int do_hnat_ext_to_ge(st
+@@ -793,11 +846,12 @@ static unsigned int do_hnat_ext_to_ge(st
  		skb->vlan_proto = htons(ETH_P_8021Q);
  		skb->vlan_tci =
  			(VLAN_CFI_MASK | (in->ifindex & VLAN_VID_MASK));
@@ -81,7 +81,7 @@
  				     in->name, hnat_priv->g_ppdev->name);
  			trace_printk("%s: called from %s successfully\n", __func__, func);
  		}
-@@ -1086,7 +1140,7 @@ static unsigned int do_hnat_mape_w2l_fas
+@@ -1091,7 +1145,7 @@ static unsigned int do_hnat_mape_w2l_fas
  		skb->dev = hnat_priv->g_ppdev;
  		skb->protocol = htons(ETH_P_IP);
  
