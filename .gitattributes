@@ -6,4 +6,10 @@
 # Fork-specific files: always keep fork version on merge
 target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts  merge=ours
 target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts merge=ours
+target/linux/mediatek/filogic/base-files/etc/hotplug.d/iface/90-viettel-wan-led merge=ours
+target/linux/mediatek/filogic/base-files/etc/init.d/viettel-wan-led merge=ours
+target/linux/mediatek/filogic/base-files/etc/uci-defaults/04_led_migration merge=ours
+target/linux/mediatek/filogic/base-files/etc/uci-defaults/99-viettel-wan-led merge=ours
+target/linux/mediatek/filogic/base-files/lib/viettel-wan-led.sh merge=ours
 README.md                                                 merge=ours
+scripts/sync-upstream.sh                                  merge=ours

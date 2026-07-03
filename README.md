@@ -65,8 +65,8 @@ Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và bá
 
 | File | Vai trò |
 |------|---------|
-| `target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts` | LED layout fork (tích hợp `viettel-wan-led.sh`) |
-| `target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts` | LED layout fork (`nr3053:green` / `nr3053:red`) |
+| `target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts` | LED layout fork (label thống nhất `red:status` / `green:status` / `blue:status`, tích hợp `viettel-wan-led.sh`) |
+| `target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts` | LED layout fork (label thống nhất `red:status` / `green:status`) |
 | `target/linux/mediatek/image/filogic-ext-viettel-fork.mk` | `DEVICE_PACKAGES` riêng cho NR3053 và 32X6 |
 | `target/linux/mediatek/image/Makefile` | `include filogic-ext-viettel-fork.mk` (sau `filogic-ext.mk`) |
 | `.gitattributes` | `merge=ours` cho 2 DTS + README — **không phải** `.gitignore`; file vẫn track và CI build bình thường |

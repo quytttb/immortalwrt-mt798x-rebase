@@ -311,13 +311,13 @@ totolink,x6000r)
 	ucidef_set_led_netdev "wan" "wan" "green:wan" "wan" "link tx rx"
 	;;
 viettel,nr3053)
-	ucidef_set_led_default "wan-green" "WAN" "nr3053:green" "0"
-	ucidef_set_led_default "wan-red" "WAN offline" "nr3053:red" "0"
+	ucidef_set_led_default "wan-green" "WAN" "green:status" "0"
+	ucidef_set_led_default "wan-red" "WAN offline" "red:status" "0"
 	;;
 viettel,32x6)
-	ucidef_set_led_default "wan-green" "WAN" "green:wan-online" "0"
-	ucidef_set_led_default "wan-red" "WAN offline" "red:power" "0"
-	ucidef_set_led_default "wan-tx" "WAN TX" "blue:tx" "0"
+	ucidef_set_led_default "wan-green" "WAN" "green:status" "0"
+	ucidef_set_led_default "wan-red" "WAN offline" "red:status" "0"
+	ucidef_set_led_default "wan-tx" "WAN TX" "blue:status" "0"
 	;;
 tplink,archer-ax80-v1-eu)
 	ucidef_set_led_netdev "lan" "LAN" "white:lan" "br-lan" "link tx rx"

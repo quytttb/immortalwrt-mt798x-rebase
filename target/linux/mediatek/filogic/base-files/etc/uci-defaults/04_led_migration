@@ -1,0 +1,19 @@
+. /lib/functions.sh
+. /lib/functions/migrations.sh
+
+board=$(board_name)
+
+case "$board" in
+viettel,nr3053|\
+viettel,32x6)
+	migrate_leds "nr3053:green=green:status" \
+		"nr3053:red=red:status" \
+		"green:wan-online=green:status" \
+		"red:power=red:status" \
+		"blue:tx=blue:status"
+	;;
+esac
+
+migrations_apply system
+
+exit 0

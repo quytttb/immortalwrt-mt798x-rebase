@@ -1,4 +1,4 @@
-# Viettel fork: one WAN color at a time (carrier only). Blue (VHT) is for sysupgrade via diag.sh.
+# Viettel fork: one WAN color at a time (carrier only). Blue status is reserved for sysupgrade via diag.sh.
 
 viettel_wan_led_supported() {
 	case "$(board_name)" in
@@ -12,15 +12,13 @@ viettel_wan_led_suspended() {
 }
 
 _viettel_wan_led_names() {
+	GREEN=green:status
+	RED=red:status
+	BLUE=
+
 	case "$(board_name)" in
-	viettel,nr3053)
-		GREEN=nr3053:green
-		RED=nr3053:red
-		;;
 	viettel,32x6)
-		GREEN=green:wan-online
-		RED=red:power
-		BLUE=blue:tx
+		BLUE=blue:status
 		;;
 	esac
 }
