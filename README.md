@@ -14,30 +14,20 @@ Merge Official Source
 Signed-off-by: Tianling Shen <cnsztl@immortalwrt.org>
 ```
 
-### MTK OpenWrt Feeds: [0a3ac21](https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/0a3ac21dccc74e12d2b1263a636085c9fd532dd5)
+### MTK OpenWrt Feeds: [a89f844](https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/a89f844fc3c2d0bc07ca0a2cbdb4f67a1adc6179)
 
 ```
-[][HIGH][kernel/kernel-6.12][mt7988/87][eth][Fix incorrect HW LRO auto-learn refresh timer register]
+[][openwrt-25.12][mt7988][npu][Add package]
 
 [Description]
-Fix incorrect HW LRO auto-learn refresh timer register.
+Add MediaTek NPU package to support tunnel hardware offload and some other
+network offload features.
 
-The original auto-learn refresh timer register is only applicable to
-LROv1. MT7988 uses LROv2, and the register is not shared between the
-two versions. As a result, the intended configuration value was never
-written to the correct register, causing offloaded flows to take at
-least 30 seconds to age out.
-
-Without this patch, candidate flows must wait at least 30 seconds
-before they have a chance to be offloaded, instead of the expected
-1 second.
-
-[Release-log]
+[Info to Customer]
 N/A
 
-
-Change-Id: I8da166f9b8a70809279493f3fc91975a86e53f84
-Reviewed-on: https://gerrit.mediatek.inc/c/openwrt/feeds/mtk_openwrt_feeds/+/12273616
+Change-Id: Id9b74e38a284dab938e5d64a45b2885ac627690a
+Reviewed-on: https://gerrit.mediatek.inc/c/openwrt/feeds/mtk_openwrt_feeds/+/12185781
 ```
 
 ### l1parser: [081bb31](https://github.com/chasey-dev/l1parser/commit/081bb31211efc74594d25bfd1bb5811f3408a205)
