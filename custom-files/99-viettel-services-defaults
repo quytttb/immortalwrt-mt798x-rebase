@@ -1,0 +1,37 @@
+#!/bin/sh
+# First-boot defaults: Adblock (VN feed), DDNS cleanup.
+# No secrets (No-IP / WireGuard keys) are embedded here.
+
+uci -q get system.@imm_init[0] >/dev/null 2>&1 || uci -q add system imm_init >/dev/null 2>&1
+
+if ! uci -q get system.@imm_init[0].services_vn >/dev/null 2>&1; then
+	# Ensure custom feeds file does not replace main feed catalog (Adblock 4.5.6)
+	[ -f /etc/adblock/adblock.custom.feeds ] && : >/etc/adblock/adblock.custom.feeds
+
+	# Add hostsVN (reg_vn) to feed catalog if missing
+	if [ -x /etc/adblock/patch-reg_vn.sh ]; then
+		/etc/adblock/patch-reg_vn.sh
+	fi
+
+	if uci -q get adblock.global >/dev/null 2>&1; then
+		uci -q del_list adblock.global.adb_feed='certpl' 2>/dev/null
+		uci -q add_list adblock.global.adb_feed='adguard' 2>/dev/null
+		uci -q add_list adblock.global.adb_feed='adguard_tracking' 2>/dev/null
+		uci -q add_list adblock.global.adb_feed='reg_vn' 2>/dev/null
+		uci -q add_list adblock.global.adb_feed='adguard_mobile' 2>/dev/null
+		uci -q add_list adblock.global.adb_feed='abpvn' 2>/dev/null
+		uci -q set adblock.global.adb_enabled='1'
+		uci -q set adblock.global.adb_trigger='daily'
+		uci -q commit adblock
+	fi
+
+	# Remove sample DDNS entries; No-IP template is added by image overlay if present
+	uci -q delete ddns.myddns_ipv4 2>/dev/null
+	uci -q delete ddns.myddns_ipv6 2>/dev/null
+	uci -q commit ddns 2>/dev/null
+
+	uci -q set system.@imm_init[0].services_vn='1'
+	uci -q commit system
+fi
+
+exit 0

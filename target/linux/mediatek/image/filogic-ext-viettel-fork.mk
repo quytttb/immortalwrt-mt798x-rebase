@@ -30,7 +30,6 @@ define Device/viettel_32x6
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_32x6
   DEVICE_PACKAGES := default-settings-vn luci-theme-aurora luci-app-aurora-config \
 	luci-app-turboacc-mtk luci-app-upnp miniupnpd bndstrg \
-	luci-app-nlbwmon luci-i18n-nlbwmon-vi \
 	luci-app-ddns luci-i18n-ddns-vi ddns-scripts ddns-scripts-cloudflare ddns-scripts-noip \
 	kmod-wireguard wireguard-tools luci-proto-wireguard rpcd-mod-wireguard \
 	luci-app-adblock luci-i18n-adblock-vi \
@@ -62,7 +61,6 @@ define Device/viettel_nr3053
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot viettel_nr3053
   DEVICE_PACKAGES := default-settings-vn luci-theme-aurora luci-app-aurora-config \
 	luci-app-turboacc-mtk luci-app-upnp miniupnpd bndstrg \
-	luci-app-nlbwmon luci-i18n-nlbwmon-vi \
 	luci-app-ddns luci-i18n-ddns-vi ddns-scripts ddns-scripts-cloudflare ddns-scripts-noip \
 	kmod-wireguard wireguard-tools luci-proto-wireguard rpcd-mod-wireguard \
 	luci-app-adblock luci-i18n-adblock-vi \

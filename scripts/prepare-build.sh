@@ -81,6 +81,22 @@ cp custom-files/99-viettel-custom-defaults \
     package/base-files/files/etc/uci-defaults/99-viettel-custom-defaults
 echo "  Đã copy 99-viettel-custom-defaults"
 
+# Services defaults: Adblock VN feed, DDNS cleanup
+if [ -f custom-files/99-viettel-services-defaults ]; then
+    cp custom-files/99-viettel-services-defaults \
+        package/base-files/files/etc/uci-defaults/99-viettel-services-defaults
+    echo "  Đã copy 99-viettel-services-defaults"
+fi
+
+# Adblock hostsVN patch script (first boot)
+if [ -f custom-files/etc/adblock/patch-reg_vn.sh ]; then
+    mkdir -p package/base-files/files/etc/adblock
+    cp custom-files/etc/adblock/patch-reg_vn.sh \
+        package/base-files/files/etc/adblock/patch-reg_vn.sh
+    chmod +x package/base-files/files/etc/adblock/patch-reg_vn.sh
+    echo "  Đã copy etc/adblock/patch-reg_vn.sh"
+fi
+
 echo "=== Bước 4: Chuẩn bị .config từ $DEFCONFIG ==="
 cp "$DEFCONFIG" .config
 make defconfig
