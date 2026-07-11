@@ -33,7 +33,7 @@ MT7986_whnat()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	usb=205
 	if [ -d "/proc/warp_ctrl/warp0" ]; then
 	wifi1_irq=237
@@ -103,7 +103,7 @@ MT7986()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	wifi1_irq=245
 	wifi2_irq=
 	wifi3_irq=
@@ -166,7 +166,7 @@ MT7986_dbdc1()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	# WARP OFF -> wifi irq change from 237 to 245
 	wifi1_irq=245
 	wifi2_irq=245
@@ -210,7 +210,7 @@ MT7981_whnat()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	usb=205
 	if [ -d "/proc/warp_ctrl/warp0" ]; then
 		wifi1_irq=237
@@ -265,7 +265,7 @@ MT7981()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	wifi1_irq=245
 	wifi2_irq=
 	wifi3_irq=
@@ -312,7 +312,7 @@ MT7981_dbdc1()
 	#Physical IRQ# setting
 	PCIe0=
 	eth_tx=229
-	eth_rx0=230
+	eth_rx0=221
 	# WARP OFF -> wifi irq change from 237 to 245
 	wifi1_irq=245
 	wifi2_irq=245
