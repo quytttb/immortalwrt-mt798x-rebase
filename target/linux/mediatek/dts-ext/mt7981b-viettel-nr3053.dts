@@ -41,10 +41,10 @@
 			debounce-interval = <60>;
 		};
 
-		button-mesh {
-			label = "mesh";
+		button-wps {
+			label = "wps";
 			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_RFKILL>;
+			linux,code = <KEY_WPS_BUTTON>;
 			debounce-interval = <60>;
 		};
 	};
