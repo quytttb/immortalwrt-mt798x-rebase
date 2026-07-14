@@ -7,6 +7,7 @@ viettel_throughwall_supported || exit 0
 
 # Create UCI config with default enable=1 if not already present
 if ! uci -q get throughwall.throughwall > /dev/null 2>&1; then
+	touch /etc/config/throughwall
 	uci -q set throughwall.throughwall='throughwall'
 	uci -q set throughwall.throughwall.enable='1'
 	uci -q commit throughwall
