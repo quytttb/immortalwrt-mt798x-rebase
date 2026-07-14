@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "WiFi Xuyên Tường (ThroughWall)"
+msgstr "WiFi Xuyên Tường (ThroughWall)"
+
+msgid "Bật chế độ Xuyên Tường"
+msgstr "Bật chế độ Xuyên Tường"
+
+msgid "Áp dụng Ngay"
+msgstr "Áp dụng Ngay"
+
+msgid "Áp dụng không cần reboot"
+msgstr "Áp dụng không cần reboot"
+
+msgid "✅ Đã bật xuyên tường. WiFi 5GHz đang hoạt động ở công suất tối đa!"
+msgstr "✅ Đã bật xuyên tường. WiFi 5GHz đang hoạt động ở công suất tối đa!"
+
+msgid "⚠️ Đã tắt xuyên tường. Giá trị gốc sẽ được khôi phục sau khi khởi động lại."
+msgstr "⚠️ Đã tắt xuyên tường. Giá trị gốc sẽ được khôi phục sau khi khởi động lại."
+
+msgid "✅ Đã lưu và áp dụng ngay!"
+msgstr "✅ Đã lưu và áp dụng ngay!"
+
+msgid "Thông tin kỹ thuật"
+msgstr "Thông tin kỹ thuật"

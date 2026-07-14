@@ -1,0 +1,11 @@
+{
+	"luci-app-nr3053-throughwall": {
+		"description": "Grant access to NR3053 ThroughWall WiFi boost settings",
+		"read": {
+			"uci": [ "throughwall" ]
+		},
+		"write": {
+			"uci": [ "throughwall" ]
+		}
+	}
+}

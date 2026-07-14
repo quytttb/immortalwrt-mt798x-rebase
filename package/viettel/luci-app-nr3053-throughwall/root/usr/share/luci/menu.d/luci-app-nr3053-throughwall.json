@@ -1,0 +1,13 @@
+{
+	"admin/network/throughwall": {
+		"title": "WiFi Xuyên Tường",
+		"action": {
+			"type": "view",
+			"path": "nr3053/throughwall"
+		},
+		"depends": {
+			"acl": [ "luci-app-nr3053-throughwall" ],
+			"uci": { "throughwall": true }
+		}
+	}
+}
