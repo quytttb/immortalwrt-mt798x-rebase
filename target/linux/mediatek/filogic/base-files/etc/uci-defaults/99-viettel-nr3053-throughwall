@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/viettel-nr3053-throughwall.sh
+
+viettel_throughwall_supported || exit 0
+
+# Create UCI config with default enable=1 if not already present
+if ! uci -q get throughwall.throughwall > /dev/null 2>&1; then
+	uci -q set throughwall.throughwall='throughwall'
+	uci -q set throughwall.throughwall.enable='1'
+	uci -q commit throughwall
+fi
+
+# Enable the service to run on boot
+/etc/init.d/viettel-nr3053-throughwall enable
+
+# Apply immediately (rax0 may already be up)
+viettel_throughwall_update
+
+exit 0

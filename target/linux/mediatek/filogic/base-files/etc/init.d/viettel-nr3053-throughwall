@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+
+# Apply throughWall WiFi calibration boost on boot (after WiFi is up).
+# Complements the hotplug trigger for cases where hotplug fires before
+# the UCI config is readable (e.g., very early boot).
+
+START=99
+STOP=10
+
+start() {
+	. /lib/functions.sh
+	. /lib/viettel-nr3053-throughwall.sh
+
+	viettel_throughwall_supported || return 0
+	viettel_throughwall_update
+}
+
+stop() {
+	return 0
+}

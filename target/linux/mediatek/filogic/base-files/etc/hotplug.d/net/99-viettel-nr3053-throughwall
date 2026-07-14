@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Trigger throughWall calibration boost when rax0 (5 GHz) comes up.
+# Only runs on supported boards (NR3053).
+
+[ "$ACTION" = add ] || exit 0
+[ "$INTERFACE" = "rax0" ] || exit 0
+
+. /lib/functions.sh
+. /lib/viettel-nr3053-throughwall.sh
+
+viettel_throughwall_supported || exit 0
+
+viettel_throughwall_update
+
+exit 0
