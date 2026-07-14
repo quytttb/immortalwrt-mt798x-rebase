@@ -146,6 +146,7 @@ dlink,aquila-pro-ai-m60-a1)
 gatonetworks,gdsp)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x10000"
 	;;
+cmcc,xr30-mtkuboot|\
 glinet,gl-mt3000|\
 ruijie,rg-x60-new-mtkuboot)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x80000" "0x20000"

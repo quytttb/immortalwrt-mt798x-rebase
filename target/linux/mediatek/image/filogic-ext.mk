@@ -8,6 +8,25 @@ define Device/clx_s20p
 endef
 TARGET_DEVICES += clx_s20p
 
+define Device/cmcc_xr30-nand-mtkuboot
+  DEVICE_VENDOR := CMCC
+  DEVICE_MODEL := XR30 NAND
+  DEVICE_VARIANT := (MTK U-Boot layout)
+  DEVICE_DTS := mt7981b-cmcc-xr30-nand-mtkuboot
+  DEVICE_DTS_DIR := ../dts-ext
+  DEVICE_PACKAGES := kmod-usb3 automount
+  SUPPORTED_DEVICES := cmcc,xr30-mtkuboot
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 116736k
+  KERNEL_IN_UBI := 1
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += cmcc_xr30-nand-mtkuboot
+
 define Device/cudy_tr3000-v1-mtkuboot
   DEVICE_VENDOR := Cudy
   DEVICE_MODEL := TR3000
