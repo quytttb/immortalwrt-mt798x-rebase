@@ -2,6 +2,9 @@
 	"luci-app-nr3053-throughwall": {
 		"description": "Grant access to NR3053 ThroughWall WiFi boost settings",
 		"read": {
+			"file": {
+				"/usr/bin/throughwall-eeprom-read": [ "exec" ]
+			},
 			"ubus": {
 				"luci": [ "setInitAction" ],
 				"file": [ "exec" ]
@@ -9,8 +12,12 @@
 			"uci": [ "throughwall" ]
 		},
 		"write": {
+			"file": {
+				"/usr/bin/throughwall-eeprom-read": [ "exec" ]
+			},
 			"ubus": {
 				"luci": [ "setInitAction" ],
+				"file": [ "exec" ],
 				"system": [ "reboot" ]
 			},
 			"uci": [ "throughwall" ]

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Wrapper để LuCI RPC đọc EEPROM offset 0x81E của rax0 (5GHz)
+# File này được whitelist trong ACL rpcd:
+#   /usr/share/rpcd/acl.d/luci-app-nr3053-throughwall.json
+exec /usr/sbin/iwpriv rax0 e2p 81e

@@ -13,11 +13,12 @@ const callInitAction = rpc.declare({
 	expect: { result: false }
 });
 
-// Đọc EEPROM qua iwpriv để lấy trạng thái thực tế của driver
-const callExecIwpriv = rpc.declare({
+// Đọc EEPROM qua wrapper script (whitelisted trong ACL)
+// /usr/bin/throughwall-eeprom-read chạy: iwpriv rax0 e2p 81e
+const callExecEepromRead = rpc.declare({
 	object: 'file',
 	method: 'exec',
-	params: ['command', 'params'],
+	params: ['command'],
 	expect: { stdout: '' }
 });
 
@@ -33,7 +34,7 @@ return view.extend({
 	load: function() {
 		return Promise.all([
 			uci.load('throughwall'),
-			callExecIwpriv('/usr/sbin/iwpriv', ['rax0', 'e2p', '81e'])
+			callExecEepromRead('/usr/bin/throughwall-eeprom-read')
 				.catch(function() { return { stdout: '' }; })
 		]);
 	},
@@ -69,7 +70,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var eepromVal = this._parseEeprom(data[1] ? data[1].stdout : '');
+		var eepromVal = this._parseEeprom(data[1] != null ? data[1] : '');
 		var uciEnable = uci.get('throughwall', 'throughwall', 'enable') || '0';
 
 		var m, s, o;
