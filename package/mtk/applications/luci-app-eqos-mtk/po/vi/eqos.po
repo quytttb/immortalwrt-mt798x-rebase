@@ -1,0 +1,65 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Address"
+msgstr "Địa chỉ"
+
+msgid "Device rules"
+msgstr "Quy tắc thiết bị"
+
+msgid "Download"
+msgstr "Tải xuống"
+
+msgid "EQoS"
+msgstr "EQoS"
+
+msgid "Enable"
+msgstr "Bật"
+
+msgid "General Settings"
+msgstr "Cài đặt chung"
+
+msgid "Grant UCI access for luci-app-eqos"
+msgstr "Cấp quyền truy cập UCI cho luci-app-eqos"
+
+msgid "IPv4 address"
+msgstr "Địa chỉ IPv4"
+
+msgid "IPv6 address"
+msgstr "Địa chỉ IPv6"
+
+msgid "Maximum rate in Mbit/s. Use 0 for no limit."
+msgstr "Tốc độ tối đa tính bằng Mbit/s. Đặt 0 để không giới hạn."
+
+msgid "Network speed control service for MediaTek HNAT."
+msgstr "Dịch vụ quản lý băng thông cho MediaTek HNAT."
+
+msgid "Queue ID"
+msgstr "ID hàng đợi"
+
+msgid "Settings"
+msgstr "Cài đặt"
+
+msgid "This value is already in use."
+msgstr "Giá trị này đã được sử dụng."
+
+msgid "Total download bandwidth."
+msgstr "Tổng băng thông tải xuống."
+
+msgid "Total upload bandwidth."
+msgstr "Tổng băng thông tải lên."
+
+msgid "Type"
+msgstr "Loại"
+
+msgid "Upload"
+msgstr "Tải lên"
+
+msgid "Values 1-31 use HNAT HQoS. Values 32 and above use software shaping."
+msgstr "Giá trị 1-31 sử dụng HNAT HQoS. Giá trị từ 32 trở lên sử dụng giới hạn bằng phần mềm."
+
+msgid "unlimited"
+msgstr "không giới hạn"
+
+msgid "unspecified"
+msgstr "không xác định"
