@@ -195,7 +195,7 @@
 					#size-cells = <1>;
 
 					eeprom_factory_0: eeprom@0 {
-						reg = <0x0 0x1000>;
+						reg = <0x0 0x5000>;
 					};
 
 					macaddr_factory_4: macaddr@4 {
