@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-NR3053 Unlock v2 - Config Backup/Restore Exploit
+NR3053 Unlock - Config Backup/Restore Exploit
 =================================================
 Unlock SSH/Telnet trên Viettel SDMC NR3053 bằng phương pháp
 sửa đổi config backup và upload lại.
@@ -8,6 +8,7 @@ sửa đổi config backup và upload lại.
 Cách dùng:
     python3 unlock_nr3053_v2.py --password SERIAL_NUMBER
     python3 unlock_nr3053_v2.py --password SDMC25B12308007286
+    python3 unlock_nr3053_v2.py --password SERIAL_NUMBER --config-input config.bin
 
 Yêu cầu:
     pip3 install requests
@@ -30,6 +31,7 @@ import time
 try:
     import requests
     import urllib3
+
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 except ImportError:
     print("ERROR: pip3 install requests")
@@ -122,9 +124,9 @@ def api_call(base_url, method, params=None, token="", extra_headers=None):
 
 
 def login(base_url, username, password):
-    return api_call(base_url, "MGMT.login", [
-        {"loginUserName": username, "loginPwd": password}
-    ])
+    return api_call(
+        base_url, "MGMT.login", [{"loginUserName": username, "loginPwd": password}]
+    )
 
 
 def _looks_like_config_bin(body: bytes) -> bool:
@@ -191,7 +193,9 @@ def _download_via_post_router_methods(
             try:
                 resp = api_call(rpc_url, m, [], token)
                 if verbose:
-                    print(f"    POST {rpc_url.split(':')[0]} …/{rpc_url.split('/')[-1]} {m}: {str(resp)[:220]}")
+                    print(
+                        f"    POST {rpc_url.split(':')[0]} …/{rpc_url.split('/')[-1]} {m}: {str(resp)[:220]}"
+                    )
                 raw = _maybe_decode_config_from_rpc(resp)
                 if raw:
                     print(f"  Đã lấy config.bin qua JSON-RPC {m} ({len(raw)} bytes)")
@@ -230,11 +234,7 @@ def download_config(ip: str, token: str, verbose: bool = False):
         save_resp = api_call(rb, "MGMT.saveConfig", token=token)
         if verbose:
             print(f"  saveConfig ({rb.split(':')[0]}): {save_resp}")
-        err = (
-            save_resp.get("error")
-            if isinstance(save_resp, dict)
-            else None
-        )
+        err = save_resp.get("error") if isinstance(save_resp, dict) else None
         if err:
             msg = err.get("message") or err.get("code") or err
             print(f"  [!] saveConfig báo lỗi ({rb[:20]}…): {msg}")
@@ -284,13 +284,14 @@ def download_config(ip: str, token: str, verbose: bool = False):
 
                 if len(body) <= 100:
                     last_hint = (
-                        f"{qurl} HTTP {r.status_code} len={len(body)} "
-                        f"body={body!r}"
+                        f"{qurl} HTTP {r.status_code} len={len(body)} body={body!r}"
                     )
                     continue
 
                 if _looks_like_config_bin(body):
-                    print(f"  Đã tải config.bin ({len(body)} bytes) qua {config_cgi.split(':')[0]}")
+                    print(
+                        f"  Đã tải config.bin ({len(body)} bytes) qua {config_cgi.split(':')[0]}"
+                    )
                     return body, config_cgi
 
                 last_hint = (
@@ -312,7 +313,8 @@ def download_config(ip: str, token: str, verbose: bool = False):
     print(
         "  — GET config.cgi chỉ trả JSON (không còn stream file .bin) là hành vi một số bản firmware.\n"
         "  — Thử: trong web vào phần Sao lưu / Backup → tải config.bin về máy, rồi chạy script với:\n"
-        "       --config-input /đường/dẫn/config.bin\n"
+        "       --password SERIAL_NUMBER --config-input /đường/dẫn/config.bin\n"
+        "    (--password vẫn cần để đăng nhập và lấy token upload config đã sửa.)\n"
         "  — Nếu router đã unlock (SSH/Telnet đã mở): không cần exploit config nữa — đổi mật khẩu root bằng lệnh passwd qua SSH."
     )
     return None, None
@@ -324,8 +326,10 @@ def modify_config(config_bin, new_root_pw):
     new_root_hash = make_md5_crypt(new_root_pw)
 
     new_tar_buf = io.BytesIO()
-    with tarfile.open(fileobj=io.BytesIO(tar_bytes)) as orig_tar, \
-         tarfile.open(fileobj=new_tar_buf, mode="w") as new_tar:
+    with (
+        tarfile.open(fileobj=io.BytesIO(tar_bytes)) as orig_tar,
+        tarfile.open(fileobj=new_tar_buf, mode="w") as new_tar,
+    ):
         for member in orig_tar.getmembers():
             if not member.isfile():
                 new_tar.addfile(member)
@@ -395,11 +399,17 @@ def modify_config(config_bin, new_root_pw):
 
 def upload_config(config_cgi, token, config_data):
     files = {
-        "configFile": ("config.bin", io.BytesIO(config_data), "application/octet-stream")
+        "configFile": (
+            "config.bin",
+            io.BytesIO(config_data),
+            "application/octet-stream",
+        )
     }
     r = requests.post(
         f"{config_cgi}?token={token}",
-        files=files, timeout=60, verify=False,
+        files=files,
+        timeout=60,
+        verify=False,
     )
     return r.status_code, r.text
 
@@ -410,7 +420,7 @@ def wait_for_config_done(base_url, token):
         try:
             r = api_call(base_url, "MGMT.getConfigUpgradeResult", token=token)
             status = r.get("result", {}).get("status", "?")
-            print(f"    [{i*3}s] Status: {status}")
+            print(f"    [{i * 3}s] Status: {status}")
             if status == "done":
                 return True
             if status == "error":
@@ -578,7 +588,9 @@ def _setup_ssh_via_socket(ip: str, username: str, password: str) -> bool:
             print(f"  [!] dropbearkey output: {out[-400:]}")
 
         run_cmd("dropbear -p 22", 3)
-        chk = run_cmd("netstat -tlnp 2>/dev/null | grep :22 || ss -tlnp 2>/dev/null | grep :22", 2)
+        chk = run_cmd(
+            "netstat -tlnp 2>/dev/null | grep :22 || ss -tlnp 2>/dev/null | grep :22", 2
+        )
         sock.sendall(b"exit\r\n")
         sock.close()
         if ":22" in chk or "dropbear" in chk.lower():
@@ -599,23 +611,38 @@ def main():
         description="Unlock SSH/Telnet on Viettel SDMC NR3053",
     )
     parser.add_argument("--ip", default="192.168.1.1")
-    parser.add_argument("--password", "-p", required=True,
-                        help="Web admin password (usually the device Serial Number)")
-    parser.add_argument("--root-password", default=NEW_ROOT_PASSWORD,
-                        help=f"New root password to set (default: {NEW_ROOT_PASSWORD})")
     parser.add_argument(
-        "--verbose", "-v",
+        "--password",
+        "-p",
+        help="Web admin password (usually the device Serial Number)",
+    )
+    parser.add_argument(
+        "--root-password",
+        default=NEW_ROOT_PASSWORD,
+        help=f"New root password to set (default: {NEW_ROOT_PASSWORD})",
+    )
+    parser.add_argument(
+        "--verbose",
+        "-v",
         action="store_true",
         help="In chi tiết khi tải config (GET/saveConfig).",
     )
     parser.add_argument(
-        "--config-input", "-i", metavar="FILE",
+        "--config-input",
+        "-i",
+        metavar="FILE",
         help=(
             "Đường dẫn file config.bin đã tải tay từ web (Sao lưu); "
             "bỏ qua bước [3] qua HTTP."
         ),
     )
     args = parser.parse_args()
+
+    if not args.password:
+        parser.error(
+            "--password/-p là bắt buộc để đăng nhập và upload config. "
+            "Ví dụ: --password SERIAL_NUMBER --config-input config.bin"
+        )
 
     ip = args.ip
     default_https_router = f"https://{ip}/cgi-bin/router.cgi"
@@ -711,7 +738,7 @@ def main():
         if check_port(ip, 80) or check_port(ip, 443):
             print("  Router is back online!")
             break
-        print(f"  Still booting... (attempt {attempt+1})")
+        print(f"  Still booting... (attempt {attempt + 1})")
         time.sleep(10)
 
     # --- Step 7: Setup SSH via Telnet ---
@@ -744,7 +771,9 @@ def main():
         if not ssh_ok and telnet_ok:
             print("\n  SSH chua mo? Dang nhap Telnet va chay:")
             print("    rm -f /etc/dropbear/dropbear_rsa_host_key")
-            print("    dropbearkey -t rsa -s 2048 -f /etc/dropbear/dropbear_rsa_host_key")
+            print(
+                "    dropbearkey -t rsa -s 2048 -f /etc/dropbear/dropbear_rsa_host_key"
+            )
             print("    dropbear -p 22")
     else:
         print("  Ports are still closed. Router may still be booting.")

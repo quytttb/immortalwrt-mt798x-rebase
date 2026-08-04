@@ -624,6 +624,20 @@ Nếu thiết bị của bạn đang chạy firmware gốc của Viettel và b�
    py -m pip install requests
    py scripts\unlock\unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN
    ```
+
+   Nếu script báo `config.cgi` chỉ trả JSON, hãy tải `config.bin` thủ công trong
+   giao diện web ở mục Sao lưu / Backup, rồi chạy lại. Tham số `--password` vẫn
+   bắt buộc vì script cần đăng nhập để upload file đã sửa:
+
+   **Linux:**
+   ```bash
+   python3 scripts/unlock/unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN --config-input /duong/dan/config.bin
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   py scripts\unlock\unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN --config-input "C:\duong\dan\config.bin"
+   ```
 4. Đợi script chạy xong và router khởi động lại, bạn sẽ có quyền truy cập SSH:
    ```bash
    ssh root@192.168.1.1
