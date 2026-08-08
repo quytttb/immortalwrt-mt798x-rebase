@@ -24,12 +24,16 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | Tính năng | Nơi cấu hình |
 |-----------|----------------|
 | **LED riêng** (DTS + script WAN) | `dts-ext/mt7981b-viettel-*.dts`, `viettel-wan-led.sh`, `01_leds` |
-| **Gói firmware** (Aurora, TurboACC, UPnP, bndstrg, DDNS, WireGuard, Adblock, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
+| **Gói firmware** (Aurora, TurboACC, UPnP, DDNS, WireGuard, Adblock, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
 | **Mặc định VN** (timezone, UPnP, BBR) | `package/emortal/default-settings` (`default-settings-vn`) |
 | **Theme Aurora + config** | Clone CI: `luci-theme-aurora`, `luci-app-aurora-config` |
 | **Defconfig build** | `defconfig/viettel-only.config` (TurboACC, UPnP vi, Aurora, …) |
 | **Dịch UPnP tiếng Việt** | `custom-files/vi-upnp.po` (CI inject vào build) |
 | **Lưu trữ nội bộ NR3053** | `/mnt/storage` tự mount + trang LuCI **Hệ thống → Lưu trữ nội bộ** |
+
+### Band steering
+
+Driver Wi-Fi được build với khả năng MediaTek band steering, nhưng cấu hình mặc định giữ `BandSteering=0`, không cài/chạy daemon `bndstrg`. Đây là trạng thái tương ứng firmware stock NR3053: tránh ép client chuyển băng tần khi chưa có profile và kiểm thử theo thiết bị. Không bật thủ công gói `bndstrg` cũ: daemon/shim đóng gói sẵn của nó chưa được kiểm thử với driver và profile của fork.
 
 `filogic-ext-viettel-fork.mk` được `include` sau `filogic-ext.mk` trong `target/linux/mediatek/image/Makefile` — override `DEVICE_PACKAGES` mà không conflict upstream.
 
@@ -45,7 +49,7 @@ Trong **Hệ thống → Lưu trữ nội bộ**, người dùng có thể chọ
 
 | Nhánh | Mục đích |
 |-------|----------|
-| **`main`** | Fork đầy đủ: cả hai router, band steering (`bndstrg`), README/docs tiếng Việt — **dùng để build flash** |
+| **`main`** | Fork đầy đủ: cả hai router, khả năng driver band steering (tắt mặc định), README/docs tiếng Việt — **dùng để build flash** |
 | **`25.12`** | Mirror [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (`25.12`), không patch Viettel |
 
 NR3053 và 32X6 đã merge vào upstream (`chasey-dev:25.12`). Các nhánh PR cũ (`viettel-nr3053`, `viettel-32x6`) đã xóa — không còn cần thiết.
@@ -175,4 +179,4 @@ Tóm tắt nhanh:
 
 - Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
 - Patch upstream: tạo nhánh mới từ `origin/25.12` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
-- Tính năng fork (bndstrg, v.v.): chỉ trên `main`.
+- Tính năng fork riêng: chỉ trên `main`.
