@@ -44,6 +44,16 @@ define Package/ubi-utils
   TITLE:=Utilities for ubi info/debug
 endef
 
+define Package/ubifs-utils
+ $(call Package/mtd-utils/Default)
+  TITLE:=Utilities for creating UBIFS filesystems
+  DEPENDS:=+ubi-utils
+endef
+
+define Package/ubifs-utils/description
+  Utilities for creating UBIFS filesystems on UBI volumes.
+endef
+
 define Package/ubi-utils/description
   Utilities for manipulating memory technology devices.
 endef
@@ -84,6 +94,11 @@ define Package/ubi-utils/install
 	$(INSTALL_DATA) ./files/ubihealthd.defaults $(1)/etc/uci-defaults/ubihealthd
 endef
 
+define Package/ubifs-utils/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/mkfs.ubifs $(1)/usr/sbin/
+endef
+
 define Package/nand-utils/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) \
@@ -92,4 +107,5 @@ define Package/nand-utils/install
 endef
 
 $(eval $(call BuildPackage,ubi-utils))
+$(eval $(call BuildPackage,ubifs-utils))
 $(eval $(call BuildPackage,nand-utils))

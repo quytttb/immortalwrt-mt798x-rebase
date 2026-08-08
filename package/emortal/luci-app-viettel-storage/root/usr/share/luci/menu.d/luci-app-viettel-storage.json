@@ -1,0 +1,13 @@
+{
+	"admin/system/viettel-storage": {
+		"title": "Lưu trữ nội bộ",
+		"order": 72,
+		"action": {
+			"type": "view",
+			"path": "system/viettel-storage"
+		},
+		"depends": {
+			"acl": [ "luci-app-viettel-storage" ]
+		}
+	}
+}

@@ -1,0 +1,160 @@
+#!/bin/sh
+
+set -u
+
+STORAGE_NAME="storage"
+STORAGE_TARGET="/mnt/storage"
+
+die() {
+	echo "viettel-storage: $*" >&2
+	exit 1
+}
+
+board_name() {
+	cat /tmp/sysinfo/board_name 2>/dev/null || true
+}
+
+assert_nr3053() {
+	[ "$(board_name)" = "viettel,nr3053" ] || \
+		die "chỉ hỗ trợ Viettel NR3053"
+}
+
+find_volume() {
+	local name_file volume_name
+
+	for name_file in /sys/class/ubi/ubi*_*/name; do
+		[ -r "$name_file" ] || continue
+		volume_name="$(cat "$name_file")"
+		[ "$volume_name" = "$1" ] || continue
+		basename "$(dirname "$name_file")"
+		return 0
+	done
+
+	return 1
+}
+
+is_mounted() {
+	awk -v target="$1" '$2 == target { found = 1 } END { exit !found }' /proc/mounts
+}
+
+format_empty_volume() {
+	local volume="$1"
+	local ubi_device="${volume%%_*}"
+	local data_bytes min_io_size leb_size leb_count image empty_dir
+
+	data_bytes="$(cat "/sys/class/ubi/$volume/data_bytes" 2>/dev/null || true)"
+	[ "$data_bytes" = "0" ] || return 1
+
+	min_io_size="$(cat "/sys/class/ubi/$ubi_device/min_io_size" 2>/dev/null || true)"
+	leb_size="$(cat "/sys/class/ubi/$ubi_device/usable_eb_size" 2>/dev/null || true)"
+	leb_count="$(cat "/sys/class/ubi/$volume/reserved_ebs" 2>/dev/null || true)"
+	case "$min_io_size" in ''|*[!0-9]*) return 1 ;; esac
+	case "$leb_size" in ''|*[!0-9]*) return 1 ;; esac
+	case "$leb_count" in ''|*[!0-9]*) return 1 ;; esac
+
+	image="/tmp/${STORAGE_NAME}.ubifs.$$"
+	empty_dir="/tmp/${STORAGE_NAME}.empty.$$"
+	mkdir -p "$empty_dir" || return 1
+
+	if ! mkfs.ubifs -r "$empty_dir" -m "$min_io_size" -e "$leb_size" \
+		-c "$leb_count" -o "$image" >/dev/null 2>&1; then
+		rmdir "$empty_dir"
+		rm -f "$image"
+		return 1
+	fi
+
+	rmdir "$empty_dir"
+	if ! ubiupdatevol "/dev/$volume" "$image" >/dev/null 2>&1; then
+		rm -f "$image"
+		return 1
+	fi
+
+	rm -f "$image"
+	return 0
+}
+
+mount_storage() {
+	local mode volume
+
+	mode="$(fw_printenv -n viettel_storage_mode 2>/dev/null || true)"
+	[ "$mode" = "overlay" ] && return 0
+
+	volume="$(find_volume "$STORAGE_NAME" || true)"
+	[ -n "$volume" ] || return 0
+	is_mounted "$STORAGE_TARGET" && return 0
+
+	mkdir -p "$STORAGE_TARGET" || return 1
+	mount -t ubifs "/dev/$volume" "$STORAGE_TARGET" 2>/dev/null && return 0
+
+	if format_empty_volume "$volume" && mount -t ubifs "/dev/$volume" "$STORAGE_TARGET"; then
+		logger -t viettel-storage "initialized and mounted /dev/$volume at $STORAGE_TARGET"
+		return 0
+	fi
+
+	logger -t viettel-storage "could not mount /dev/$volume at $STORAGE_TARGET"
+	return 1
+}
+
+print_status() {
+	local volume mode storage_total storage_available overlay_total overlay_available
+
+	volume="$(find_volume "$STORAGE_NAME" || true)"
+	mode="$(fw_printenv -n viettel_storage_mode 2>/dev/null || true)"
+	[ -n "$mode" ] || mode="separate"
+
+	storage_total=""
+	storage_available=""
+	if is_mounted "$STORAGE_TARGET"; then
+		set -- $(df -kP "$STORAGE_TARGET" 2>/dev/null | awk 'NR == 2 { print $2, $4 }')
+		storage_total="${1:-}"
+		storage_available="${2:-}"
+	fi
+
+	set -- $(df -kP /overlay 2>/dev/null | awk 'NR == 2 { print $2, $4 }')
+	overlay_total="${1:-}"
+	overlay_available="${2:-}"
+
+	echo "board=$(board_name)"
+	echo "mode=$mode"
+	echo "storage_volume=$volume"
+	echo "storage_mounted=$(is_mounted "$STORAGE_TARGET" && echo 1 || echo 0)"
+	echo "storage_total_kib=$storage_total"
+	echo "storage_available_kib=$storage_available"
+	echo "overlay_total_kib=$overlay_total"
+	echo "overlay_available_kib=$overlay_available"
+}
+
+prepare_mode() {
+	local mode="$1"
+
+	assert_nr3053
+	case "$mode" in
+	separate|overlay) ;;
+	*) die "chế độ không hợp lệ" ;;
+	esac
+
+	command -v fw_setenv >/dev/null 2>&1 || die "không tìm thấy fw_setenv"
+	fw_setenv viettel_storage_mode "$mode" || die "không thể ghi U-Boot environment"
+
+	echo "mode=$mode"
+	echo "next_step=sysupgrade-reset"
+}
+
+case "${1:-}" in
+mount)
+	mount_storage
+	;;
+status)
+	print_status
+	;;
+prepare-overlay)
+	prepare_mode overlay
+	;;
+prepare-storage)
+	prepare_mode separate
+	;;
+*)
+	echo "Usage: $0 {mount|status|prepare-overlay|prepare-storage}" >&2
+	exit 2
+	;;
+esac

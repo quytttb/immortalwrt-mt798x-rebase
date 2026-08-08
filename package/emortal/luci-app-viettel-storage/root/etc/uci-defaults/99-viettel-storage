@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/etc/init.d/viettel-storage enable
+/etc/init.d/viettel-storage start
+
+exit 0
