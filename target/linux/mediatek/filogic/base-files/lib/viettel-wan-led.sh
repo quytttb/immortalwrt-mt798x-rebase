@@ -1,4 +1,5 @@
-# Viettel fork: one WAN color at a time (carrier only). Blue status is reserved for sysupgrade via diag.sh.
+# Viettel fork: two physical LEDs only. Keep the WAN carrier state independent
+# from Wi-Fi/Mesh packages so the same behavior works on a minimal image.
 
 viettel_wan_led_supported() {
 	case "$(board_name)" in
@@ -34,8 +35,19 @@ viettel_wan_led_set() {
 	[ -n "$BLUE" ] && led_off "$BLUE"
 
 	case "$state" in
-	up) led_on "$GREEN" ;;
-	down) led_on "$RED" ;;
+	up)
+		led_on "$GREEN"
+		;;
+	down)
+		# Match the stock firmware's WAN-disconnected indication.
+		led_timer "$RED" 300 200
+		;;
+	wps)
+		# Reserved for a future WPS/onboarding event hook.
+		led_timer "$GREEN" 300 200
+		;;
+	off)
+		;;
 	esac
 }
 

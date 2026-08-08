@@ -13,7 +13,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
 | Cổng LAN | 3 × LAN + 1 × WAN | 2 × LAN + 1 × WAN |
 | USB | Không | Không |
-| LED | Đỏ không có WAN carrier / xanh có carrier (một màu) | Giống NR3053 (không ping, không TX) |
+| LED | Đỏ nháy khi mất WAN carrier / xanh cố định khi có carrier | Giống NR3053 (không ping, không TX) |
 | IP LAN mặc định | `192.168.1.1` | `192.168.1.1` |
 | Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
 
@@ -149,6 +149,10 @@ Hướng dẫn chi tiết (TFTP, U-Boot bootmenu, UART, sysupgrade NAND):
 Cấu hình WireGuard, DDNS, Adblock:
 
 **[docs/huong-dan-tinh-nang-mo-rong.md](docs/huong-dan-tinh-nang-mo-rong.md)**
+
+Nghiên cứu và điều kiện triển khai MediaTek EasyMesh native cho NR3053:
+
+**[docs/trien-khai-mediatek-easymesh.md](docs/trien-khai-mediatek-easymesh.md)**
 
 Tóm tắt nhanh:
 
