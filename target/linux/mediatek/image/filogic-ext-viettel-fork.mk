@@ -64,6 +64,7 @@ define Device/viettel_nr3053
 	luci-app-turboacc-mtk luci-app-eqos-mtk luci-i18n-eqos-mtk-vi luci-app-upnp miniupnpd \
 	luci-app-ddns luci-i18n-ddns-vi ddns-scripts ddns-scripts-cloudflare ddns-scripts-noip \
 		kmod-wireguard wireguard-tools luci-proto-wireguard rpcd-mod-wireguard \
+		kmod-sched-cake \
 		luci-app-adblock luci-i18n-adblock-vi \
 		tailscale luci-app-tailscale-community \
 		luci-app-viettel-storage \
