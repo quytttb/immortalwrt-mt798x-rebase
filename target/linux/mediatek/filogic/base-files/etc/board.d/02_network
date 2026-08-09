@@ -46,6 +46,9 @@ mediatek_setup_interfaces()
 	arcadyan,mozart)
 		ucidef_set_interfaces_lan_wan "lan0 eth1" eth2
 		;;
+	aigo,ags21)
+		ucidef_set_interfaces_lan_wan "lan1 lan2" eth1
+		;;
 	asus,rt-ax52|\
 	asus,rt-ax59u|\
 	asus,zenwifi-bt8|\
@@ -156,7 +159,9 @@ mediatek_setup_interfaces()
 	hiveton,h5000m|\
 	huasifei,wh3000-emmc|\
 	huasifei,wh3000-pro-emmc|\
-	huasifei,wh3000-pro-nand)
+	huasifei,wh3000-pro-nand|\
+	wavlink,wl-wnt100x3|\
+	wavlink,wl-wnt100x3-ubootmod)
 		ucidef_set_interfaces_lan_wan eth0 eth1
 		;;
 	bazis,ax3000wm|\

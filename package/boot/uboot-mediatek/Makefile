@@ -231,6 +231,18 @@ define U-Boot/mt7981_abt_asr3000
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
 endef
 
+define U-Boot/mt7981_aigo_ags21
+  NAME:=AIGO ASG21
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=aigo_ags21
+  UBOOT_CONFIG:=mt7981_aigo_ags21
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=emmc
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr4
+endef
+
 define U-Boot/mt7981_bazis-ax3000wm
   NAME:=BAZIS AX3000WM
   BUILD_SUBTARGET:=filogic
@@ -801,6 +813,18 @@ define U-Boot/mt7981_viettel_nr3053
   BUILD_SUBTARGET:=filogic
   BUILD_DEVICES:=viettel_nr3053
   UBOOT_CONFIG:=mt7981_viettel_nr3053
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
+define U-Boot/mt7981_wavlink_wl-wnt100x3
+  NAME:=WAVLINK WL-WNT100X3
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=wavlink_wl-wnt100x3-ubootmod
+  UBOOT_CONFIG:=mt7981_wavlink_wl-wnt100x3
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
   BL2_SOC:=mt7981
@@ -1407,6 +1431,7 @@ UBOOT_TARGETS := \
 	mt7628_ravpower_rp-wd009 \
 	mt7629_rfb \
 	mt7981_abt_asr3000 \
+	mt7981_aigo_ags21 \
 	mt7981_bazis-ax3000wm \
 	mt7981_cetron_ct3003 \
 	mt7981_cmcc_a10 \
@@ -1455,6 +1480,7 @@ UBOOT_TARGETS := \
 	mt7981_snr_snr-cpe-ax2 \
 	mt7981_viettel_32x6 \
 	mt7981_viettel_nr3053 \
+  mt7981_wavlink_wl-wnt100x3 \
 	mt7981_wirelesstag_zx7981pd \
 	mt7981_xiaomi_mi-router-ax3000t \
 	mt7981_xiaomi_mi-router-wr30u \
