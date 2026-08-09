@@ -47,7 +47,7 @@ endef
 define Package/ubifs-utils
  $(call Package/mtd-utils/Default)
   TITLE:=Utilities for creating UBIFS filesystems
-  DEPENDS:=+ubi-utils
+  DEPENDS:=+ubi-utils +libselinux +libuuid
 endef
 
 define Package/ubifs-utils/description

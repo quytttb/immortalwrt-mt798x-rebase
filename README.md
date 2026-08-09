@@ -33,7 +33,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 
 ### Band steering
 
-Driver Wi-Fi được build với khả năng MediaTek band steering, nhưng cấu hình mặc định giữ `BandSteering=0`, không cài/chạy daemon `bndstrg`. Đây là trạng thái tương ứng firmware stock NR3053: tránh ép client chuyển băng tần khi chưa có profile và kiểm thử theo thiết bị. Không bật thủ công gói `bndstrg` cũ: daemon/shim đóng gói sẵn của nó chưa được kiểm thử với driver và profile của fork.
+Driver Wi-Fi được build với khả năng MediaTek band steering, nhưng cấu hình mặc định giữ `BandSteering=0` và không kèm daemon steering riêng. Đây là trạng thái tương ứng firmware stock NR3053: tránh ép client chuyển băng tần khi chưa có profile và kiểm thử theo thiết bị.
 
 `filogic-ext-viettel-fork.mk` được `include` sau `filogic-ext.mk` trong `target/linux/mediatek/image/Makefile` — override `DEVICE_PACKAGES` mà không conflict upstream.
 
