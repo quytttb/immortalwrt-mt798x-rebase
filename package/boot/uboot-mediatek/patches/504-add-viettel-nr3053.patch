@@ -307,13 +307,9 @@
 +reset_factory=ubi part ubi ; mw $loadaddr 0x0 0x800 ; ubi write $loadaddr ubootenv 0x800 ; ubi write $loadaddr ubootenv2 0x800
 +mtd_write_fip=mtd erase FIP && mtd write FIP $loadaddr
 +mtd_write_bl2=mtd erase BL2 && mtd write BL2 $loadaddr
-+rootfs_data_max=0x5000000
-+storage_size=0x6800000
-+viettel_storage_mode=separate
 +ubi_create_env=ubi check ubootenv || ubi create ubootenv 0x100000 dynamic || run ubi_format ; ubi check ubootenv2 || ubi create ubootenv2 0x100000 dynamic || run ubi_format
 +ubi_format=ubi detach ; mtd erase ubi && ubi part ubi ; reset
-+ubi_prepare_storage=if test "$viettel_storage_mode" = "overlay"; then true; else if ubi check storage; then true; else ubi create storage $storage_size dynamic || true; fi; fi
-+ubi_prepare_rootfs=if ubi check rootfs_data ; then else if env exists rootfs_data_max ; then ubi create rootfs_data $rootfs_data_max dynamic || ubi create rootfs_data - dynamic ; else ubi create rootfs_data - dynamic ; fi ; fi ; run ubi_prepare_storage
++ubi_prepare_rootfs=if ubi check rootfs_data ; then else if env exists rootfs_data_max ; then ubi create rootfs_data $rootfs_data_max dynamic || ubi create rootfs_data - dynamic ; else ubi create rootfs_data - dynamic ; fi ; fi
 +ubi_read_production=ubi read $loadaddr fit && iminfo $loadaddr && run ubi_prepare_rootfs
 +ubi_read_recovery=ubi check recovery && ubi read $loadaddr recovery
 +ubi_remove_rootfs=ubi check rootfs_data && ubi remove rootfs_data

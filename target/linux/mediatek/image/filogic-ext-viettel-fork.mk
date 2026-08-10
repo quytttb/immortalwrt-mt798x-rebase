@@ -66,6 +66,5 @@ define Device/viettel_nr3053
 		kmod-wireguard wireguard-tools luci-proto-wireguard rpcd-mod-wireguard \
 		luci-app-adblock luci-i18n-adblock-vi \
 		tailscale luci-app-tailscale-community \
-		luci-app-viettel-storage \
 		-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba
 endef

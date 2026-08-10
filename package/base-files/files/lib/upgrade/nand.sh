@@ -182,8 +182,6 @@ nand_upgrade_prepare_ubi() {
 	local rootfs_length="$1"
 	local rootfs_type="$2"
 	local rootfs_data_max="$(fw_printenv -n rootfs_data_max 2> /dev/null)"
-	local viettel_storage_mode="$(fw_printenv -n viettel_storage_mode 2> /dev/null)"
-	local board_name="$(cat /tmp/sysinfo/board_name 2> /dev/null)"
 	[ -n "$rootfs_data_max" ] && rootfs_data_max=$((rootfs_data_max))
 
 	local kernel_length="$3"
@@ -207,37 +205,17 @@ nand_upgrade_prepare_ubi() {
 	local kern_ubivol="$( nand_find_volume $kern_ubidev "$CI_KERNPART" )"
 	local root_ubivol="$( nand_find_volume $root_ubidev "$CI_ROOTPART" )"
 	local data_ubivol="$( nand_find_volume $root_ubidev rootfs_data )"
-	local storage_ubivol="$( nand_find_volume $root_ubidev storage )"
 	[ "$root_ubivol" = "$kern_ubivol" ] && root_ubivol=
-
-	# NR3053 can reserve a separate UBI volume for user data. When the user
-	# explicitly converts it to overlay, remove that volume during the next
-	# clean sysupgrade and let rootfs_data grow into the released space.
-	case "$board_name:$viettel_storage_mode" in
-	viettel,nr3053:overlay)
-		rootfs_data_max=
-		;;
-	esac
 
 	# remove ubiblocks
 	[ "$kern_ubivol" ] && { nand_remove_ubiblock $kern_ubivol || return 1; }
 	[ "$root_ubivol" ] && { nand_remove_ubiblock $root_ubivol || return 1; }
 	[ "$data_ubivol" ] && { nand_remove_ubiblock $data_ubivol || return 1; }
-	case "$board_name:$viettel_storage_mode" in
-	viettel,nr3053:overlay)
-		[ "$storage_ubivol" ] && { nand_remove_ubiblock $storage_ubivol || return 1; }
-		;;
-	esac
 
 	# kill volumes
 	[ "$kern_ubivol" ] && ubirmvol /dev/$kern_ubidev -N "$CI_KERNPART" || :
 	[ "$root_ubivol" ] && ubirmvol /dev/$root_ubidev -N "$CI_ROOTPART" || :
 	[ "$data_ubivol" ] && ubirmvol /dev/$root_ubidev -N rootfs_data || :
-	case "$board_name:$viettel_storage_mode" in
-	viettel,nr3053:overlay)
-		[ "$storage_ubivol" ] && ubirmvol /dev/$root_ubidev -N storage || :
-		;;
-	esac
 
 	# create provisioning vol
 	if [ "${UPGRADE_OPT_ADD_PROVISIONING:-0}" -gt 0 ]; then

@@ -29,7 +29,7 @@ Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/i
 | **Theme Aurora + config** | Clone CI: `luci-theme-aurora`, `luci-app-aurora-config` |
 | **Defconfig build** | `defconfig/viettel-only.config` (TurboACC, UPnP vi, Aurora, …) |
 | **Dịch UPnP tiếng Việt** | `custom-files/vi-upnp.po` (CI inject vào build) |
-| **Lưu trữ nội bộ NR3053** | `/mnt/storage` tự mount + trang LuCI **Hệ thống → Lưu trữ nội bộ** |
+| **Overlay mặc định** | Toàn bộ dung lượng UBI còn lại cho hệ thống, gói APK và dữ liệu cấu hình |
 
 ### Band steering
 
@@ -37,11 +37,9 @@ Driver Wi-Fi được build với khả năng MediaTek band steering, nhưng c�
 
 `filogic-ext-viettel-fork.mk` được `include` sau `filogic-ext.mk` trong `target/linux/mediatek/image/Makefile` — override `DEVICE_PACKAGES` mà không conflict upstream.
 
-### Lưu trữ nội bộ NR3053
+### Overlay và dữ liệu
 
-NR3053 dành một volume UBI riêng cho dữ liệu người dùng: mặc định nó được khởi tạo và mount tại `/mnt/storage`. Đây là nơi phù hợp cho download, backup và dữ liệu ứng dụng; package APK vẫn cài vào overlay để LuCI Software quản lý đúng.
-
-Trong **Hệ thống → Lưu trữ nội bộ**, người dùng có thể chọn chuyển volume này thành dung lượng overlay lớn hơn. Việc chuyển layout được chuẩn bị bằng trang LuCI nhưng chỉ áp dụng khi nạp lại đúng `sysupgrade.itb` với tùy chọn **không giữ cấu hình**; cả overlay hoặc storage cũ đều sẽ bị xóa. Lần đầu dùng layout mặc định trên UBI sạch cần FIP cùng release để U-Boot tạo các volume đúng kích thước.
+NR3053 và 32X6 đều dùng toàn bộ dung lượng UBI còn lại làm overlay mặc định; không tạo volume `/mnt/storage` riêng và không có trang chọn layout. Gói APK, cấu hình, log và file tải về có thể lưu trên overlay, miễn là luôn chừa dung lượng trống cho hệ thống hoạt động và nâng cấp.
 
 ---
 
