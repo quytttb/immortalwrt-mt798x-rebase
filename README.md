@@ -70,6 +70,12 @@ git push quytttb main
 
 Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và báo lỗi nếu còn conflict chưa giải quyết.
 
+### Đồng bộ tự động
+
+Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow gọi chính script sync ở trên rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow dừng để xử lý bằng script thủ công trên máy local.
+
+Trước khi dùng, vào **Settings → Actions → General → Workflow permissions** để cho phép `GITHUB_TOKEN` có quyền ghi nội dung và tạo pull request. Các PR sync vẫn cần review, đặc biệt khi upstream đổi partition layout, image format hoặc board files dùng chung.
+
 **File fork-only cần biết:**
 
 | File | Vai trò |

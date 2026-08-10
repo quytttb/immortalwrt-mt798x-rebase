@@ -1,0 +1,84 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    # Monday 03:17 UTC (10:17 ICT), away from the top-of-hour queue.
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      UPSTREAM_REPOSITORY: https://github.com/chasey-dev/immortalwrt-mt798x-rebase.git
+      UPSTREAM_BRANCH: 25.12
+      SYNC_BRANCH: automation/sync-upstream
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge upstream into sync branch
+        id: sync
+        run: |
+          set -euo pipefail
+
+          git remote add upstream "$UPSTREAM_REPOSITORY" 2>/dev/null || \
+            git remote set-url upstream "$UPSTREAM_REPOSITORY"
+          git fetch --no-tags upstream "$UPSTREAM_BRANCH"
+          git fetch --no-tags origin "$SYNC_BRANCH" 2>/dev/null || true
+
+          upstream_sha="$(git rev-parse "upstream/$UPSTREAM_BRANCH")"
+          echo "upstream_sha=$upstream_sha" >> "$GITHUB_OUTPUT"
+
+          if git merge-base --is-ancestor "$upstream_sha" HEAD; then
+            echo "needs_sync=false" >> "$GITHUB_OUTPUT"
+            echo "main already contains upstream/$UPSTREAM_BRANCH."
+            exit 0
+          fi
+
+          git switch -C "$SYNC_BRANCH"
+          if ! ./scripts/sync-upstream.sh upstream "$UPSTREAM_BRANCH"; then
+            git merge --abort 2>/dev/null || true
+            echo "::error::Upstream merge has conflicts; resolve it locally with scripts/sync-upstream.sh."
+            exit 1
+          fi
+
+          git push --force-with-lease origin "$SYNC_BRANCH"
+          echo "needs_sync=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update sync pull request
+        if: steps.sync.outputs.needs_sync == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          title="chore: sync upstream $UPSTREAM_BRANCH (${{ steps.sync.outputs.upstream_sha }})"
+          body="$(cat <<EOF
+          Automated merge of \`chasey-dev/$UPSTREAM_BRANCH\`.
+
+          This pull request is intentionally not merged automatically. Review shared Viettel files, especially board support and image layout, before merging.
+          EOF
+          )"
+          pr_number="$(gh pr list --repo "$GITHUB_REPOSITORY" --base main --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number')"
+
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$SYNC_BRANCH" --title "$title" --body "$body"
+          fi
