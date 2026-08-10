@@ -45,34 +45,17 @@ NR3053 và 32X6 đều dùng toàn bộ dung lượng UBI còn lại làm overla
 
 ## Cấu trúc nhánh
 
-| Nhánh | Mục đích |
-|-------|----------|
-| **`main`** | Fork đầy đủ: cả hai router, khả năng driver band steering (tắt mặc định), README/docs tiếng Việt — **dùng để build flash** |
-| **`25.12`** | Mirror [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (`25.12`), không patch Viettel |
+Nhánh **`main`** là nhánh mặc định và duy nhất của fork: gồm hỗ trợ cả hai router, khả năng driver band steering (tắt mặc định), README/docs tiếng Việt — **dùng để build flash**. Upstream được fetch trực tiếp từ `chasey-dev/25.12`; fork không giữ nhánh mirror `25.12` riêng.
 
 NR3053 và 32X6 đã merge vào upstream (`chasey-dev:25.12`). Các nhánh PR cũ (`viettel-nr3053`, `viettel-32x6`) đã xóa — không còn cần thiết.
 
 ---
 
-## Đồng bộ upstream
+## Đồng bộ upstream tự động
 
 Fork `main` định kỳ merge từ [chasey-dev/25.12](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/tree/25.12). Một số file fork **cố ý khác upstream** (LED DTS, `DEVICE_PACKAGES`, README) nên đã được tách riêng để tránh conflict mỗi lần sync.
 
-**Cách sync (khuyến nghị):**
-
-```bash
-git checkout main
-./scripts/sync-upstream.sh          # mặc định: remote origin, branch 25.12
-# hoặc chỉ định remote/branch khác:
-./scripts/sync-upstream.sh origin 25.12
-git push quytttb main
-```
-
-Script sẽ đăng ký merge driver `merge=ours`, fetch upstream, merge, và báo lỗi nếu còn conflict chưa giải quyết.
-
-### Đồng bộ tự động
-
-Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow gọi chính script sync ở trên rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow dừng để xử lý bằng script thủ công trên máy local.
+Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow fetch, đăng ký merge driver `merge=ours`, merge vào nhánh PR riêng rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow báo lỗi để xử lý trực tiếp trên nhánh PR.
 
 Trước khi dùng, vào **Settings → Actions → General → Workflow permissions** để cho phép `GITHUB_TOKEN` có quyền ghi nội dung và tạo pull request. Các PR sync vẫn cần review, đặc biệt khi upstream đổi partition layout, image format hoặc board files dùng chung.
 

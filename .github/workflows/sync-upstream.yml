@@ -51,10 +51,12 @@ jobs:
             exit 0
           fi
 
+          git config merge.ours.driver true
           git switch -C "$SYNC_BRANCH"
-          if ! ./scripts/sync-upstream.sh upstream "$UPSTREAM_BRANCH"; then
+          if ! git merge "upstream/$UPSTREAM_BRANCH" \
+            -m "chore: sync upstream $UPSTREAM_BRANCH (${upstream_sha:0:12})"; then
             git merge --abort 2>/dev/null || true
-            echo "::error::Upstream merge has conflicts; resolve it locally with scripts/sync-upstream.sh."
+            echo "::error::Upstream merge has conflicts; resolve and push the sync branch manually."
             exit 1
           fi
 
