@@ -621,18 +621,22 @@ Nếu thiết bị của bạn đang chạy firmware gốc của Viettel và b�
 
 1. Kết nối PC vào cổng LAN của router.
 2. **Factory reset** router (nhấn giữ nút Reset >10 giây cho đến khi đèn tắt rồi sáng lại). Mật khẩu admin trang web lúc này sẽ là Serial Number (S/N) in dưới đáy router.
-3. Chạy script mở khoá SSH (trong thư mục clone repo):
+3. Clone và chạy công cụ unlock riêng cho NR3053:
 
    **Linux:**
    ```bash
-   pip3 install requests
-   python3 scripts/unlock/unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN
+   git clone https://github.com/quytttb/unlock-nr3053.git
+   cd unlock-nr3053
+   pip3 install -r requirements.txt
+   python3 unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN
    ```
 
    **Windows (PowerShell):**
    ```powershell
-   py -m pip install requests
-   py scripts\unlock\unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN
+   git clone https://github.com/quytttb/unlock-nr3053.git
+   cd unlock-nr3053
+   py -m pip install -r requirements.txt
+   py unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN
    ```
 
    Nếu script báo `config.cgi` chỉ trả JSON, hãy tải `config.bin` thủ công trong
@@ -641,12 +645,12 @@ Nếu thiết bị của bạn đang chạy firmware gốc của Viettel và b�
 
    **Linux:**
    ```bash
-   python3 scripts/unlock/unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN --config-input /duong/dan/config.bin
+   python3 unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN --config-input /duong/dan/config.bin
    ```
 
    **Windows (PowerShell):**
    ```powershell
-   py scripts\unlock\unlock_viettel.py --password SERIAL_NUMBER_CUA_BAN --config-input "C:\duong\dan\config.bin"
+   py unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN --config-input "C:\duong\dan\config.bin"
    ```
 4. Đợi script chạy xong và router khởi động lại, bạn sẽ có quyền truy cập SSH:
    ```bash

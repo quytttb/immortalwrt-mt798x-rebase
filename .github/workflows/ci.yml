@@ -15,19 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install ShellCheck
-        run: sudo apt-get install -y shellcheck
-
-      - name: ShellCheck (project scripts)
-        run: |
-          find scripts/unlock/ -name "*.sh" -exec shellcheck --severity=warning {} +
-
-      - name: Install ruff
-        run: pip install --quiet 'ruff~=0.16.0'
-
-      - name: ruff (unlock Python scripts)
-        run: ruff check scripts/unlock/
-
       - name: Verify Viettel-only defconfig
         run: |
           enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' defconfig/viettel-only.config)
