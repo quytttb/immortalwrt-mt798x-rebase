@@ -55,7 +55,7 @@ NR3053 và 32X6 đã merge vào upstream (`chasey-dev:25.12`). Các nhánh PR c�
 
 Fork `main` định kỳ merge từ [chasey-dev/25.12](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/tree/25.12). Một số file fork **cố ý khác upstream** (LED DTS, `DEVICE_PACKAGES`, README) nên đã được tách riêng để tránh conflict mỗi lần sync.
 
-Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow fetch, đăng ký merge driver `merge=ours`, merge vào nhánh PR riêng rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow báo lỗi để xử lý trực tiếp trên nhánh PR.
+Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow fetch, đăng ký merge driver `merge=ours`, merge vào nhánh PR riêng rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow báo lỗi; maintainer cần tạo nhánh sync và giải quyết conflict bằng Git trước khi mở PR.
 
 Trước khi dùng, vào **Settings → Actions → General → Workflow permissions** để cho phép `GITHUB_TOKEN` có quyền ghi nội dung và tạo pull request. Các PR sync vẫn cần review, đặc biệt khi upstream đổi partition layout, image format hoặc board files dùng chung.
 
