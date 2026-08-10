@@ -5,10 +5,20 @@
 
 > Tài liệu dành cho fork [quytttb/immortalwrt-mt798x-rebase](https://github.com/quytttb/immortalwrt-mt798x-rebase).
 
----
+## Chọn đường nạp
+
+| Tình trạng router | Dùng file | Cách phù hợp |
+|---|---|---|
+| Đang chạy ImmortalWrt fork | `*-squashfs-sysupgrade.itb` | LuCI **System → Backup / Flash Firmware** hoặc `sysupgrade`; không ghi FIP/BL2 |
+| Muốn test/recovery, chưa ghi NAND | `*-initramfs-recovery.itb` | Boot qua TFTP, theo Tuỳ chọn A của đúng model |
+| Đang chạy ROM gốc Viettel | `*-bl31-uboot.fip`, sau đó `*-squashfs-sysupgrade.itb` | Xem phần [Nạp firmware qua SSH từ ROM gốc](#nạp-firmware-qua-ssh-từ-rom-gốc-không-cần-tháo-vỏ) |
+| Nâng cấp bootloader | `*-bl31-uboot.fip` hoặc `*-preloader.bin` | Chỉ làm khi có lý do cụ thể, backup và phương án recovery |
+
+> Với sysupgrade thông thường, sao lưu cấu hình trước. Chỉ các file nằm trong backup sysupgrade mới được khôi phục; file tải về, log và dữ liệu tự tạo trong overlay không nên được coi là tự động giữ lại.
 
 ## Mục lục
 
+- [Chọn đường nạp](#chọn-đường-nạp)
 - [Chuẩn bị chung](#chuẩn-bị-chung)
   - [Linux](#linux)
   - [Windows](#windows)

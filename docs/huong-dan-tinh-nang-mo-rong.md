@@ -1,6 +1,8 @@
-# Hướng dẫn cấu hình tính năng mở rộng
+# Tính năng có sẵn trên ImmortalWrt Viettel
 
-Firmware fork Viettel (NR3053 / 32X6) đã tích hợp sẵn các gói sau:
+Áp dụng cho cả **Viettel NR3053** và **Viettel 32X6**. Firmware dùng IP LAN/DNS mặc định `192.168.1.1`; xem [README](../README.md) để chọn firmware, build hoặc nạp recovery.
+
+## Có sẵn trong firmware
 
 | Tính năng | Menu LuCI |
 |-----------|-----------|
@@ -58,11 +60,11 @@ uci commit adblock
 
 ```bash
 /etc/init.d/adblock status
-nslookup doubleclick.net 192.168.2.1
+nslookup doubleclick.net 192.168.1.1
 # Kết quả mong đợi: NXDOMAIN hoặc 0.0.0.0
 ```
 
-Thiết bị LAN lấy DNS từ router (`192.168.2.1`). Tắt **Secure DNS** trên trình duyệt nếu quảng cáo vẫn lọt.
+Thiết bị LAN lấy DNS từ router (`192.168.1.1`). Tắt **Secure DNS** trên trình duyệt nếu quảng cáo vẫn lọt.
 
 ---
 
@@ -88,12 +90,12 @@ Thiết bị LAN lấy DNS từ router (`192.168.2.1`). Tắt **Secure DNS** tr�
 [Interface]
 PrivateKey = <client-private-key>
 Address = 10.66.66.2/32
-DNS = 192.168.2.1
+DNS = 192.168.1.1
 
 [Peer]
 PublicKey = <router-public-key>
 Endpoint = <hostname-ddns>:51820
-AllowedIPs = 10.66.66.0/24, 192.168.2.0/24
+AllowedIPs = 10.66.66.0/24, 192.168.1.0/24
 PersistentKeepalive = 25
 ```
 
@@ -140,3 +142,4 @@ logread | grep -i ddns
 
 - [Hướng dẫn nạp firmware](huong-dan-nap-firmware.md)
 - [README](../README.md)
+- [Trạng thái MediaTek EasyMesh](trien-khai-mediatek-easymesh.md)

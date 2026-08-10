@@ -1,14 +1,15 @@
 # Triển khai MediaTek EasyMesh cho Viettel NR3053
 
-> Trạng thái: nghiên cứu và chuẩn bị port. Chưa có package EasyMesh nào được
-> thêm vào firmware public của fork.
+> **Trạng thái:** nghiên cứu, chưa phát hành. Firmware public hiện không có package hay giao diện MediaTek EasyMesh; tài liệu này không phải hướng dẫn cài mesh.
+
+Xem [README](../README.md) để biết các tính năng đang có trong firmware, hoặc [hướng dẫn tính năng mở rộng](huong-dan-tinh-nang-mo-rong.md) cho WireGuard, DDNS và Adblock.
 
 ## Mục tiêu
 
-Đưa MediaTek EasyMesh/Multi-AP native vào bản ImmortalWrt cho NR3053 để một
+Đưa MediaTek EasyMesh/Multi-AP native vào bản ImmortalWrt cho **NR3053** để một
 node custom có thể làm controller hoặc agent cùng các node dùng stack MediaTek
 tương thích. Đây không phải 802.11s; nó cần control plane IEEE 1905.1/Multi-AP
-bên cạnh driver Wi-Fi.
+bên cạnh driver Wi-Fi. Phạm vi hiện tại không bao gồm 32X6.
 
 ## Hiện trạng đã xác minh
 
