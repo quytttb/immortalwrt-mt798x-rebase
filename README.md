@@ -1,169 +1,80 @@
-# ImmortalWrt MT798x — Fork hỗ trợ router Viettel
+# ImmortalWrt MT798x cho router Viettel
 
-Fork từ [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase) (branch `25.12`), bổ sung hỗ trợ **hai router WiFi 6 Viettel** chạy ImmortalWrt trên nền MediaTek MT7981.
+Firmware ImmortalWrt 25.12 cho **Viettel NR3053** và **Viettel 32X6**, dựa trên [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase). Nhánh `main` là nhánh mặc định, dùng để build và phát hành firmware.
 
----
+## Thiết bị hỗ trợ
 
-## Router được hỗ trợ
-
-| | **Viettel NR3053** | **Viettel 32X6** |
+| | Viettel NR3053 | Viettel 32X6 |
 |---|---|---|
 | SoC | MediaTek MT7981B | MediaTek MT7981B |
 | RAM | 512 MB DDR3 | 128 MB DDR3 |
 | Flash | 128 MB SPI-NAND (UBI) | 128 MB SPI-NAND (UBI) |
-| Cổng LAN | 3 × LAN + 1 × WAN | 2 × LAN + 1 × WAN |
-| USB | Không | Không |
-| LED | Đỏ nháy khi mất WAN carrier / xanh cố định khi có carrier | Giống NR3053 (không ping, không TX) |
+| Cổng mạng | 3 LAN + 1 WAN | 2 LAN + 1 WAN |
 | IP LAN mặc định | `192.168.1.1` | `192.168.1.1` |
-| Trạng thái test | Đã test trên phần cứng | Đã test trên phần cứng |
+| Trạng thái | Đã test phần cứng | Đã test phần cứng |
 
----
+## Dùng firmware có sẵn
 
-## Tính năng fork (branch `main`)
+Tải bản mới nhất tại [Releases](https://github.com/quytttb/immortalwrt-mt798x-rebase/releases), rồi chọn file **đúng model**.
 
-| Tính năng | Nơi cấu hình |
-|-----------|----------------|
-| **LED riêng** (DTS + script WAN) | `dts-ext/mt7981b-viettel-*.dts`, `viettel-wan-led.sh`, `01_leds` |
-| **Gói firmware** (Aurora, TurboACC, UPnP, DDNS, WireGuard, Adblock, VN defaults) | `filogic-ext-viettel-fork.mk` → `DEVICE_PACKAGES` |
-| **Mặc định VN** (timezone, UPnP, BBR) | `package/emortal/default-settings` (`default-settings-vn`) |
-| **Theme Aurora + config** | Clone CI: `luci-theme-aurora`, `luci-app-aurora-config` |
-| **Defconfig build** | `defconfig/viettel-only.config` (TurboACC, UPnP vi, Aurora, …) |
-| **Dịch UPnP tiếng Việt** | `custom-files/vi-upnp.po` (CI inject vào build) |
-| **Overlay mặc định** | Toàn bộ dung lượng UBI còn lại cho hệ thống, gói APK và dữ liệu cấu hình |
+| File | Mục đích |
+|---|---|
+| `*-squashfs-sysupgrade.itb` | Cài đặt hoặc nâng cấp vĩnh viễn |
+| `*-initramfs-recovery.itb` | Boot qua TFTP để test hoặc recovery, không ghi NAND |
+| `*-bl31-uboot.fip` | Nâng cấp U-Boot — chỉ dùng khi hướng dẫn yêu cầu |
+| `*-preloader.bin` | Nâng cấp BL2 — rủi ro cao, không dùng cho nâng cấp thông thường |
 
-### Band steering
+> Không dùng file của NR3053 cho 32X6 hoặc ngược lại. Đọc [hướng dẫn nạp firmware](docs/huong-dan-nap-firmware.md) trước khi ghi NAND, FIP hoặc BL2.
 
-Driver Wi-Fi được build với khả năng MediaTek band steering, nhưng cấu hình mặc định giữ `BandSteering=0` và không kèm daemon steering riêng. Đây là trạng thái tương ứng firmware stock NR3053: tránh ép client chuyển băng tần khi chưa có profile và kiểm thử theo thiết bị.
+## Điểm chính của bản fork
 
-`filogic-ext-viettel-fork.mk` được `include` sau `filogic-ext.mk` trong `target/linux/mediatek/image/Makefile` — override `DEVICE_PACKAGES` mà không conflict upstream.
+- LED WAN riêng cho từng board.
+- Giao diện Aurora, TurboACC, UPnP, DDNS, WireGuard, Adblock và mặc định phù hợp Việt Nam.
+- Band steering được hỗ trợ ở driver nhưng tắt mặc định (`BandSteering=0`) để không ép thiết bị khách đổi băng tần.
+- NR3053 và 32X6 dùng toàn bộ UBI còn lại làm overlay. Không có volume `/mnt/storage` riêng; APK, cấu hình, log và file tải về đều ở overlay. Luôn chừa dung lượng trống cho hệ thống và nâng cấp.
 
-### Overlay và dữ liệu
+## Build từ mã nguồn
 
-NR3053 và 32X6 đều dùng toàn bộ dung lượng UBI còn lại làm overlay mặc định; không tạo volume `/mnt/storage` riêng và không có trang chọn layout. Gói APK, cấu hình, log và file tải về có thể lưu trên overlay, miễn là luôn chừa dung lượng trống cho hệ thống hoạt động và nâng cấp.
-
----
-
-## Cấu trúc nhánh
-
-Nhánh **`main`** là nhánh mặc định và duy nhất của fork: gồm hỗ trợ cả hai router, khả năng driver band steering (tắt mặc định), README/docs tiếng Việt — **dùng để build flash**. Upstream được fetch trực tiếp từ `chasey-dev/25.12`; fork không giữ nhánh mirror `25.12` riêng.
-
-NR3053 và 32X6 đã merge vào upstream (`chasey-dev:25.12`). Các nhánh PR cũ (`viettel-nr3053`, `viettel-32x6`) đã xóa — không còn cần thiết.
-
----
-
-## Đồng bộ upstream tự động
-
-Fork `main` định kỳ merge từ [chasey-dev/25.12](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/tree/25.12). Một số file fork **cố ý khác upstream** (LED DTS, `DEVICE_PACKAGES`, README) nên đã được tách riêng để tránh conflict mỗi lần sync.
-
-Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 (giờ Việt Nam), hoặc có thể chạy tay từ tab **Actions**. Khi upstream có commit mới, workflow fetch, đăng ký merge driver `merge=ours`, merge vào nhánh PR riêng rồi tạo hoặc cập nhật pull request; nó **không tự merge vào `main`**. Nếu merge conflict, workflow báo lỗi; maintainer cần tạo nhánh sync và giải quyết conflict bằng Git trước khi mở PR.
-
-Trước khi dùng, vào **Settings → Actions → General → Workflow permissions** để cho phép `GITHUB_TOKEN` có quyền ghi nội dung và tạo pull request. Các PR sync vẫn cần review, đặc biệt khi upstream đổi partition layout, image format hoặc board files dùng chung.
-
-**File fork-only cần biết:**
-
-| File | Vai trò |
-|------|---------|
-| `target/linux/mediatek/dts-ext/mt7981b-viettel-32x6.dts` | LED layout fork (label thống nhất `red:status` / `green:status` / `blue:status`, tích hợp `viettel-wan-led.sh`) |
-| `target/linux/mediatek/dts-ext/mt7981b-viettel-nr3053.dts` | LED layout fork (label thống nhất `red:status` / `green:status`) |
-| `target/linux/mediatek/image/filogic-ext-viettel-fork.mk` | `DEVICE_PACKAGES` riêng cho NR3053 và 32X6 |
-| `target/linux/mediatek/image/Makefile` | `include filogic-ext-viettel-fork.mk` (sau `filogic-ext.mk`) |
-| `.gitattributes` | `merge=ours` cho 2 DTS + README — **không phải** `.gitignore`; file vẫn track và CI build bình thường |
-
-`filogic-ext.mk` giữ định nghĩa device theo upstream (không `DEVICE_PACKAGES`). File `filogic-ext-viettel-fork.mk` load sau (thứ tự alphabet) và override khi build.
-
-**Lưu ý khi upstream sửa Viettel:** nếu upstream đổi partition layout, image format, hoặc artifact của NR3053/32X6, cần cập nhật thủ công `filogic-ext-viettel-fork.mk`. Nếu upstream fix bug trong DTS (MAC, partition, EEPROM), kiểm tra diff upstream và cherry-pick hunk cần thiết — `.gitattributes` sẽ giữ bản fork khi merge.
-
----
-
-## Tải bản đã build (Release)
-
-Nếu bạn không muốn tự build, có thể tải firmware được build tự động (có sẵn giao diện hiện đại như Aurora) tại trang **[Releases](../../releases)** của repository.
-Mỗi bản release gồm: `sysupgrade.itb`, `initramfs-recovery.itb`, `bl31-uboot.fip`, `preloader.bin` cho từng thiết bị.
-
----
-
-## Build firmware
-
-Build firmware đầy đủ tính năng từ branch **`main`**.
-
-Yêu cầu: Ubuntu/Debian (hoặc tương đương), đủ RAM/disk cho OpenWrt build.
+Yêu cầu Ubuntu/Debian hoặc môi trường tương đương, đủ RAM và dung lượng đĩa cho OpenWrt.
 
 ```bash
 git clone https://github.com/quytttb/immortalwrt-mt798x-rebase.git
 cd immortalwrt-mt798x-rebase
-git checkout main
-```
-
-**Lần đầu build (cài dependency hệ thống):**
-
-```bash
 bash scripts/install-deps.sh
-```
-
-**Build đầy đủ (giống CI):**
-
-```bash
 bash scripts/build-viettel.sh
 ```
 
-Script này làm toàn bộ: feeds, clone Aurora, copy bản dịch, defconfig, `make download`, `make`, và copy firmware ra thư mục `dist/`. Kết quả giống hệt bản từ GitHub Actions.
+Build script chuẩn bị feeds, theme Aurora, bản dịch, defconfig hai thiết bị, tải source và build; artifact được chép vào `dist/`.
 
-Chỉ chạy bước tạo file image (nhanh hơn, bỏ qua biên dịch lại package):
+Để chỉ tạo image cho một thiết bị sau khi đã build package:
 
 ```bash
 make target/linux/install V=s TARGET=mediatek SUBTARGET=filogic DEVICE=viettel_nr3053
 # hoặc DEVICE=viettel_32x6
 ```
 
-**Artifact** (`bin/targets/mediatek/filogic/`):
+Kết quả gốc nằm trong `bin/targets/mediatek/filogic/`; luôn kiểm tra `sha256sums` trước khi nạp.
 
-| Router | `<device>` trong tên file |
-|--------|---------------------------|
-| NR3053 | `viettel_nr3053` |
-| 32X6 | `viettel_32x6` |
+## Nạp và khôi phục
 
-```
-immortalwrt-mediatek-filogic-<device>-preloader.bin
-immortalwrt-mediatek-filogic-<device>-bl31-uboot.fip
-immortalwrt-mediatek-filogic-<device>-squashfs-sysupgrade.itb
-immortalwrt-mediatek-filogic-<device>-initramfs-recovery.itb
-```
+Hướng dẫn đầy đủ có TFTP, U-Boot bootmenu, UART, sysupgrade và recovery:
 
----
+- [Nạp firmware](docs/huong-dan-nap-firmware.md)
+- [Cấu hình WireGuard, DDNS và Adblock](docs/huong-dan-tinh-nang-mo-rong.md)
+- [Nghiên cứu MediaTek EasyMesh cho NR3053](docs/trien-khai-mediatek-easymesh.md)
 
-## Nạp firmware
+Quy trình an toàn: boot `initramfs-recovery.itb` qua TFTP để test trước, sau đó mới ghi `squashfs-sysupgrade.itb`. Chỉ nâng cấp FIP hoặc BL2 khi có lý do cụ thể và đã chuẩn bị đường recovery.
 
-Hướng dẫn chi tiết (TFTP, U-Boot bootmenu, UART, sysupgrade NAND):
+## Đồng bộ upstream
 
-**[docs/huong-dan-nap-firmware.md](docs/huong-dan-nap-firmware.md)**
+Fork fetch trực tiếp từ [chasey-dev/25.12](https://github.com/chasey-dev/immortalwrt-mt798x-rebase/tree/25.12); không giữ nhánh mirror `25.12` riêng. Workflow **Sync Upstream** chạy mỗi thứ Hai lúc 10:17 giờ Việt Nam hoặc có thể chạy tay từ tab **Actions**.
 
-Cấu hình WireGuard, DDNS, Adblock:
+Khi upstream có thay đổi, workflow merge vào nhánh PR riêng và tạo/cập nhật pull request, không tự merge vào `main`. DTS LED và README được bảo vệ bằng `merge=ours`; `DEVICE_PACKAGES` được tách ở file fork riêng. Vẫn cần review PR khi upstream đổi image layout, partition hoặc board files dùng chung. Nếu merge conflict, maintainer giải quyết bằng Git trên nhánh sync rồi mở PR.
 
-**[docs/huong-dan-tinh-nang-mo-rong.md](docs/huong-dan-tinh-nang-mo-rong.md)**
+## Đóng góp và ghi công
 
-Nghiên cứu và điều kiện triển khai MediaTek EasyMesh native cho NR3053:
+- Báo lỗi hoặc đề xuất tính năng: mở Issue trên fork.
+- Patch chung cho upstream: tạo nhánh từ `chasey-dev/25.12`, mỗi PR chỉ cho một thiết bị.
+- Tính năng riêng cho Viettel: phát triển trên `main`.
 
-**[docs/trien-khai-mediatek-easymesh.md](docs/trien-khai-mediatek-easymesh.md)**
-
-Tóm tắt nhanh:
-
-1. Cắm PC vào cổng **LAN**, cấu hình TFTP server `192.168.1.254/24`.
-2. **Test không ghi NAND:** boot initramfs qua TFTP (bootmenu mục **[2]**).
-3. **Cài vĩnh viễn:** ghi `sysupgrade.itb` qua TFTP (bootmenu mục **[5]**) hoặc `sysupgrade` từ Linux.
-4. UART 115200 8N1 nếu cần debug / recovery.
-
----
-
-## Upstream & ghi công
-
-- Repo gốc: [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase)
-- Nền: [ImmortalWrt](https://immortalwrt.org/) + MTK OpenWrt feeds
-- Tham khảo thêm mục **About External Devices HNAT** và commit cutoff trong lịch sử README upstream
-
----
-
-## Đóng góp
-
-- Bug / góp ý: mở Issue trên fork hoặc comment PR upstream (#50 / #51).
-- Patch upstream: tạo nhánh mới từ `origin/25.12` → PR vào `chasey-dev:25.12`, mỗi PR một thiết bị.
-- Tính năng fork riêng: chỉ trên `main`.
+Nền tảng: [ImmortalWrt](https://immortalwrt.org/), MediaTek OpenWrt feeds và [chasey-dev/immortalwrt-mt798x-rebase](https://github.com/chasey-dev/immortalwrt-mt798x-rebase).
