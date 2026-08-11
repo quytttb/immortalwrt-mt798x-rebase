@@ -199,7 +199,7 @@ Khi cần **mtk_uartboot**, nên **kẹp 2 cửa sổ cạnh nhau** (Snap Win+�
 #### mtk_uartboot trên Windows
 
 Dùng khi router **không vào U-Boot** (chỉ BootROM / im lặng). Tool tải từ:  
-https://github.com/981213/mtk_uartboot/releases (file `mtk_uartboot-v*-x86_64-pc-windows-msvc.zip`).
+https://github.com/quytttb/mtk_uartboot/releases (file `mtk_uartboot-v*-x86_64-pc-windows-msvc.zip`).
 
 **Chuẩn bị thư mục** (ví dụ `C:\viettel-uart\`):
 
@@ -306,7 +306,7 @@ Công cụ `mtk_uartboot` thường đặt ở thư mục riêng cạnh repo clo
 
 | File | Nguồn cung cấp / Vị trí |
 |---|---|
-| `mtk_uart/mtk_uartboot` | Tool Linux (`../mtk_uart/`) hoặc [mtk_uartboot.exe](https://github.com/981213/mtk_uartboot/releases) (Windows) |
+| `mtk_uart/mtk_uartboot` | Tool Linux (`../mtk_uart/`) hoặc [mtk_uartboot.exe](https://github.com/quytttb/mtk_uartboot/releases) (Windows) |
 | `bl2-viettel-nr3053-ram.bin` | BL2 RAM payload cho NR3053 — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
 | `bl2-viettel-32x6-ram.bin` | BL2 RAM payload cho 32X6 — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
 | `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | NR3053 FIP — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
