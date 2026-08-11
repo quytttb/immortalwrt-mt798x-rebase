@@ -1,0 +1,22 @@
+#!/bin/sh
+# Ensure EQoS ships disabled and with safe line-rate defaults.
+# The original default (download=100, upload=20 Mbit/s) caused ~96 Mbps
+# throughput on 1 Gbps links whenever EQoS was enabled.
+#
+# This script runs once on first boot (or after a factory reset).
+# It intentionally does NOT touch eqos.config.enabled so that users who
+# have deliberately enabled EQoS keep their setting after a sysupgrade.
+
+uci -q get eqos.config > /dev/null 2>&1 || exit 0
+
+# Only migrate the rate defaults when they are still at the old 100/20 values.
+dl=$(uci -q get eqos.config.download)
+up=$(uci -q get eqos.config.upload)
+
+if [ "$dl" = "100" ] && [ "$up" = "20" ]; then
+	uci -q set eqos.config.download='1000'
+	uci -q set eqos.config.upload='500'
+	uci -q commit eqos
+fi
+
+exit 0

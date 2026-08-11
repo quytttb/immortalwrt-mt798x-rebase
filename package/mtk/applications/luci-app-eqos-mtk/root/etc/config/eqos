@@ -1,7 +1,12 @@
+# EQoS global shaper — disabled by default.
+# WARNING: 'download' and 'upload' are in Mbit/s (1–1000).
+# The shipped default was 100/20 Mbit/s.  When enabled that cap applies to
+# ALL WAN traffic through HNAT QDMA, producing ~96 Mbps on a 1 Gbps link.
+# Set these to your actual WAN speed (or leave disabled) to avoid confusion.
 config eqos 'config'
 	option enabled      0
-	option download     100
-	option upload       20
+	option download     1000
+	option upload       500
 
 # Per-device bandwidth is kbit/s.
 # Slots 1~31 use NETSYS V2/V3 64-QDMA HQoS.
