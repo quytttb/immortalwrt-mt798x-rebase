@@ -1043,6 +1043,10 @@ return view.extend({
 					{
 						o = ss.taboption('advanced', form.Flag, 'whnat', _('Wireless HWNAT'));
 						o.default = o.enabled;
+
+						o = ss.taboption('advanced', form.Flag, 'bandsteering', _('Band Steering (mt_wifi)'), _('Use the built-in MediaTek mt_wifi band-steering feature to guide capable clients between the paired 2.4 GHz and 5 GHz APs. Both bands must use compatible AP settings, including SSID, encryption and passphrase. Applying this change reloads Wi-Fi.'));
+						o.default = o.enabled;
+						o.rmempty = false;
 	
 						o = ss.taboption('advanced', form.Value, 'beacon_int', _('Beacon Interval'));
 						o.optional = true;
