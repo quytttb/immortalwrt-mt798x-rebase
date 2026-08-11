@@ -1,5 +1,5 @@
 #!/bin/sh
 [ "$ACTION" = "ifup" ] || exit 0
-[ "$INTERFACE" = "lan" ] || exit 0
+[ "$INTERFACE" = "lan" ] || [ "$INTERFACE" = "wan" ] || exit 0
 
-/etc/init.d/eqos start
+/etc/init.d/eqos reload
