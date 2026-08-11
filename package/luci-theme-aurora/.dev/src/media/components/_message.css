@@ -1,0 +1,57 @@
+.alert-message {
+  /* Radius matches `.cbi-section` (16px): the alert sits in the content layer,
+     same width and edge alignment as the sections it stacks above. The larger
+     radii in this theme belong to overlays (24px) and pills (32px). */
+  @apply bg-surface-sunken text-text border-hairline sticky top-14 z-30 mb-4 rounded-2xl border p-6 max-md:mx-0 max-md:mb-3 max-md:p-4;
+
+  &.modal {
+    @apply static top-auto;
+  }
+
+  .modal & {
+    @apply mb-0;
+  }
+
+  .login-shell & {
+    @apply mb-0 px-2 py-2.5 text-center text-base max-md:px-0.5;
+  }
+
+  &.success {
+    @apply border-hairline bg-success-surface text-success;
+  }
+
+  &.info {
+    @apply border-hairline bg-info-surface text-info;
+  }
+
+  &.warning,
+  &.notice {
+    @apply border-hairline bg-warning-surface text-warning;
+  }
+
+  &.error,
+  &.danger {
+    @apply border-hairline bg-danger-surface text-danger;
+  }
+
+  h4,
+  h5,
+  pre,
+  ul,
+  li,
+  p {
+    @apply border-0 bg-transparent text-inherit;
+  }
+
+  & h4 {
+    @apply mb-2 text-lg font-semibold max-md:mb-1.5 max-md:text-base;
+  }
+
+  & p {
+    @apply text-sm leading-relaxed max-md:text-sm;
+  }
+
+  & .right {
+    @apply mt-4 max-md:mt-3;
+  }
+}

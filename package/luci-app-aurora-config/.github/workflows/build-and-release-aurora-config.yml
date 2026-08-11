@@ -1,0 +1,70 @@
+name: LuCI App Aurora Config Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build luci-app-aurora-config ${{ matrix.pkg_type }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pkg_type: [ipk, apk]
+    steps:
+      - uses: eamonxg/build-luci-package@master
+        with:
+          package: luci-app-aurora-config
+          pkg_type: ${{ matrix.pkg_type }}
+          prep_script: |
+            ./scripts/feeds update -f base luci
+            ./scripts/feeds install luci-base luci-i18n-base-zh-cn luci-i18n-base-zh-tw luci-i18n-base-de luci-i18n-base-es luci-i18n-base-fr luci-i18n-base-id luci-i18n-base-it luci-i18n-base-ja luci-i18n-base-ko luci-i18n-base-nl luci-i18n-base-pl luci-i18n-base-ru luci-i18n-base-tr luci-i18n-base-uk luci-i18n-base-vi
+            echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
+            echo "CONFIG_LUCI_LANG_zh_Hant=y" >> .config
+            echo "CONFIG_LUCI_LANG_de=y" >> .config
+            echo "CONFIG_LUCI_LANG_es=y" >> .config
+            echo "CONFIG_LUCI_LANG_fr=y" >> .config
+            echo "CONFIG_LUCI_LANG_id=y" >> .config
+            echo "CONFIG_LUCI_LANG_it=y" >> .config
+            echo "CONFIG_LUCI_LANG_ja=y" >> .config
+            echo "CONFIG_LUCI_LANG_ko=y" >> .config
+            echo "CONFIG_LUCI_LANG_nl=y" >> .config
+            echo "CONFIG_LUCI_LANG_pl=y" >> .config
+            echo "CONFIG_LUCI_LANG_ru=y" >> .config
+            echo "CONFIG_LUCI_LANG_tr=y" >> .config
+            echo "CONFIG_LUCI_LANG_uk=y" >> .config
+            echo "CONFIG_LUCI_LANG_vi=y" >> .config
+          artifact_paths: |
+            bin/packages/$ARCH/base/luci-app-aurora-config*.[ai]pk
+            bin/packages/$ARCH/base/luci-i18n-aurora-config*.[ai]pk
+          release_body_repo: eamonxg/assets
+          release_body_path: aurora/docs/config/changelog/${{ github.ref_name }}.md
+
+  notify-feed:
+    name: notify openwrt-cloud
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref_type == 'tag'
+    steps:
+      - name: Dispatch feed rebuild
+        env:
+          GH_TOKEN: ${{ secrets.FEED_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::FEED_DISPATCH_TOKEN is not set, so openwrt-cloud was never told about this release."
+            echo "The feed's releases channel only rebuilds on this dispatch — without it the tag" >&2
+            echo "ships to GitHub Releases but never reaches the feed. Create a fine-grained PAT" >&2
+            echo "scoped to eamonxg/openwrt-cloud with Contents: read and write, then store it as" >&2
+            echo "the FEED_DISPATCH_TOKEN secret in this repository." >&2
+            exit 1
+          fi
+          gh api repos/eamonxg/openwrt-cloud/dispatches \
+            -f event_type=package-released \
+            -f 'client_payload[repo]=${{ github.repository }}' \
+            -f 'client_payload[tag]=${{ github.ref_name }}'
+

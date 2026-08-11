@@ -1,0 +1,65 @@
+{
+  "luci-app-aurora": {
+    "description": "Grant access to Aurora theme configuration",
+    "read": {
+      "uci": ["aurora"],
+      "ubus": {
+        "luci.aurora": [
+          "list_icons",
+          "get_system_info",
+          "get_init_data",
+          "get_theme_preset",
+          "get_font_presets",
+          "get_font_status",
+          "export_config",
+          "get_hub_status",
+          "hub_local_state",
+          "hub_me"
+        ],
+        "file": ["read", "list", "stat"]
+      },
+      "file": {
+        "/tmp/aurora_icon.tmp": ["read", "write"],
+        "/tmp/aurora_font.tmp": ["read", "write"],
+        "/tmp/aurora_config_export.conf": ["read"],
+        "/www/luci-static/aurora/images/*": ["read", "list"],
+        "/www/luci-static/aurora/fonts/*": ["read", "list"],
+        "/tmp/aurora_hub_jobs/*": ["read"]
+      }
+    },
+    "write": {
+      "uci": ["aurora"],
+      "ubus": {
+        "luci.aurora": [
+          "upload_icon",
+          "write_pwa_manifest",
+          "remove_icon",
+          "reset_defaults",
+          "add_feed",
+          "import_config",
+          "apply_theme_preset",
+          "prepare_font",
+          "upload_font",
+          "remove_font",
+          "hub_apply",
+          "hub_restore_backup",
+          "hub_share_begin",
+          "hub_share_commit",
+          "hub_delete",
+          "hub_export_key",
+          "hub_import_key",
+          "hub_set_nickname"
+        ],
+        "file": ["write", "remove", "exec", "stat"]
+      },
+      "file": {
+        "/tmp/aurora_icon.tmp": ["read", "write"],
+        "/tmp/aurora_font.tmp": ["read", "write"],
+        "/tmp/aurora_config_import.tmp": ["read", "write", "remove"],
+        "/www/luci-static/aurora/images/*": ["read", "write", "remove"],
+        "/www/luci-static/aurora/fonts/*": ["read", "write", "remove"],
+        "/tmp/aurora_hub_jobs/*": ["read", "write"]
+      }
+    }
+  }
+}

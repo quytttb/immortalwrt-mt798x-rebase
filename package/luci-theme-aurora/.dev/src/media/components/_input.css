@@ -1,0 +1,39 @@
+input {
+  @apply disabled:cursor-not-allowed disabled:opacity-(--app-opacity-disabled);
+}
+
+input[type="text"],
+input[type="password"],
+.cbi-input-text,
+.cbi-input {
+  @apply text-text border-hairline bg-control-bg placeholder-text-muted focus:border-brand focus:ring-focus-ring relative w-52.5 max-w-full rounded-2xl border px-3 py-1.5 text-sm font-normal shadow-sm transition-[border-color,box-shadow] duration-150 focus:ring-2 focus:outline-none;
+
+  .table.cbi-section-table & {
+    @apply w-full;
+  }
+}
+
+.cbi-input-text {
+  @apply min-w-20 max-md:min-w-14;
+}
+
+#localtime {
+  @apply min-w-70;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  @apply focus:before:border-brand focus:before:ring-focus-ring checked:before:border-brand checked:before:bg-brand before:border-hairline before:bg-control-bg after:bg-on-brand hover:before:border-hairline relative mr-3 inline-block h-4 w-4 cursor-pointer appearance-none before:absolute before:top-0 before:left-0 before:h-4 before:w-4 before:border before:transition-[background-color,border-color,box-shadow] before:duration-150 after:absolute after:top-0.5 after:left-0.5 after:h-3 after:w-3 after:opacity-0 after:transition-opacity after:duration-150 checked:after:opacity-100 focus:before:ring-2 focus:before:outline-none disabled:cursor-not-allowed;
+}
+
+input[type="radio"] {
+  @apply before:rounded-full after:[mask:var(--icon-radio)_center/cover_no-repeat];
+}
+
+input[type="checkbox"] {
+  @apply before:rounded after:[mask:var(--icon-check)_center/cover_no-repeat];
+}
+
+.cbi-checkbox {
+  @apply relative inline-flex items-center;
+}

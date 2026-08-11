@@ -1,0 +1,12 @@
+/*
+  PATCH: admin-network-network (luci-app-network — bridge VLAN)
+  Loaded on-demand by header.ut only when data-page matches this filename.
+  Native declarations keep this standalone patch free of Tailwind helper output;
+  theme values come through the :root custom properties.
+*/
+
+@media (width < 48rem) {
+  [data-name="bridge-vlan"] > div {
+    overflow: visible !important;
+  }
+}

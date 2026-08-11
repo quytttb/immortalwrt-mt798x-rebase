@@ -1,0 +1,28 @@
+{
+  "admin/system/aurora": {
+    "title": "Aurora Theme Design",
+    "order": 100,
+    "action": {
+      "type": "firstchild"
+    },
+    "depends": {
+      "acl": ["luci-app-aurora"]
+    }
+  },
+  "admin/system/aurora/studio": {
+    "title": "Design Studio",
+    "order": 10,
+    "action": {
+      "type": "view",
+      "path": "aurora/studio"
+    }
+  },
+  "admin/system/aurora/marketplace": {
+    "title": "Theme Marketplace",
+    "order": 15,
+    "action": {
+      "type": "view",
+      "path": "aurora/marketplace"
+    }
+  }
+}

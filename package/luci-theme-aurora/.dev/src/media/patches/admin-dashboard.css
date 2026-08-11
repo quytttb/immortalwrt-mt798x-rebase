@@ -1,0 +1,120 @@
+/*
+  PATCH: admin-dashboard (luci-mod-dashboard)
+  Loaded on-demand by header.ut only when data-page matches this filename.
+  Native declarations keep this standalone patch free of Tailwind helper output;
+  theme values come through the :root custom properties.
+*/
+
+[data-page="admin-dashboard"] {
+  .Dashboard {
+    & > .section-content {
+      & .dashboard-bg {
+        background: var(--surface-overlay);
+
+        &.tr {
+          border-radius: 0;
+        }
+
+        &:not(.tr) {
+          border: 1px solid var(--hairline);
+          box-shadow: var(--app-shadow-lg);
+
+          &:hover {
+            border-color: var(--hairline);
+            /* The theme maps the xl utility onto --app-shadow-md. */
+            box-shadow: var(--app-shadow-md);
+          }
+        }
+
+        /* Dark mode: override custom.css hardcoded light-mode colors on all text nodes */
+        & span,
+        & td,
+        & th {
+          [data-darkmode="true"] & {
+            color: var(--text) !important;
+          }
+        }
+
+        img[src*=".svg"] {
+          [data-darkmode="true"] & {
+            filter: invert(100%);
+          }
+        }
+
+        /* Compact spacing for assoclist cells (carry .td/.th classes) */
+        & .td {
+          padding-block: 0.5rem;
+
+          @media (width < 48rem) {
+            padding-block: 0.25rem;
+          }
+        }
+        & .th {
+          padding-block: 0.5rem;
+        }
+
+        /* Inline info tables (e.g. DNS): strip card decoration, restore table layout */
+        & .table:not(.assoclist) {
+          margin-bottom: 0;
+          border-radius: 0;
+          border: 0;
+          background: transparent;
+          box-shadow: none;
+
+          & tr {
+            &:hover {
+              background: transparent;
+            }
+
+            @media (width < 48rem) {
+              display: table-row;
+              border: 0;
+              padding: 0;
+            }
+          }
+
+          & td {
+            border: 0;
+            padding: 0.125rem 0;
+
+            @media (width < 48rem) {
+              display: table-cell;
+            }
+
+            &:first-child {
+              padding-right: 0.5rem;
+              white-space: nowrap;
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+
+      .title h3 {
+        color: var(--text);
+        border: 0;
+        padding-bottom: 1rem;
+
+        @media (width < 48rem) {
+          margin-inline: 0;
+          padding-bottom: 0.5rem;
+        }
+      }
+
+      .router-status-wifi {
+        .wifi-info .devices-info .tr .td {
+          &:nth-child(3) {
+            position: relative;
+            top: 0;
+            width: 100%;
+            padding-inline: 0;
+          }
+
+          @media (width < 48rem) {
+            flex: 1 1 50%;
+          }
+        }
+      }
+    }
+  }
+}

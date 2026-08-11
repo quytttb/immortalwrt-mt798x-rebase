@@ -1,0 +1,74 @@
+name: "Bug report"
+description: Report an issue for luci-theme-aurora
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ###  Thanks for taking the time to create a bug report.Please provide a clear description and screenshots if possible
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: 请清晰地描述出现的问题，尽量能附上截图/录屏，这会大大提高修复效率。
+      placeholder: Briefly describe the issue and attach screenshots if possible
+    validations:
+      required: true
+
+  - type: input
+    id: openwrt-version
+    attributes:
+      label: OpenWrt version
+      description: 请填写OpenWrt发布或构建版本，例如24.10-SNAPSHOT
+      placeholder: ex. 24.10-SNAPSHOT
+    validations:
+      required: true
+
+  - type: textarea
+    id: dom-structure
+    attributes:
+      label: DOM structure of the problematic area (optional)
+      description: 请提供出现问题的页面的HTML文件（上传）或DOM结构（粘贴），这有助于调试和修复问题。在Chrome浏览器中，按下 Command + S (Mac) 或 Ctrl + S (Windows/Linux) 保存页面为HTML文件，然后上传该文件，或直接粘贴相关的DOM结构代码。
+      placeholder: Upload the HTML file or paste the DOM structure of the problematic area
+    validations:
+      required: false
+
+  - type: textarea
+    id: plugin-source
+    attributes:
+      label: Plugin source (optional; if issue happens on a plugin page)
+      description: |
+        如果问题出现在第三方插件页面，请提供该插件的 GitHub 仓库地址，以便安装复现。
+        如果插件来自 OpenWrt 软件源，请提供完整包名，便于搜索安装复现。
+      placeholder: ex. https://github.com/owner/plugin 或 luci-app-xxx
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser (optional; vendor + version)
+      description: 请填写浏览器名称与版本，例如 Chrome 141.0.7390.77
+      placeholder: ex. Safari 26
+    validations:
+      required: false
+
+  - type: input
+    id: theme-version
+    attributes:
+      label: Theme version (optional)
+      description: luci-theme-aurora 的版本号或commit 哈希
+      placeholder: ex. 0.11.0 or commit SHA(e.g. 53eeabb)
+    validations:
+      required: false
+
+  - type: input
+    id: os
+    attributes:
+      label: OS (optional; name + version)
+      description: 操作系统名称与版本，例如 Windows 11 25H2、Android 15
+      placeholder: ex. macOS Tahoe、iOS 26
+    validations:
+      required: false

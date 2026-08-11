@@ -1,0 +1,158 @@
+/**
+ * Shared navigation vocabulary.
+ *
+ * One visual definition consumed by the desktop sidebar, the mobile
+ * drawer and (incrementally) the other navigation modes. Mode files
+ * (_layout.css, _overlay.css) keep positioning, sizing overrides and
+ * show/hide state only — never duplicate these recipes there.
+ */
+
+.nav-link {
+  /* hover:no-underline: the global `a:hover { underline }` in _elements.css
+     outranks a bare class (a:hover is 0,1,1), so nav rows must opt out at
+     the same specificity tier. */
+  @apply text-text hover:bg-hover-faint block rounded-xl px-3 py-1.5 no-underline transition-colors duration-150 hover:no-underline;
+}
+
+.navigation-direct {
+  @apply text-text hover:text-text;
+}
+
+/* Direct destinations use the same selected state in both navigation modes:
+   a filled brand pill, matching the active sublink. */
+.navigation-direct.is-active-page {
+  @apply text-brand hover:text-brand bg-brand-subtle font-medium;
+}
+
+/* Category rows are group labels, not buttons: no hover surface, just a
+   text-color shift. Block highlights belong to child links exclusively.
+   appearance-none + border-0 + shadow-none strip the theme's global
+   <button> chrome (_button.css), which would otherwise box every row. */
+.nav-category {
+  @apply text-text-muted hover:text-text focus-visible:ring-focus-ring flex w-full cursor-pointer appearance-none items-center gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-left text-lg font-semibold tracking-wide shadow-none transition-colors duration-150 select-none focus-visible:ring-2 focus-visible:outline-none;
+}
+
+.navigation-group-toggle {
+  /* size-4.5 ≈ the row's text height — 3.5 read as undersized next to the
+     text-lg category labels, on desktop and in the mobile drawer alike. */
+  @apply after:size-4.5 after:shrink-0 after:bg-current after:opacity-55 after:transition-[transform,opacity] after:duration-[250ms] after:content-[''] after:[mask:var(--icon-arrow-right)_center/cover_no-repeat] hover:after:opacity-100;
+}
+
+.nav-category-label {
+  @apply min-w-0 flex-1 truncate;
+}
+
+/* An expanded group's label turns brand and its arrow rotates open. */
+.navigation-group.is-expanded > .navigation-group-toggle {
+  @apply text-brand after:rotate-90;
+}
+
+/* The active group keeps its brand label even when the user manually
+   collapses it — otherwise the active-page pill is hidden inside the inert
+   region and no "you are here" marker survives. No arrow rotation here: a
+   collapsed group's arrow must still point right. */
+.navigation-group.is-active-group > .navigation-group-toggle {
+  @apply text-brand;
+}
+
+/* ── Row icons ──
+   A leading glyph inline with the label, on sidebar and mobile-drawer
+   rows alike (the mega-menu title draws its own ::before). bg-current +
+   mask lets the glyph track the row's text colour through hover, expanded
+   and active states; the size is set per surface — sidebar rows in
+   _layout.css, drawer rows in _overlay.css. */
+.nav-icon {
+  @apply shrink-0 bg-current opacity-55 transition-opacity duration-150 [mask:var(--menu-icon,var(--icon-category))_center/contain_no-repeat];
+}
+
+/* Direct-row labels; group rows keep .nav-category-label. flex-1 also
+   holds the label against the drawer's justify-between rows. */
+.nav-label {
+  @apply min-w-0 flex-1 truncate;
+}
+
+/* Full-strength glyph wherever the row itself is highlighted. */
+.navigation-direct:hover .nav-icon,
+.navigation-group-toggle:hover .nav-icon,
+.navigation-direct.is-active-page .nav-icon,
+.navigation-group.is-expanded > .navigation-group-toggle .nav-icon,
+.navigation-group.is-active-group > .navigation-group-toggle .nav-icon {
+  @apply opacity-100;
+}
+
+.navigation-group-region {
+  @apply grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-[250ms] ease-out;
+}
+
+.navigation-group.is-expanded > .navigation-group-region {
+  @apply grid-rows-[1fr] opacity-100;
+}
+
+.navigation-submenu-list {
+  @apply min-h-0 list-none overflow-hidden;
+}
+
+.navigation-sublink {
+  @apply text-text-muted hover:bg-hover-faint hover:text-text relative flex rounded-xl font-medium no-underline transition-colors duration-150;
+}
+
+/* Active page: a filled brand pill, shared by the sidebar and the drawer. */
+.navigation-sublink.is-active-page {
+  @apply text-brand hover:text-brand bg-brand-subtle font-semibold;
+}
+
+.nav-category-preview {
+  @apply text-text-subtle truncate pb-1;
+
+  & .nav-preview-current {
+    @apply text-brand;
+  }
+}
+
+/* ── First-level section icons ──
+   The name → icon map, shared by every navigation surface: the mega-menu
+   title (::before consumer in _layout.css) and the sidebar/mobile-drawer
+   row glyphs (.nav-icon below). Keyed on the LuCI node name (data-section,
+   set by menu-aurora.js) — stable and language-independent. Scoped to the
+   three row elements that carry the attribute so the selector can't
+   accidentally match unrelated data-section usage elsewhere; :is() keeps
+   every key at (0,2,0) — the mega-menu consumer's fallback chain would
+   outrank anything higher (see _layout.css). The only maintenance point:
+   add new first-level sections here; anything unmapped falls back to the
+   default icon at the consumer. */
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="status"] {
+  @apply [--menu-icon:var(--icon-activity)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="statistics"] {
+  @apply [--menu-icon:var(--icon-chart-bar)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="nlbw"] {
+  @apply [--menu-icon:var(--icon-gauge)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="system"] {
+  @apply [--menu-icon:var(--icon-settings)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="services"] {
+  @apply [--menu-icon:var(--icon-apps)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="nas"] {
+  @apply [--menu-icon:var(--icon-server)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="control"] {
+  @apply [--menu-icon:var(--icon-adjustments)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="network"] {
+  @apply [--menu-icon:var(--icon-world)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="vpn"] {
+  @apply [--menu-icon:var(--icon-shield)];
+}
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="docker"] {
+  @apply [--menu-icon:var(--icon-box)];
+}
+/* "asterisk" covers VoIP/PBX apps (e.g. luci-app-asterisk forks) — no
+   official OpenWrt package registers a verified menu.d node under this
+   name, so this is a best-effort key. */
+:is(.desktop-nav-title, .navigation-direct, .navigation-group-toggle)[data-section="asterisk"] {
+  @apply [--menu-icon:var(--icon-phone)];
+}

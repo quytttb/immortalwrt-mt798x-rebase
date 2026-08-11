@@ -1,0 +1,10 @@
+#!/bin/sh
+# Legacy CI inject — BBR/UPnP/lang now handled by default-settings-vn.
+# Keep UPnP enable here for builds that skip default-settings-vn.
+
+if uci -q get upnpd.config > /dev/null; then
+	uci -q set upnpd.config.enabled='1'
+	uci -q commit upnpd
+fi
+
+exit 0

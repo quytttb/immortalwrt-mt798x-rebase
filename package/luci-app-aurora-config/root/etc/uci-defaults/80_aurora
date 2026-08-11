@@ -1,0 +1,135 @@
+#!/bin/sh
+
+readonly CONF_FILE="/etc/config/aurora"
+readonly DEFAULT_TEMPLATE="/usr/share/aurora/default.template"
+readonly SAGE_GREEN_TEMPLATE="/usr/share/aurora/sage-green.template"
+readonly AMBER_SAND_TEMPLATE="/usr/share/aurora/amber-sand.template"
+readonly MONOCHROME_TEMPLATE="/usr/share/aurora/monochrome.template"
+readonly SKY_BLUE_TEMPLATE="/usr/share/aurora/sky-blue.template"
+readonly LOG_TAG="aurora"
+
+# Bump when the meaning of stored color tokens changes incompatibly.
+# v2: two-layer flip -- light_/dark_ status inputs (success/info/warning/danger)
+#     went from "light surface" to "dark content", surfaces derived via
+#     oklch(from var(--token) ...). Pre-flip snapshots leave content the same
+#     colour as the derived surface -> invisible label text and icons.
+# v3: fixes a re-seed bug in v2 that left ~14 colour keys empty (a nested
+#     command substitution inside a pipe-fed `while read` swallowed stdin and
+#     skipped keys). v3 re-runs a corrected re-seed, so devices stuck at v2
+#     with a half-migrated config are repaired.
+# v4: single-plane token redesign. The two-layer taxonomy (canvas/content/
+#     surface_raised + ~57 derived expression tokens) is gone. The schema is now
+#     10 editable inputs (canvas->bg, content->text, surface_raised dropped) plus
+#     20 engine-derived flat colours. The re-seed prunes EVERY legacy light_/dark_
+#     key absent from the new template, clearing stale overrides that header.ut
+#     would otherwise inject against now-nonexistent CSS variables. Custom colours
+#     reset to the active template defaults (no value mapping).
+# v5: broad config rework. Stored values are no longer migrated key-by-key --
+#     any schema mismatch triggers a full reset: the live config is overwritten
+#     wholesale with the active template. ALL prior customisation (colours,
+#     fonts, toolbar items, nav mode, icon, logo/favicon) is discarded so every
+#     upgraded device lands on the new defaults.
+# v6: link now defaults to the brand colour in both modes (aurora-tokens
+#     1.0.1). Seeded v5 snapshots still carry the legacy magenta/teal link,
+#     which header.ut would keep injecting over the new CSS defaults; per the
+#     v5 policy the mismatch triggers a full reset to the active template.
+# v7: light-mode relight to the "snow x blue hour" palette (aurora-tokens
+#     1.1.0, refined in 1.2.x: icy recessed fills, snow panel, control_bg
+#     + app_opacity_disabled): cool 235deg neutrals, purified status hues
+#     and a cool blue-black menu scrim. Seeded v6 snapshots carry the old
+#     264deg purple-grey light tokens, which header.ut would keep injecting
+#     over the new CSS defaults; per the v5 policy the mismatch triggers a
+#     full reset to the active template.
+readonly SCHEMA_VERSION="7"
+
+log() {
+    logger -t "$LOG_TAG" "$1"
+}
+
+# Rename struct_container_max_width -> struct_content_width_centered, in place.
+#
+# Deliberately NOT a SCHEMA_VERSION bump: that triggers a full reset to the
+# template (see the v5 policy above) and is reserved for incompatible *colour*
+# semantics. A rename changes no meaning, so discarding every other
+# customisation to accomplish it would be gratuitous.
+#
+# The width cap only ever applied to the centred (top-bar) layouts — the
+# sidebar shell runs full-width — so the key was renamed to say which shell it
+# governs. The old key must be deleted, not merely copied: header.ut re-emits
+# every stored struct_* key as a CSS custom property, so leaving it behind would
+# keep injecting a --container-max-width that nothing reads.
+migrate_structure_keys() {
+    local old
+
+    old=$(uci -q get aurora.theme.struct_container_max_width)
+    [ -n "$old" ] || return 0
+
+    [ -n "$(uci -q get aurora.theme.struct_content_width_centered)" ] ||
+        uci -q set aurora.theme.struct_content_width_centered="$old"
+    uci -q delete aurora.theme.struct_container_max_width
+    uci -q commit aurora
+    log "Renamed struct_container_max_width -> struct_content_width_centered (${old})"
+}
+
+# Reset the whole config to the active template. Used when the stored schema
+# version does not match: rather than migrating individual keys, the entire
+# config is overwritten so no stale options survive.
+migrate_color_schema() {
+    local template="$1" stored
+
+    stored=$(uci -q get aurora.theme.config_version)
+    [ "$stored" = "$SCHEMA_VERSION" ] && return 0
+
+    log "Schema changed (was '${stored:-unset}'); resetting config to template defaults"
+    if cp "$template" "$CONF_FILE"; then
+        chmod 644 "$CONF_FILE"
+        uci -q set aurora.theme.config_version="$SCHEMA_VERSION"
+        uci -q commit aurora
+        log "Config reset to schema v$SCHEMA_VERSION complete"
+    else
+        log "Config reset failed; leaving existing config untouched"
+    fi
+}
+
+main() {
+    log "Initializing Aurora theme configuration"
+
+    template=""
+    if [ -f "$DEFAULT_TEMPLATE" ]; then
+        template="$DEFAULT_TEMPLATE"
+    elif [ -f "$SAGE_GREEN_TEMPLATE" ]; then
+        template="$SAGE_GREEN_TEMPLATE"
+    elif [ -f "$AMBER_SAND_TEMPLATE" ]; then
+        template="$AMBER_SAND_TEMPLATE"
+    elif [ -f "$MONOCHROME_TEMPLATE" ]; then
+        template="$MONOCHROME_TEMPLATE"
+    elif [ -f "$SKY_BLUE_TEMPLATE" ]; then
+        template="$SKY_BLUE_TEMPLATE"
+    fi
+
+    if [ -z "$template" ]; then
+        log "Template missing: $DEFAULT_TEMPLATE, $SAGE_GREEN_TEMPLATE, $AMBER_SAND_TEMPLATE, $MONOCHROME_TEMPLATE, $SKY_BLUE_TEMPLATE"
+        exit 0
+    fi
+
+    if [ ! -f "$CONF_FILE" ]; then
+        if cp "$template" "$CONF_FILE"; then
+            chmod 644 "$CONF_FILE"
+            uci -q set aurora.theme.config_version="$SCHEMA_VERSION"
+            uci -q commit aurora
+            log "First-time initialization: Config created from template at schema v$SCHEMA_VERSION"
+        else
+            log "Failed to create config from template"
+        fi
+    else
+        log "Configuration already exists, checking colour token schema"
+        migrate_color_schema "$template"
+        # After a reset the config already matches the template, so this is a
+        # no-op; it only does work for configs that survived the check above.
+        migrate_structure_keys
+    fi
+}
+
+main
+
+exit 0

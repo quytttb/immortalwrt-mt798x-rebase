@@ -11,6 +11,7 @@
 /staging_dir
 /tmp
 /logs
+/toolchains
 /feeds
 /feeds.conf
 /files

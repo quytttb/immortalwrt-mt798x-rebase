@@ -625,16 +625,16 @@ Nếu thiết bị của bạn đang chạy firmware gốc của Viettel và b�
 
    **Linux:**
    ```bash
-   git clone https://github.com/quytttb/unlock-nr3053.git
-   cd unlock-nr3053
+   git clone https://github.com/quytttb/nr3053-tools.git
+   cd nr3053-tools
    pip3 install -r requirements.txt
    python3 unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN
    ```
 
    **Windows (PowerShell):**
    ```powershell
-   git clone https://github.com/quytttb/unlock-nr3053.git
-   cd unlock-nr3053
+   git clone https://github.com/quytttb/nr3053-tools.git
+   cd nr3053-tools
    py -m pip install -r requirements.txt
    py unlock_nr3053.py --password SERIAL_NUMBER_CUA_BAN
    ```

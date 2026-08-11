@@ -1,0 +1,47 @@
+/**
+ * Copyright (C) 2025 eamonxg <eamonxiong@gmail.com>
+ * Licensed under the Apache License, Version 2.0.
+ */
+
+/* Every shipped utility is referenced through @apply in these CSS sources.
+   Disabling automatic repository scanning prevents class-like words in docs,
+   scripts and fixtures from leaking into the OpenWrt payload. */
+@import "tailwindcss" source(none);
+
+@custom-variant dark (&:where([data-darkmode=true], [data-darkmode=true] *));
+
+@import "@eamonxg/luci-theme-tokens/dist/aurora/tokens.css";
+@import "./_icons.css";
+
+@import "./_base.css";
+@import "./_page-bg.css";
+@import "./_elements.css";
+@import "./_layout.css";
+
+@import "./components/_nav.css";
+@import "./components/_switcher.css";
+@import "./components/_float-button.css";
+@import "./components/_button.css";
+@import "./components/_input.css";
+@import "./components/_textarea.css";
+@import "./components/_select.css";
+@import "./components/_dropdown.css";
+@import "./components/_tooltip.css";
+@import "./components/_message.css";
+@import "./components/_progress.css";
+@import "./components/_badge.css";
+@import "./components/_card.css";
+@import "./components/_modal.css";
+@import "./components/_overlay.css";
+@import "./components/_table.css";
+@import "./components/_syslog.css";
+@import "./components/_form.css";
+@import "./components/_segmented.css";
+@import "./components/_tab.css";
+@import "./components/_palette.css";
+
+@import "./_page-bg-mode.css";
+
+@import "./_utilities.css";
+@import "./_reduced-motion.css";
+@import "./_reduced-transparency.css";

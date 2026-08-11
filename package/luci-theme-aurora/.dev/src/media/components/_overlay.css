@@ -1,0 +1,112 @@
+.mobile-menu-overlay {
+  /* The mobile surface is opaque, so filtering pixels behind it has no visual
+     effect and only adds a full-screen paint/compositing cost. */
+  @apply max-md:bg-mega-menu-bg max-md:invisible max-md:fixed max-md:inset-0 max-md:z-60 max-md:opacity-0 md:hidden;
+
+  /* Transitions live on the OPEN state only: opening fades in, closing cuts
+     instantly. Link taps close into a full-page navigation, and any close
+     fade racing the document swap freezes mid-frame as a ghost. */
+  &.mobile-menu-open {
+    @apply max-md:visible max-md:opacity-100 max-md:transition-[visibility,opacity] max-md:duration-[250ms];
+  }
+
+  .mobile-nav {
+    @apply max-md:flex max-md:h-full max-md:w-full max-md:flex-col max-md:pt-14;
+
+    & .mobile-nav-body {
+      @apply max-md:flex max-md:min-h-0 max-md:flex-1 max-md:flex-col max-md:px-5 max-md:pt-6;
+
+      & .mobile-nav-label {
+        @apply max-md:text-text-muted max-md:mb-3 max-md:text-sm max-md:font-medium;
+      }
+    }
+
+    & .mobile-nav-list {
+      @apply max-md:m-0 max-md:flex max-md:min-h-0 max-md:flex-1 max-md:-translate-y-2 max-md:list-none max-md:flex-col max-md:overflow-y-auto max-md:overscroll-contain max-md:p-0 max-md:pb-5 max-md:opacity-0;
+
+      & .mobile-nav-item {
+        @apply max-md:shrink-0;
+
+        & .mobile-nav-link {
+          /* gap-3 (not 4): tight enough that the leading .nav-icon reads
+             attached to its label; justify-between still pins the group
+             arrow to the right edge. */
+          @apply max-md:flex max-md:min-h-13 max-md:w-full max-md:items-center max-md:justify-between max-md:gap-3 max-md:rounded-none max-md:border-0 max-md:bg-transparent max-md:px-0 max-md:py-2.5 max-md:text-left max-md:text-2xl max-md:leading-tight max-md:font-medium max-md:tracking-tight max-md:no-underline max-md:shadow-none;
+
+          & .nav-icon {
+            /* Row icons at drawer scale, against the text-2xl labels. */
+            @apply max-md:size-6;
+          }
+        }
+
+        & .mobile-nav-submenu {
+          & .mobile-nav-submenu-list {
+            /* pl: rows are px-0, so icon (1.5) + gap (0.75) put the label
+               at 2.25rem; sublinks bring px-3, the list supplies the rest. */
+            @apply max-md:mx-0 max-md:mt-0 max-md:mb-2 max-md:py-1 max-md:pr-0 max-md:pl-6;
+          }
+
+          & .mobile-nav-subitem {
+            & .mobile-nav-sublink {
+              @apply max-md:min-h-10 max-md:w-full max-md:items-center max-md:px-3 max-md:py-2 max-md:text-base;
+            }
+          }
+        }
+      }
+    }
+
+    & .mobile-nav-footer {
+      @apply max-md:border-hairline max-md:flex max-md:shrink-0 max-md:items-center max-md:justify-between max-md:border-t max-md:px-5 max-md:pt-4 max-md:pb-[max(1rem,env(safe-area-inset-bottom))];
+
+      & .mobile-nav-footer-action {
+        @apply max-md:flex max-md:items-center;
+      }
+
+      & .mobile-nav-logout {
+        @apply max-md:text-text max-md:hover:text-brand max-md:text-sm max-md:font-medium max-md:no-underline max-md:transition-colors max-md:duration-150;
+      }
+
+      & .theme-switcher {
+        & .theme-option {
+          @apply max-md:px-2 max-md:py-1;
+        }
+      }
+    }
+  }
+
+  &.mobile-menu-open .mobile-nav-list {
+    @apply max-md:translate-y-0 max-md:opacity-100 max-md:transition-[translate,opacity] max-md:duration-[250ms] max-md:ease-out;
+  }
+}
+
+body.mobile-navigation-open > header {
+  @apply max-md:z-70 max-md:bg-transparent;
+}
+
+[data-nav-type="mega-menu"] {
+  /* Apple's curtain: the frost is DECLARED here permanently and never
+     toggled — it fades in and out WITH the dim, so the page blurs
+     progressively as the sheet descends (apple.com's globalnav curtain runs
+     its blur exactly like this while the flyout animates). Gating the blur
+     on a post-transition "settled" state was tried and rejected: the frost
+     popped in only after the menu landed, visibly off-design.
+
+     The cost is per-frame blur re-compositing for the 300ms of fade — but it
+     is now the ONLY per-frame work: the reveal itself runs entirely on the
+     compositor (see _layout.css). What janked low-end devices was the old
+     overlap of main-thread height layout + live blur, not the blur alone.
+     If the fade still janks a device, reduce the radius or rely on
+     _reduced-transparency.css, which strips the filter outright.
+
+     Closing starts immediately and uses the same 220ms exit as the menu
+     surface. Delaying the opacity transition left the page frosted after the
+     sheet had already collapsed into the header, which read as a flash. Once
+     hidden, visibility:hidden makes the invisible filter cost nothing. */
+  & .desktop-menu-overlay {
+    @apply bg-mega-menu-scrim pointer-events-none invisible fixed inset-0 z-60 opacity-0 backdrop-blur-lg backdrop-saturate-150 transition-[opacity,visibility] duration-[220ms] ease-[cubic-bezier(0.4,0,0.6,1)] max-md:hidden;
+
+    &.active {
+      @apply pointer-events-auto visible opacity-100;
+    }
+  }
+}

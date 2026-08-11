@@ -1,0 +1,182 @@
+/**
+ * luci-theme-aurora: login page stylesheet
+ * Copyright 2025 eamonxg <eamonxiong@gmail.com>
+ * Licensed to the public under the Apache License 2.0.
+ */
+
+/* Login only needs Tailwind's theme variables and generated utilities. The
+   full Preflight reset is intentionally omitted from this standalone entry. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "@eamonxg/luci-theme-tokens/dist/aurora/tokens.css";
+
+@import "./_reduced-motion.css";
+@import "./_base.css";
+@import "./_page-bg.css";
+
+@custom-variant dark (&:where([data-darkmode=true], [data-darkmode=true] *));
+
+/* Minimal reset for this template, replacing the much larger Preflight. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply box-border;
+  }
+
+  body,
+  hr,
+  p,
+  button,
+  input {
+    @apply m-0;
+  }
+
+  button,
+  input {
+    @apply [font:inherit];
+  }
+
+  a {
+    @apply no-underline;
+  }
+
+  [hidden] {
+    @apply hidden!;
+  }
+}
+
+@keyframes divider-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.15);
+  }
+}
+
+.login-screen {
+  @apply relative flex min-h-dvh flex-col items-center justify-center px-5 pb-14;
+}
+
+.login-shell {
+  @apply w-full max-w-md;
+}
+
+/* Login maps its own token pair onto the shared page background layer. */
+.page-bg {
+  --page-bg: var(--login-bg);
+  --page-bg-lqip: var(--login-bg-lqip);
+}
+
+/* Login tunables — the var() fallbacks reproduce today's look exactly
+   (opaque card, no blur, no scrim), so an unset config changes nothing;
+   the config app's :root overrides pull them live. data-bg is stamped by
+   header.ut only when a login background is set. */
+body[data-bg] .page-bg::before {
+  @apply pointer-events-none absolute inset-0 z-1 content-[''] [background:color-mix(in_srgb,var(--bg)_var(--login-bg-scrim,0%),transparent)];
+}
+
+body[data-bg] .login-card {
+  @apply [background:color-mix(in_srgb,var(--surface)_var(--login-bg-alpha,100%),transparent)] [backdrop-filter:blur(var(--login-bg-blur,0px))_saturate(150%)];
+}
+
+/* login.css does not import _reduced-transparency.css (it would drag
+   admin-only tokens into the pruned sheet), so the login card carries its
+   own fallback: no blur, and the local --login-bg-alpha declaration
+   outranks the :root override to restore full opacity. */
+@media (prefers-reduced-transparency: reduce) {
+  body[data-bg] .login-card {
+    --login-bg-alpha: 100%;
+    @apply [backdrop-filter:none]!;
+  }
+}
+
+.login-card {
+  @apply bg-surface flex flex-col gap-7 rounded-4xl p-14 shadow-lg max-md:rounded-3xl max-md:p-9;
+}
+
+.login-brand {
+  @apply flex items-center gap-3.5;
+}
+
+.login-divider {
+  @apply via-hairline h-px w-full animate-[divider-in_0.7s_cubic-bezier(0.16,1,0.3,1)_0.1s_both] border-0 bg-linear-to-r from-transparent to-transparent;
+}
+
+.login-logo {
+  @apply bg-brand-subtle ring-brand-subtle flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ring-1;
+
+  & img {
+    @apply h-6 w-6;
+  }
+}
+
+.login-title {
+  @apply flex flex-col gap-1;
+}
+
+.login-hostname {
+  @apply text-text text-xl font-semibold tracking-tight;
+}
+
+.login-subtitle {
+  @apply text-text text-sm;
+}
+
+.login-form {
+  @apply flex flex-col gap-5;
+}
+
+.login-fields {
+  @apply flex flex-col gap-4;
+}
+
+.login-field {
+  @apply flex flex-col gap-2;
+}
+
+.login-label {
+  @apply text-text text-xs font-semibold tracking-widest uppercase;
+}
+
+.input-wrap {
+  @apply border-hairline bg-control-bg relative rounded-2xl border [contain:layout_style];
+}
+
+/* Focus ring: opacity-only transition runs on compositor thread, not main thread —
+   border-color changes require a repaint (~400 ms INP); opacity changes do not. */
+.input-wrap::after {
+  @apply border-brand pointer-events-none absolute -inset-px rounded-[calc(var(--radius-2xl)+1px)] border-2 opacity-0 content-[''] [transition:opacity_150ms_ease];
+}
+
+.input-wrap:focus-within::after {
+  @apply opacity-100;
+}
+
+.login-input {
+  @apply text-text placeholder:text-text-subtle w-full appearance-none rounded-2xl border-0 bg-transparent px-3 py-2.5 text-base outline-none;
+}
+
+.login-error {
+  @apply bg-danger-surface text-danger border-hairline rounded-2xl border px-3 py-2 text-center text-sm;
+}
+
+.login-actions {
+  @apply pt-4;
+}
+
+.login-submit {
+  @apply bg-brand text-on-brand w-full cursor-pointer rounded-2xl border-0 py-2.5 text-base font-medium hover:opacity-90 active:opacity-80;
+}
+
+.login-footer {
+  @apply text-text-muted absolute right-0 bottom-5 left-0 px-5 text-center text-xs;
+
+  & p {
+    @apply whitespace-normal;
+  }
+
+  & a {
+    @apply text-brand hover:underline;
+  }
+}

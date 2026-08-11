@@ -1,0 +1,17 @@
+/*
+  PATCH: admin-system-filemanager (luci-app-filemanager)
+  Loaded on-demand by header.ut only when data-page matches this filename.
+  Native declarations keep this standalone patch free of Tailwind helper output;
+  theme values come through the :root custom properties.
+*/
+
+[data-page="admin-system-filemanager"] {
+  #file-manager-container {
+    overflow: auto;
+
+    #status-bar {
+      background: var(--surface);
+      border: 0;
+    }
+  }
+}
