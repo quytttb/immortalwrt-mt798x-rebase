@@ -21,8 +21,8 @@ Tải bản mới nhất tại [Releases](https://github.com/quytttb/immortalwrt
 |---|---|
 | `*-squashfs-sysupgrade.itb` | Cài đặt hoặc nâng cấp vĩnh viễn |
 | `*-initramfs-recovery.itb` | Boot qua TFTP để test hoặc recovery, không ghi NAND |
-| `*-bl31-uboot.fip` | Nâng cấp U-Boot — chỉ dùng khi hướng dẫn yêu cầu |
-| `*-preloader.bin` | Nâng cấp BL2 — rủi ro cao, không dùng cho nâng cấp thông thường |
+| `*-bl31-uboot.fip` | Nâng cấp U-Boot — tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
+| `*-preloader.bin` | Nâng cấp BL2 — rủi ro cao, tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
 
 > Không dùng file của NR3053 cho 32X6 hoặc ngược lại. Đọc [hướng dẫn nạp firmware](docs/huong-dan-nap-firmware.md) trước khi ghi NAND, FIP hoặc BL2.
 
@@ -64,6 +64,14 @@ Hướng dẫn đầy đủ có TFTP, U-Boot bootmenu, UART, sysupgrade và reco
 - [Nghiên cứu MediaTek EasyMesh cho NR3053](docs/trien-khai-mediatek-easymesh.md)
 
 Quy trình an toàn: boot `initramfs-recovery.itb` qua TFTP để test trước, sau đó mới ghi `squashfs-sysupgrade.itb`. Chỉ nâng cấp FIP hoặc BL2 khi có lý do cụ thể và đã chuẩn bị đường recovery.
+
+## Bootloader (U-Boot / BL2)
+
+File `*-bl31-uboot.fip` và `*-preloader.bin` được build và phát hành riêng tại:
+
+**[quytttb/bl-mt798x-dhcpd](https://github.com/quytttb/bl-mt798x-dhcpd)** — tải từ tab [Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases).
+
+BL2 RAM payload dùng cho `mtk_uartboot` (boot UART khi router không vào được U-Boot) cũng lấy từ repo đó.
 
 ## Đồng bộ upstream
 

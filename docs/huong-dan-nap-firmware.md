@@ -206,7 +206,7 @@ https://github.com/981213/mtk_uartboot/releases (file `mtk_uartboot-v*-x86_64-pc
 ```
 C:\viettel-uart\
 ├── mtk_uartboot.exe
-├── bl2-viettel-nr3053-ram.bin       ← BL2 RAM payload (lấy từ docs/uart_payloads/ trong repo)
+├── bl2-viettel-nr3053-ram.bin       ← BL2 RAM payload (tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases))
 └── immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip   ← đúng model (NR3053 hoặc 32X6)
 ```
 
@@ -307,10 +307,10 @@ Công cụ `mtk_uartboot` thường đặt ở thư mục riêng cạnh repo clo
 | File | Nguồn cung cấp / Vị trí |
 |---|---|
 | `mtk_uart/mtk_uartboot` | Tool Linux (`../mtk_uart/`) hoặc [mtk_uartboot.exe](https://github.com/981213/mtk_uartboot/releases) (Windows) |
-| `bl2-viettel-nr3053-ram.bin` | BL2 RAM payload cho NR3053 — Lấy từ `docs/uart_payloads/` trong repo |
-| `bl2-viettel-32x6-ram.bin` | BL2 RAM payload cho 32X6 — Lấy từ `docs/uart_payloads/` trong repo |
-| `bin/targets/mediatek/filogic/immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | NR3053 FIP (Lấy từ kết quả build) |
-| `bin/targets/mediatek/filogic/immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | 32X6 FIP (Lấy từ kết quả build) |
+| `bl2-viettel-nr3053-ram.bin` | BL2 RAM payload cho NR3053 — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
+| `bl2-viettel-32x6-ram.bin` | BL2 RAM payload cho 32X6 — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
+| `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | NR3053 FIP — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
+| `immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | 32X6 FIP — Tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) |
 
 ---
 
@@ -375,8 +375,8 @@ Dùng khi chỉ thấy log BootROM hoặc im lặng — không có dòng autoboo
 chmod +x ../mtk_uart/mtk_uartboot
 
 sudo ../mtk_uart/mtk_uartboot -s /dev/ttyUSB0 \
-  -p docs/uart_payloads/bl2-viettel-nr3053-ram.bin \
-  -f bin/targets/mediatek/filogic/immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip \
+  -p bl2-viettel-nr3053-ram.bin \
+  -f immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip \
   -a
 ```
 
@@ -531,8 +531,8 @@ picocom -b 115200 /dev/ttyUSB0
 chmod +x ../mtk_uart/mtk_uartboot
 
 sudo ../mtk_uart/mtk_uartboot -s /dev/ttyUSB0 \
-  -p docs/uart_payloads/bl2-viettel-32x6-ram.bin \
-  -f bin/targets/mediatek/filogic/immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip \
+  -p bl2-viettel-32x6-ram.bin \
+  -f immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip \
   -a
 ```
 
@@ -811,7 +811,7 @@ Hoặc trong bootmenu chọn **[8] Load BL2 preloader via TFTP then write to NAN
 - Thử cổng khác: Linux `/dev/ttyUSB0`, `/dev/ttyUSB1`; Windows `COM3`, `COM4` (Device Manager).
 - Chạy `mtk_uartboot` **trước**, rồi mới cắm nguồn hoặc nhấn reset.
 - **Kẹp 2 cửa sổ** sẵn: mtk_uartboot + picocom/PuTTY — không mở picocom/PuTTY **trong lúc** mtk_uartboot đang chạy.
-- Dùng đúng file BL2 RAM Payload trong `docs/uart_payloads/` cho thiết bị tương ứng (`bl2-viettel-nr3053-ram.bin` hoặc `bl2-viettel-32x6-ram.bin`).
+- Dùng đúng file BL2 RAM Payload tải từ [quytttb/bl-mt798x-dhcpd Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases) cho thiết bị tương ứng (`bl2-viettel-nr3053-ram.bin` hoặc `bl2-viettel-32x6-ram.bin`).
 
 **Sau `FIP received` không thấy log U-Boot:**
 
