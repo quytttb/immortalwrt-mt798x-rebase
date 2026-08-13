@@ -66,6 +66,16 @@
 			gpios = <&pio 6 GPIO_ACTIVE_LOW>;
 		};
 	};
+
+	usb_vbus: regulator-usb-vbus {
+		compatible = "regulator-fixed";
+		regulator-name = "usb_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpios = <&pio 14 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-boot-on;
+	};
 };
 
 &eth {
@@ -282,4 +292,5 @@
 
 &xhci {
 	status = "okay";
+	vbus-supply = <&usb_vbus>;
 };
