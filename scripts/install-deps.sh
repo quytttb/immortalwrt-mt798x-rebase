@@ -20,4 +20,5 @@ fi
   build-essential clang flex bison g++ gawk gettext git \
   libncurses5-dev libssl-dev python3 python3-setuptools \
   rsync unzip zlib1g-dev file wget curl libelf-dev \
-  subversion swig time
+  subversion swig time \
+  device-tree-compiler gcc-aarch64-linux-gnu nodejs npm qemu-user-static

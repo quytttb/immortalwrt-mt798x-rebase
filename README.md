@@ -67,11 +67,13 @@ Quy trình an toàn: boot `initramfs-recovery.itb` qua TFTP để test trước,
 
 ## Bootloader (U-Boot / BL2)
 
-File `*-bl31-uboot.fip` và `*-preloader.bin` được build và phát hành riêng tại:
+Source và release chính thức của file `*-bl31-uboot.fip` và `*-preloader.bin` nằm tại:
 
 **[quytttb/bl-mt798x-dhcpd](https://github.com/quytttb/bl-mt798x-dhcpd)** — tải từ tab [Releases](https://github.com/quytttb/bl-mt798x-dhcpd/releases).
 
-BL2 RAM payload dùng cho `mtk_uartboot` (boot UART khi router không vào được U-Boot) cũng lấy từ repo đó.
+`scripts/build-viettel.sh` pin một commit của repo này, build FIP/BL2 một lần
+sau firmware, rồi gom chúng vào `dist/`; source firmware không còn tự build
+U-Boot/TF-A. BL2 RAM payload dùng cho `mtk_uartboot` cũng lấy từ repo đó.
 
 ## Đồng bộ upstream
 

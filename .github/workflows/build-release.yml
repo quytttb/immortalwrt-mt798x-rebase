@@ -161,8 +161,8 @@ jobs:
             |------|------------|-----------|
             | `immortalwrt-mediatek-filogic-viettel_nr3053-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
             | `immortalwrt-mediatek-filogic-viettel_nr3053-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | BL31 + U-Boot (FIP) | Nâng cấp U-Boot (bootmenu [7]) |
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-preloader.bin` | BL2 preloader | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | BL31 + U-Boot (FIP, build từ repo bootloader pin revision) | Nâng cấp U-Boot (bootmenu [7]) |
+            | `immortalwrt-mediatek-filogic-viettel_nr3053-preloader.bin` | BL2 preloader (build từ repo bootloader pin revision) | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
 
             ### Viettel 32X6
 
@@ -170,8 +170,8 @@ jobs:
             |------|------------|-----------|
             | `immortalwrt-mediatek-filogic-viettel_32x6-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
             | `immortalwrt-mediatek-filogic-viettel_32x6-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
-            | `immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | BL31 + U-Boot (FIP) | Nâng cấp U-Boot (bootmenu [7]) |
-            | `immortalwrt-mediatek-filogic-viettel_32x6-preloader.bin` | BL2 preloader | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
+            | `immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | BL31 + U-Boot (FIP, build từ repo bootloader pin revision) | Nâng cấp U-Boot (bootmenu [7]) |
+            | `immortalwrt-mediatek-filogic-viettel_32x6-preloader.bin` | BL2 preloader (build từ repo bootloader pin revision) | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
 
             Chi tiết nạp firmware: [docs/huong-dan-nap-firmware.md](https://github.com/quytttb/immortalwrt-mt798x-rebase/blob/main/docs/huong-dan-nap-firmware.md)
 
