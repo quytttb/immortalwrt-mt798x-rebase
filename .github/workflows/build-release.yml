@@ -153,6 +153,10 @@ jobs:
 
             ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6.
 
+            > **Lưu ý USB:** Chức năng USB trong release này chỉ dành cho Viettel
+            > **NR3053 đã mod phần cứng USB**. Không dùng bản này để kích hoạt USB
+            > trên 32X6 hoặc NR3053 chưa mod USB.
+
             Mỗi thiết bị có **4 file firmware** + `sha256sums`:
 
             ### Viettel NR3053
