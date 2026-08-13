@@ -63,5 +63,5 @@ define Device/viettel_nr3053
 		-kmod-usb3 -kmod-usb-ledtrig-usbport -automount -autosamba \
 		kmod-usb-core kmod-usb-ehci kmod-usb-net kmod-usb-storage \
 		kmod-usb-storage-extras kmod-usb-storage-uas kmod-usb-wdm \
-		kmod-usb-xhci-hcd kmod-usb-xhci-mtk kmod-usb2 kmod-usb3
+		kmod-usb-xhci-hcd kmod-usb-xhci-mtk kmod-usb2
 endef
