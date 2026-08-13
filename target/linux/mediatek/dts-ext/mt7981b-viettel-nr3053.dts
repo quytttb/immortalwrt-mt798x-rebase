@@ -277,9 +277,9 @@
 };
 
 &usb_phy {
-	status = "okay";
+	status = "disabled";
 };
 
 &xhci {
-	status = "okay";
+	status = "disabled";
 };
