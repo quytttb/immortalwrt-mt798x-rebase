@@ -12,6 +12,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BOOTLOADER_REPO_URL="https://github.com/quytttb/bl-mt798x-dhcpd.git"
 BOOTLOADER_REVISION="7b27cb0e2b91d7ecfaba12f6380c5a1fea4ab44c"
 BOOTLOADER_VERSION="SP2"
+FIRMWARE_VERSION="${FIRMWARE_VERSION:-$(git describe --tags --always --dirty)}"
 cd "$REPO_ROOT"
 
 build_bootloaders() {
@@ -82,12 +83,18 @@ shopt -u nullglob
 
 build_bootloaders
 
+# Keep the release description coupled to the exact files that passed validation.
+bash scripts/generate-release-notes.sh dist "$FIRMWARE_VERSION" "$BOOTLOADER_REVISION" \
+    > dist/release-notes.md
+
 # Regenerate checksums after adding the externally-built FIP and BL2 artifacts.
 (
     cd dist
     rm -f sha256sums
     sha256sum -- * > sha256sums
 )
+
+bash scripts/verify-viettel-artifacts.sh dist
 
 echo ""
 echo "Artifacts:"

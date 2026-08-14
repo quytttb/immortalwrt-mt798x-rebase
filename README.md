@@ -44,7 +44,7 @@ bash scripts/install-deps.sh
 bash scripts/build-viettel.sh
 ```
 
-Build script chuẩn bị feeds, theme Aurora, bản dịch, defconfig hai thiết bị, tải source và build; artifact được chép vào `dist/`.
+Build script chuẩn bị feeds, kiểm tra Aurora vendored, áp dụng bản dịch, defconfig hai thiết bị, tải source và build; artifact được chép vào `dist/`. Script kiểm tra đủ 8 file đặc thù hai board, xác minh `sha256sums` và sinh `dist/release-notes.md` từ artifact thực tế.
 
 Để chỉ tạo image cho một thiết bị sau khi đã build package:
 

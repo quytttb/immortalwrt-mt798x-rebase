@@ -68,10 +68,12 @@ jobs:
             openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-
 
       - name: Build firmware and collect artifacts
+        env:
+          FIRMWARE_VERSION: dev-${{ github.sha }}
         run: bash scripts/build-viettel.sh defconfig/viettel-only.config
 
       - name: Verify artifacts exist
-        run: test "$(ls -1 dist/ | wc -l)" -ge 1
+        run: bash scripts/verify-viettel-artifacts.sh dist
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v7

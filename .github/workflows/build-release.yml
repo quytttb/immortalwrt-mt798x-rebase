@@ -83,10 +83,12 @@ jobs:
             openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-
 
       - name: Build firmware and collect artifacts
+        env:
+          FIRMWARE_VERSION: ${{ needs.prepare.outputs.version }}
         run: bash scripts/build-viettel.sh defconfig/viettel-only.config
 
       - name: Verify artifacts exist
-        run: test "$(ls -1 dist/ | wc -l)" -ge 1
+        run: bash scripts/verify-viettel-artifacts.sh dist
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v7
@@ -148,34 +150,7 @@ jobs:
           generate_release_notes: true
           make_latest: true
           overwrite_files: true
-          body: |
-            ## ImmortalWrt ${{ needs.prepare.outputs.version }}
-
-            ImmortalWrt 25.12 (filogic / MT7981) cho Viettel NR3053 và 32X6.
-
-            Mỗi thiết bị có **4 file firmware** + `sha256sums`:
-
-            ### Viettel NR3053
-
-            | File | Thành phần | Cách dùng |
-            |------|------------|-----------|
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-bl31-uboot.fip` | BL31 + U-Boot (FIP, build từ repo bootloader pin revision) | Nâng cấp U-Boot (bootmenu [7]) |
-            | `immortalwrt-mediatek-filogic-viettel_nr3053-preloader.bin` | BL2 preloader (build từ repo bootloader pin revision) | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
-
-            ### Viettel 32X6
-
-            | File | Thành phần | Cách dùng |
-            |------|------------|-----------|
-            | `immortalwrt-mediatek-filogic-viettel_32x6-squashfs-sysupgrade.itb` | Firmware | sysupgrade / TFTP (bootmenu [5]) |
-            | `immortalwrt-mediatek-filogic-viettel_32x6-initramfs-recovery.itb` | Recovery RAM | UART / TFTP test (bootmenu [2]) |
-            | `immortalwrt-mediatek-filogic-viettel_32x6-bl31-uboot.fip` | BL31 + U-Boot (FIP, build từ repo bootloader pin revision) | Nâng cấp U-Boot (bootmenu [7]) |
-            | `immortalwrt-mediatek-filogic-viettel_32x6-preloader.bin` | BL2 preloader (build từ repo bootloader pin revision) | Nâng cấp BL2 (bootmenu [8], **rủi ro cao**) |
-
-            Chi tiết nạp firmware: [docs/huong-dan-nap-firmware.md](https://github.com/quytttb/immortalwrt-mt798x-rebase/blob/main/docs/huong-dan-nap-firmware.md)
-
-            Built from tag `${{ needs.prepare.outputs.tag }}`.
+          body_path: release-assets/release-notes.md
           files: |
             release-assets/**/*.itb
             release-assets/**/*.bin

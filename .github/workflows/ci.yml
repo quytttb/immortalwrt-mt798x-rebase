@@ -16,13 +16,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Verify Viettel-only defconfig
-        run: |
-          enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' defconfig/viettel-only.config)
-          if [ "$enabled" -ne 2 ]; then
-            echo "::error::viettel-only.config must enable exactly 2 devices, got $enabled" >&2
-            exit 1
-          fi
-          grep -q "viettel_nr3053" defconfig/viettel-only.config
-          grep -q "viettel_32x6" defconfig/viettel-only.config
-          ! grep -q "DEVICE_xiaomi" defconfig/viettel-only.config
-          echo "Viettel-only defconfig OK (NR3053 + 32X6)."
+        run: bash scripts/verify-viettel-config.sh defconfig/viettel-only.config
+
+      - name: Check fork automation scripts
+        run: bash -n scripts/build-viettel.sh scripts/prepare-build.sh scripts/verify-viettel-config.sh scripts/verify-viettel-artifacts.sh scripts/generate-release-notes.sh

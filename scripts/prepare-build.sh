@@ -16,20 +16,16 @@ echo "=== Bước 1: Update và install feeds ==="
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
-echo "=== Bước 2: Clone custom packages (Aurora theme) ==="
-if [ ! -d "package/luci-theme-aurora" ]; then
-    git clone --depth 1 https://github.com/eamonxg/luci-theme-aurora.git package/luci-theme-aurora
-    rm -rf package/luci-theme-aurora/.git
-else
-    echo "  luci-theme-aurora đã có, bỏ qua."
-fi
-
-if [ ! -d "package/luci-app-aurora-config" ]; then
-    git clone --depth 1 https://github.com/eamonxg/luci-app-aurora-config.git package/luci-app-aurora-config
-    rm -rf package/luci-app-aurora-config/.git
-else
-    echo "  luci-app-aurora-config đã có, bỏ qua."
-fi
+echo "=== Bước 2: Verify custom packages (Aurora) ==="
+# Aurora sources are vendored in this fork, so their revision is pinned by the
+# top-level firmware commit. Do not replace them with an unpinned clone at build time.
+for package_dir in package/luci-theme-aurora package/luci-app-aurora-config; do
+    if [[ ! -f "$package_dir/Makefile" ]]; then
+        echo "ERROR: Missing vendored Aurora package: $package_dir" >&2
+        exit 1
+    fi
+done
+echo "  Aurora packages are pinned by this firmware revision."
 
 echo "=== Bước 3: Áp dụng bản dịch và defaults tuỳ chỉnh ==="
 inject_po() {
@@ -101,13 +97,7 @@ echo "=== Bước 4: Chuẩn bị .config từ $DEFCONFIG ==="
 cp "$DEFCONFIG" .config
 make defconfig
 
-enabled=$(grep -c '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' .config)
-if [ "$enabled" -ne 2 ]; then
-    echo "ERROR: Expected 2 Viettel devices in .config, got $enabled" >&2
-    grep '^CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_.*=y' .config >&2 || true
-    exit 1
-fi
-echo "  OK: $enabled devices selected"
+bash scripts/verify-viettel-config.sh .config
 
 echo ""
 echo "Chuẩn bị hoàn tất. Tiếp theo:"
