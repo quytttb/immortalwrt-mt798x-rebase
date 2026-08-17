@@ -61,19 +61,19 @@
             "description": "RSSI threshold for association"
         },
         "wpa_group_rekey": {
-            "type": "integer",
+            "type": "number",
             "description": "WPA group rekey interval"
         },
         "frag": {
-            "type": "integer",
+            "type": "number",
             "description": "Fragmentation threshold"
         },
         "rts": {
-            "type": "integer",
+            "type": "number",
             "description": "RTS threshold"
         },
         "dtim_period": {
-            "type": "integer",
+            "type": "number",
             "description": "DTIM period"
         },
         "wmm": {

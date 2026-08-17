@@ -74,7 +74,7 @@ function calc_bandwidth(htmode, noscan) {
 
 	if (width == "40") {
 		res.HT_BW = "1";
-		res.HT_BSSCoexistence = (noscan == "1") ? "0" : "1";
+		res.HT_BSSCoexistence = noscan ? "0" : "1";
 	} else if (width == "80") {
 		res.HT_BW = "1";
 		res.VHT_BW = "1";

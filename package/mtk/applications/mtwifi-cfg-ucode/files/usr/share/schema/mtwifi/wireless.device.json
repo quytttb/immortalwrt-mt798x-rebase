@@ -24,15 +24,15 @@
             "description": "High Throughput Mode (e.g., HE160, HE80)"
         },
         "noscan": {
-            "type": "string",
-            "description": "Disable scanning (set to '1' to disable)"
+            "type": "boolean",
+            "description": "Do not scan for overlapping BSSs in HT40+/- mode"
         },
         "txpower": {
-            "type": "integer",
+            "type": "number",
             "description": "Transmission power (0-100)"
         },
         "beacon_int": {
-            "type": "integer",
+            "type": "number",
             "description": "Beacon interval"
         },
         "mu_beamformer": {
