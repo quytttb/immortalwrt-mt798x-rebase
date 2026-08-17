@@ -3,8 +3,11 @@
     "type": "object",
     "properties": {
         "mac": {
-            "type": "string",
-            "description": "MAC address"
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Station MAC addresses"
         },
         "key": {
             "type": "string",
@@ -15,8 +18,11 @@
             "description": "VLAN ID"
         },
         "iface": {
-            "type": "string",
-            "description": "Interface name"
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "List of associated interfaces"
         }
     }
 }

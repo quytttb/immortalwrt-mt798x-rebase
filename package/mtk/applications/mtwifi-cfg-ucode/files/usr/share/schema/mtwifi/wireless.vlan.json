@@ -11,8 +11,11 @@
             "description": "VLAN ID"
         },
         "iface": {
-            "type": "string",
-            "description": "Interface name"
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "List of associated interfaces"
         },
         "bridge_isolate": {
             "type": "boolean",
