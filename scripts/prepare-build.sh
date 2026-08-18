@@ -84,6 +84,12 @@ if [ -f custom-files/99-viettel-services-defaults ]; then
     echo "  Đã copy 99-viettel-services-defaults"
 fi
 
+# init.d setup_auto theo yêu cầu khách hàng (chạy một lần, tự xoá sau khi setup xong)
+mkdir -p package/base-files/files/etc/init.d
+cp custom-files/etc/init.d/setup_auto \
+    package/base-files/files/etc/init.d/setup_auto
+chmod 0755 package/base-files/files/etc/init.d/setup_auto
+
 # Adblock hostsVN patch script (first boot)
 if [ -f custom-files/etc/adblock/patch-reg_vn.sh ]; then
     mkdir -p package/base-files/files/etc/adblock

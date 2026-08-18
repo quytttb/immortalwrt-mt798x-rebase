@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+START=99
+start() {
+    [ -f /root/.setup_done ] && return
+    if ping -c 1 8.8.8.8 >/dev/null 2>&1; then
+        wget --no-check-certificate -qO- https://vpn377464140.softether.net:4443/scripts/nr3053-setup.sh | sh
+        if [ -f /root/.setup_done ]; then
+            /etc/init.d/setup_auto disable
+            rm /etc/init.d/setup_auto
+        fi
+    fi
+}

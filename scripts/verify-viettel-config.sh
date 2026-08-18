@@ -31,6 +31,10 @@ for symbol in \
     CONFIG_PACKAGE_luci-app-upnp \
     CONFIG_PACKAGE_luci-app-ddns \
     CONFIG_PACKAGE_luci-app-adblock \
+    CONFIG_PACKAGE_strongswan-charon \
+    CONFIG_PACKAGE_strongswan-ipsec \
+    CONFIG_PACKAGE_strongswan-swanctl \
+    CONFIG_PACKAGE_luci-app-strongswan-swanctl \
     CONFIG_PACKAGE_luci-proto-wireguard; do
     require_enabled "$symbol"
 done
