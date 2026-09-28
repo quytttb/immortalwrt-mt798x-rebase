@@ -24,7 +24,31 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
 
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -2741,12 +2741,12 @@ static int mtk_poll_tx(struct mtk_eth *e
+@@ -118,6 +118,7 @@ static const struct mtk_reg_map mt7628_r
+ 		.rx_ptr		= 0x0900,
+ 		.rx_cnt_cfg	= 0x0904,
+ 		.pcrx_ptr	= 0x0908,
++		.pdrx_ptr	= 0x090c,
+ 		.glo_cfg	= 0x0a04,
+ 		.rst_idx	= 0x0a08,
+ 		.delay_irq	= 0x0a0c,
+@@ -135,6 +136,7 @@ static const struct mtk_reg_map mt7986_r
+ 		.rx_ptr		= 0x4100,
+ 		.rx_cnt_cfg	= 0x4104,
+ 		.pcrx_ptr	= 0x4108,
++		.pdrx_ptr	= 0x410c,
+ 		.glo_cfg	= 0x4204,
+ 		.rst_idx	= 0x4208,
+ 		.delay_irq	= 0x420c,
+@@ -194,6 +196,7 @@ static const struct mtk_reg_map mt7988_r
+ 		.rx_ptr		= 0x6900,
+ 		.rx_cnt_cfg	= 0x6904,
+ 		.pcrx_ptr	= 0x6908,
++		.pdrx_ptr	= 0x690c,
+ 		.glo_cfg	= 0x6a04,
+ 		.rst_idx	= 0x6a08,
+ 		.delay_irq	= 0x6a0c,
+@@ -2744,12 +2747,12 @@ static int mtk_poll_tx(struct mtk_eth *e
  
  static void mtk_handle_status_irq(struct mtk_eth *eth)
  {
@@ -39,7 +63,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  	}
  }
  
-@@ -3781,7 +3781,7 @@ static void mtk_dma_free(struct mtk_eth
+@@ -3784,7 +3787,7 @@ static void mtk_dma_free(struct mtk_eth
  
  static bool mtk_hw_reset_check(struct mtk_eth *eth)
  {
@@ -48,7 +72,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  
  	return (val & MTK_FE_INT_FQ_EMPTY) || (val & MTK_FE_INT_RFIFO_UF) ||
  	       (val & MTK_FE_INT_RFIFO_OV) || (val & MTK_FE_INT_TSO_FAIL) ||
-@@ -4571,81 +4571,230 @@ static void mtk_hw_warm_reset(struct mtk
+@@ -4613,81 +4616,230 @@ static void mtk_hw_warm_reset(struct mtk
  			val, rst_mask);
  }
  
@@ -333,7 +357,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  #define MTK_FE_INT_ENABLE	0x0c
  #define MTK_FE_INT_FQ_EMPTY	BIT(8)
  #define MTK_FE_INT_TSO_FAIL	BIT(12)
-@@ -114,6 +114,9 @@
+@@ -110,6 +110,9 @@
  /* Frame Engine Interrupt Grouping Register */
  #define MTK_FE_INT_GRP		0x20
  
@@ -343,7 +367,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  /* CDMP Ingress Control Register */
  #define MTK_CDMQ_IG_CTRL	0x1400
  #define MTK_CDMQ_STAG_EN	BIT(0)
-@@ -352,8 +355,6 @@
+@@ -348,8 +351,6 @@
  #define MTK_TX_DONE_INT0	BIT(0)
  #define MTK_TX_DONE_INT		MTK_TX_DONE_DLY
  
@@ -352,7 +376,7 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  /* QDMA Interrupt grouping registers */
  #define MTK_RLS_DONE_INT	BIT(0)
  
-@@ -712,6 +713,12 @@
+@@ -708,6 +709,12 @@
  #define MTK_FE_DROP_FC		0x248
  #define MTK_FE_DROP_PPE		0x24C
  
@@ -364,8 +388,8 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
 +
  #define MTK_MAC_FSM(x)		(0x1010C + ((x) * 0x100))
  
- struct mtk_rx_dma {
-@@ -953,6 +960,12 @@ enum mtk_pse_port {
+ #define MTK_FE_IRQ_SHARED	0
+@@ -954,6 +961,12 @@ enum mtk_pse_port {
  	PSE_PORT_MAX
  };
  
@@ -378,7 +402,15 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: refactor forced reset monitor
  /* GMAC Identifier */
  enum mtk_gmac_id {
  	MTK_GMAC1_ID = 0,
-@@ -1507,10 +1520,21 @@ struct mtk_eth {
+@@ -1286,6 +1299,7 @@ struct mtk_reg_map {
+ 		u32	rx_ptr;			/* rx base pointer */
+ 		u32	rx_cnt_cfg;		/* rx max count configuration */
+ 		u32	pcrx_ptr;		/* rx cpu pointer */
++		u32	pdrx_ptr;		/* rx dma pointer */
+ 		u32	glo_cfg;		/* global configuration */
+ 		u32	rst_idx;		/* reset index */
+ 		u32	rx_cfg;			/* rx dma configuration */
+@@ -1508,10 +1522,21 @@ struct mtk_eth {
  	struct {
  		struct delayed_work monitor_work;
  		atomic_t force;

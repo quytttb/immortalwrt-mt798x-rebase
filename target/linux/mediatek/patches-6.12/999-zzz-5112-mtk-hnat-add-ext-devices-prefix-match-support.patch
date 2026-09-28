@@ -1,6 +1,6 @@
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat.c
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat.c
-@@ -1710,6 +1710,18 @@ static int hnat_probe(struct platform_de
+@@ -1772,6 +1772,18 @@ static int hnat_probe(struct platform_de
  		dev_info(&pdev->dev, "ext devices = %s\n", ext_entry->name);
  	}
  
@@ -21,15 +21,15 @@
  
 --- a/drivers/net/ethernet/mediatek/mtk_hnat/hnat.h
 +++ b/drivers/net/ethernet/mediatek/mtk_hnat/hnat.h
-@@ -239,6 +239,7 @@
- #define DEF_BIND_THRESHOLD	30
+@@ -252,6 +252,7 @@
+ #define DEF_UDP_KA		1
  #define MAX_EXT_DEVS		(0x3fU)
  #define MAX_IF_NUM		64
 +#define MAX_EXT_PREFIX_NUM	8
  
  #if defined(CONFIG_MEDIATEK_NETSYS_V3)
  #define MAX_PPE_NUM		3
-@@ -1081,6 +1082,7 @@ struct mtk_hnat {
+@@ -1101,6 +1102,7 @@ struct mtk_hnat {
  	struct net_device *g_wandev;
  	struct net_device *wifi_hook_if[MAX_IF_NUM];
  	struct extdev_entry *ext_if[MAX_EXT_DEVS];

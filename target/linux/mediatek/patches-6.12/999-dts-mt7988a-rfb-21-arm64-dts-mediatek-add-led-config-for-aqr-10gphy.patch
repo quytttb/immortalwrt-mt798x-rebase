@@ -17,13 +17,11 @@ Subject: [PATCH] arm64: dts: mt7988: add led config for aqr 10gphy
  .../dts/mediatek/mt7988a-rfb-eth2-aqr.dtso    | 23 +++++++++++++++++++
  2 files changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-aqr.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-aqr.dtso
-index f998750..a15ade6 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-aqr.dtso
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-aqr.dtso
-@@ -26,6 +26,29 @@ phy0: ethernet-phy@0 {
- 				firmware-name = "Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld";
- 				eee-broken-10gt;
+@@ -28,6 +28,29 @@
+ 				eee-broken-5gt;
+ 				eee-broken-2_5gt;
  				eee-broken-1000t;
 +
 +				leds {
@@ -51,13 +49,11 @@ index f998750..a15ade6 100644
  			};
  		};
  	};
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth2-aqr.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth2-aqr.dtso
-index 7aef64f..2b03b2b 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth2-aqr.dtso
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth2-aqr.dtso
-@@ -26,6 +26,29 @@ phy8: ethernet-phy@8 {
- 				firmware-name = "Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld";
- 				eee-broken-10gt;
+@@ -28,6 +28,29 @@
+ 				eee-broken-5gt;
+ 				eee-broken-2_5gt;
  				eee-broken-1000t;
 +
 +				leds {
@@ -85,6 +81,3 @@ index 7aef64f..2b03b2b 100644
  			};
  		};
  	};
--- 
-2.45.2
-

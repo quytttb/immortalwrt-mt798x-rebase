@@ -1,36 +1,48 @@
 #!/bin/sh
 
-[ "$(uci -q get "turboacc.global.set")" -eq "1" ] && exit 0
+set_default() {
+	uci -q get "turboacc.config.$1" >/dev/null ||
+		uci -q set "turboacc.config.$1=$2"
+}
 
-cat <<-EOF > "/etc/config/turboacc"
+[ -e /etc/config/turboacc ] || touch /etc/config/turboacc || exit 1
 
-config turboacc 'global'
-	option set '0'
+uci -q get "turboacc.config" >/dev/null ||
+	uci -q set "turboacc.config=turboacc"
 
-config turboacc 'config'
-	option tcpcca 'cubic'
+# preserve existing settings, including an explicitly disabled engine.
+if ! uci -q get "turboacc.config.fastpath" >/dev/null; then
+	kernel_ver="$(uname -r)"
 
-EOF
-
-kernel_ver="$(uname -r)"
-
-if [ -e "/lib/modules/$kernel_ver/mtkhnat.ko" ]; then
-	uci -q set "turboacc.config.fastpath"="mediatek_hnat"
-	uci -q set "turboacc.config.fastpath_mh_bind_rate"="30"
-	uci -q set "turboacc.config.fastpath_mh_update_nfct"="0"
-elif [ -e "/lib/modules/$kernel_ver/fast-classifier.ko" ]; then
-	uci -q set "turboacc.config.fastpath"="fast_classifier"
-	uci -q set "turboacc.config.fastpath_fc_br"="1"
-	if [ -d "/proc/sys/net/ipv6" ]; then
-		uci -q set "turboacc.config.fastpath_fc_ipv6"="1"
+	if [ -e "/lib/modules/$kernel_ver/mtkhnat.ko" ]; then
+		fastpath="mediatek_hnat"
+	elif [ -e "/lib/modules/$kernel_ver/fast-classifier.ko" ]; then
+		fastpath="fast_classifier"
+	elif [ -e "/lib/modules/$kernel_ver/shortcut-fe-cm.ko" ]; then
+		fastpath="shortcut_fe_cm"
 	else
-		uci -q set "turboacc.config.fastpath_fc_ipv6"="0"
+		fastpath="disabled"
 	fi
-elif [ -e "/lib/modules/$kernel_ver/shortcut-fe-cm.ko" ]; then
-	uci -q set "turboacc.config.fastpath"="shortcut_fe_cm"
-else
-	uci -q set "turboacc.config.fastpath"="none"
+
+	uci -q set "turboacc.config.fastpath=$fastpath"
 fi
+
+case "$(uci -q get "turboacc.config.fastpath")" in
+mediatek_hnat)
+	set_default fastpath_mh_bind_rate 30
+	set_default fastpath_mh_update_nfct 0
+	;;
+fast_classifier)
+	set_default fastpath_fc_br 1
+	if [ -d "/proc/sys/net/ipv6" ]; then
+		set_default fastpath_fc_ipv6 1
+	else
+		set_default fastpath_fc_ipv6 0
+	fi
+	;;
+esac
+
+set_default tcpcca cubic
 
 uci -q commit "turboacc"
 

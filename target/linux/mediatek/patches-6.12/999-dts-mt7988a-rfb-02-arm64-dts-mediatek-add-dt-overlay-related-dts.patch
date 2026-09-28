@@ -1,11 +1,12 @@
 ---
-[v5] arm64: dts: mediatek: add dt overlay related dts
+[v6] arm64: dts: mediatek: add dt overlay related dts
 
 Add device tree overlay support for MT7988A RFB with various Ethernet PHY
 configurations including AN8831X, AN8855, AQR113C, CUX3410, interal 2.5G PHYs,
 and MXL86252 switch. Enables flexible hardware configuration through
 runtime DTS overlays.
 ---
+v6: Disable 2.5G/5G EEE modes for Aquantia 10G PHY.
 v5: Move Wi-Fi nodes to separate DTSOs
 v4: Add a device tree overlay for the new mt7988a-mxl86252-rfb (MTK-5197) to
 replace the older one.
@@ -281,7 +282,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth1-sfp-aqr.dtso
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,99 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (C) 2022 MediaTek Inc.
@@ -363,6 +364,8 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +				compatible = "ethernet-phy-ieee802.3-c45";
 +				firmware-name = "Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld";
 +				eee-broken-10gt;
++				eee-broken-5gt;
++				eee-broken-2_5gt;
 +				eee-broken-1000t;
 +			};
 +		};
@@ -694,7 +697,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +};
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-rfb-eth2-mxl86252-aqr.dtso
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,150 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (C) 2022 MediaTek Inc.
@@ -729,6 +732,8 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +				compatible = "ethernet-phy-ieee802.3-c45";
 +				firmware-name = "Rhe-05.06-Candidate9-AQR_Mediatek_23B_P5_ID45824_LCLVER1.cld";
 +				eee-broken-10gt;
++				eee-broken-5gt;
++				eee-broken-2_5gt;
 +				eee-broken-1000t;
 +			};
 +

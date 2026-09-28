@@ -130,8 +130,9 @@ struct hnat_mcast_group_info {
 };
 
 enum hnat_npu_mcast_dest {
-	HNAT_NPU_MCAST_DEST_SWITCH = 0,
-	HNAT_NPU_MCAST_DEST_LAN,
+	HNAT_NPU_MCAST_DEST_SWITCH = 1,
+	HNAT_NPU_MCAST_DEST_LAN,	/* pse 15 eth2 gdm3 */
+	HNAT_NPU_MCAST_DEST_WAN,	/* pse 2 eth1 */
 	HNAT_NPU_MCAST_DEST_MAX,
 };
 

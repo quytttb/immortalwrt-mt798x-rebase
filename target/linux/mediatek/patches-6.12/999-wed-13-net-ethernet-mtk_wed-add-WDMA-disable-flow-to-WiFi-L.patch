@@ -27,7 +27,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -2058,6 +2058,18 @@ static inline void mtk_pse_gdm_enable(st
+@@ -2106,6 +2106,18 @@ static inline void mtk_pse_gdm_enable(st
  	mtk_w32(eth, val, MTK_FE_GLO_CFG(PSE_GDM_PORT(id)));
  }
  
@@ -43,12 +43,12 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 +	mtk_w32(eth, val, MTK_FE_GLO_CFG(PSE_WDMA_PORT(id)));
 +}
 +
- int mtk_gmac_sgmii_path_setup(struct mtk_eth *eth, int mac_id);
- int mtk_gmac_2p5gphy_path_setup(struct mtk_eth *eth, int mac_id);
- int mtk_gmac_gephy_path_setup(struct mtk_eth *eth, int mac_id);
+ static inline void mtk_reset_event_update(struct mtk_eth *eth, u32 id)
+ {
+ 	eth->reset.count[id]++;
 --- a/drivers/net/ethernet/mediatek/mtk_wed.c
 +++ b/drivers/net/ethernet/mediatek/mtk_wed.c
-@@ -2106,6 +2106,8 @@ mtk_wed_reset_dma(struct mtk_wed_device
+@@ -2119,6 +2119,8 @@ mtk_wed_reset_dma(struct mtk_wed_device
  	u32 val;
  	int i;
  
@@ -57,7 +57,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  	for (i = 0; i < ARRAY_SIZE(dev->tx_ring); i++) {
  		if (!dev->tx_ring[i].desc)
  			continue;
-@@ -2771,6 +2773,7 @@ mtk_wed_start(struct mtk_wed_device *dev
+@@ -2784,6 +2786,7 @@ mtk_wed_start(struct mtk_wed_device *dev
  	mtk_wed_amsdu_init(dev);
  
  	mtk_wed_dma_enable(dev);

@@ -48,7 +48,8 @@ struct hnat_desc {
 	u32 is_decap : 1;
 	u32 cdrt : 8;
 	u32 is_decrypt : 1;
-	u32 resv3 : 3;
+	u32 is_pppoe : 1;
+	u32 resv3 : 2;
 	u32 magic_tag_protect : 16;
 } __packed;
 #elif defined(CONFIG_MEDIATEK_NETSYS_RX_V2)
@@ -105,8 +106,10 @@ struct hnat_desc {
 #define skb_hnat_cdrt(skb) (((struct hnat_desc *)((skb)->head))->cdrt)
 #define skb_hnat_is_decrypt(skb) (((struct hnat_desc *)((skb)->head))->is_decrypt)
 #define skb_hnat_is_encrypt(skb) (!skb_hnat_is_decrypt(skb))
+#define skb_hnat_is_pppoe(skb) (((struct hnat_desc *)((skb)->head))->is_pppoe)
 #define skb_hnat_set_cdrt(skb, cdrt) ((skb_hnat_cdrt(skb)) = (cdrt))
 #define skb_hnat_set_is_decrypt(skb, is_dec) ((skb_hnat_is_decrypt(skb)) = is_dec)
+#define skb_hnat_set_is_pppoe(skb, is_pppoe) ((skb_hnat_is_pppoe(skb)) = (is_pppoe))
 #else /* !defined(CONFIG_MEDIATEK_NETSYS_V3) */
 #define skb_hnat_tops(skb) (0)
 #define skb_hnat_is_decap(skb) (0)
@@ -116,8 +119,10 @@ struct hnat_desc {
 #define skb_hnat_cdrt(skb) (0)
 #define skb_hnat_is_decrypt(skb) (0)
 #define skb_hnat_is_encrypt(skb) (0)
+#define skb_hnat_is_pppoe(skb) (0)
 #define skb_hnat_set_cdrt(skb, cdrt)
 #define skb_hnat_set_is_decrypt(skb, is_dec)
+#define skb_hnat_set_is_pppoe(skb, is_pppoe)
 #endif /* defined(CONFIG_MEDIATEK_NETSYS_V3) */
 #define skb_hnat_magic(skb) (((struct hnat_desc *)(skb->head))->magic)
 #define skb_hnat_reason(skb) (((struct hnat_desc *)(skb->head))->crsn)

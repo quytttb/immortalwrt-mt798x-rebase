@@ -2096,7 +2096,7 @@ new file mode 100644
 index 0000000..2251b90
 --- /dev/null
 +++ b/drivers/net/dsa/mxl862xx/mxl862xx.c
-@@ -0,0 +1,3828 @@
+@@ -0,0 +1,3829 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Based upon the Maxlinear SDK driver
@@ -5094,6 +5094,7 @@ index 0000000..2251b90
 +}
 +
 +static void mxl862xx_pcs_get_state(struct phylink_pcs *pcs,
++				 unsigned int neg_mode,
 +				 struct phylink_link_state *state)
 +{
 +	struct mxl862xx_priv *priv = pcs_to_mxl862xx_pcs(pcs)->priv;
