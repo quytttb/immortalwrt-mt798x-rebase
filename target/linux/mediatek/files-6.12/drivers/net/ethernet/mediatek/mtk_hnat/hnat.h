@@ -237,6 +237,11 @@
  */
 /* default binding threshold: 30 packets per second */
 #define DEF_BIND_THRESHOLD	30
+#define DEF_TCP_DLTA		7
+#define DEF_UDP_DLTA		12
+#define DEF_FIN_DLTA		1
+#define DEF_TCP_KA		1
+#define DEF_UDP_KA		1
 #define MAX_EXT_DEVS		(0x3fU)
 #define MAX_IF_NUM		64
 
@@ -1075,7 +1080,14 @@ struct mtk_hnat {
 
 	u32 foe_etry_num;
 	u32 etry_num_cfg;
+	/* debugfs tunables, re-applied by hnat_hw_init() after a SER */
 	u16 bind_threshold;
+	u16 tcp_dlta;
+	u16 udp_dlta;
+	u16 fin_dlta;
+	u8 tcp_ka;
+	u8 udp_ka;
+	u8 dft_cport;
 	struct net_device *g_ppdev;
 	struct net_device *g_wandev;
 	struct net_device *wifi_hook_if[MAX_IF_NUM];
@@ -1555,6 +1567,8 @@ void __entry_delete(struct foe_entry *entry);
 int entry_mac_cmp(struct foe_entry *entry, u8 *mac, enum entry_cmp_flags flags);
 int entry_ip_cmp(struct foe_entry *entry, bool is_ipv4, void *addr, enum entry_cmp_flags flags);
 int hnat_warm_init(void);
+void hnat_hw_set_dft_cport(u32 ppe_id);
+void hnat_hw_set_prot_3t(u32 ppe_id);
 u32 hnat_get_ppe_hash(struct foe_entry *entry);
 int mtk_ppe_get_xlat_v4_by_v6(struct in6_addr *ipv6, u32 *ipv4);
 int mtk_ppe_get_xlat_v6_by_v4(u32 *ipv4, struct in6_addr *ipv6,

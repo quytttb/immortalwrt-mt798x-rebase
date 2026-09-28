@@ -1080,6 +1080,54 @@ void hnat_cache_ebl(int enable)
 }
 EXPORT_SYMBOL(hnat_cache_ebl);
 
+void hnat_hw_set_dft_cport(u32 ppe_id)
+{
+	if (ppe_id >= CFG_PPE_NUM)
+		return;
+
+	/* Packets may reach PPE1 through CLS -> TDMA -> PPE1, so keep PPE1 on
+	 * the reset default (ADMA) to prevent looping.
+	 */
+	if (ppe_id == 1 && hnat_priv->dft_cport == PSE_TDMA_PORT)
+		return;
+
+	/* SP1/2/3 = GMAC1/2/3 source ports (MT798x) */
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT,
+		     SP1_DFT_CPORT, hnat_priv->dft_cport);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT,
+		     SP2_DFT_CPORT, hnat_priv->dft_cport);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT,
+		     SP3_DFT_CPORT, hnat_priv->dft_cport);
+
+	if (hnat_priv->data->version == MTK_HNAT_V3)
+		/* SP15 = GMAC3 source port (MT7987) */
+		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT1,
+			     SP15_DFT_CPORT, hnat_priv->dft_cport);
+}
+
+void hnat_hw_set_prot_3t(u32 ppe_id)
+{
+	const struct hnat_prot_3t_cfg *prot_3t;
+	u32 prot_regs[4] = {0};
+	unsigned int i;
+
+	if (ppe_id >= CFG_PPE_NUM)
+		return;
+
+	prot_3t = &hnat_priv->prot_3t[ppe_id];
+	for (i = 0; i < prot_3t->num && i < ARRAY_SIZE(prot_3t->proto); i++)
+		prot_regs[i / 4] |= (u32)prot_3t->proto[i] << ((i % 4) * 8);
+
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_FLOW_CFG,
+		     BIT_IP_PROT_CHK_BLIST, prot_3t->blist);
+	writel(prot_3t->ipv4_chk | ((u32)prot_3t->ipv6_chk << 16),
+	       hnat_priv->ppe_base[ppe_id] + PPE_IP_PROT_CHK);
+	writel(prot_regs[0], hnat_priv->ppe_base[ppe_id] + PPE_IP_PROT_0);
+	writel(prot_regs[1], hnat_priv->ppe_base[ppe_id] + PPE_IP_PROT_1);
+	writel(prot_regs[2], hnat_priv->ppe_base[ppe_id] + PPE_IP_PROT_2);
+	writel(prot_regs[3], hnat_priv->ppe_base[ppe_id] + PPE_IP_PROT_3);
+}
+
 static int hnat_hw_init(u32 ppe_id)
 {
 	if (ppe_id >= CFG_PPE_NUM)
@@ -1123,10 +1171,13 @@ static int hnat_hw_init(u32 ppe_id)
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, TCP_AGE, 1);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, UDP_AGE, 1);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, FIN_AGE, 1);
-	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_0, UDP_DLTA, 12);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_0, UDP_DLTA,
+		     hnat_priv->udp_dlta);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_0, NTU_DLTA, 1);
-	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_1, FIN_DLTA, 1);
-	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_1, TCP_DLTA, 7);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_1, FIN_DLTA,
+		     hnat_priv->fin_dlta);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BND_AGE_1, TCP_DLTA,
+		     hnat_priv->tcp_dlta);
 
 	/* setup FOE ka */
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, KA_CFG, 0);
@@ -1140,8 +1191,10 @@ static int hnat_hw_init(u32 ppe_id)
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, KA_CFG, 3);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_TB_CFG, TICK_SEL, 0);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_KA, KA_T, 1);
-	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_KA, TCP_KA, 1);
-	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_KA, UDP_KA, 1);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_KA, TCP_KA,
+		     hnat_priv->tcp_ka);
+	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_KA, UDP_KA,
+		     hnat_priv->udp_ka);
 	cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_BIND_LMT_1, NTU_KA, 1);
 
 	/* setup FOE rate limit */
@@ -1190,6 +1243,10 @@ static int hnat_hw_init(u32 ppe_id)
 		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_MIB_CFG, MIB_READ_CLEAR, 1);
 		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_MIB_CAH_CTRL, MIB_CAH_EN, 1);
 	}
+
+	/* must come after the PPE_DFT_CPORT and PPE_DFT_CPORT1 writes above */
+	hnat_hw_set_dft_cport(ppe_id);
+	hnat_hw_set_prot_3t(ppe_id);
 
 	hnat_priv->g_ppdev = dev_get_by_name(&init_net, hnat_priv->ppd);
 	hnat_priv->g_wandev = dev_get_by_name(&init_net, hnat_priv->wan);
@@ -1551,6 +1608,11 @@ static int hnat_probe(struct platform_device *pdev)
 
 	hnat_priv->foe_etry_num = DEF_ETRY_NUM;
 	hnat_priv->bind_threshold = DEF_BIND_THRESHOLD;
+	hnat_priv->tcp_dlta = DEF_TCP_DLTA;
+	hnat_priv->udp_dlta = DEF_UDP_DLTA;
+	hnat_priv->fin_dlta = DEF_FIN_DLTA;
+	hnat_priv->tcp_ka = DEF_TCP_KA;
+	hnat_priv->udp_ka = DEF_UDP_KA;
 
 	match = of_match_device(of_hnat_match, &pdev->dev);
 	if (unlikely(!match)) {

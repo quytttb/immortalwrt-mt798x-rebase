@@ -98,6 +98,7 @@ cudy,wr3000p-v1-ubootmod)
 	ucidef_set_led_netdev "wan" "wan" "white:wan" "wan" "link tx rx"
 	ucidef_set_led_netdev "internet" "internet" "white:wan-online" "wan" "link"
 	;;
+cudy,wr3000u-v1|\
 cudy,wbr3000uax-v1|\
 cudy,wbr3000uax-v1-ubootmod)
 	ucidef_set_led_default "internet_off" "internet_off" "red:fault" "1"
@@ -145,9 +146,6 @@ huasifei,wh3000r-nand)
 	;;
 iptime,ax3000q)
 	ucidef_set_led_netdev "wan" "WAN" "amber:wan" "wan" "link tx rx"
-	;;
-iptime,ax3000se)
-	ucidef_set_led_netdev "wlan" "WLAN" "blue:wlan" "phy1-ap0"
 	;;
 iptime,ax3000sm)
 	ucidef_set_led_netdev "wan" "wan" "amber:wan" "eth1" "link tx rx"
@@ -215,6 +213,9 @@ netgear,eax17)
 	;;
 netgear,wax220)
 	ucidef_set_led_netdev "eth0" "LAN" "green:lan" "eth0"
+	;;
+netis,n6-v2)
+	ucidef_set_led_netdev "wan" "WAN" "blue:wan" "wan" "link tx rx"
 	;;
 netis,nx30v2)
 	ucidef_set_led_netdev "wanlink" "WANLINK" "blue:wan" "eth1" "link"
@@ -314,6 +315,13 @@ smartrg,sdg-8733a)
 teltonika,rutc50)
 	ucidef_set_led_netdev "wan-green" "WAN" "mdio-bus:00:green:wan" "wan" "link_1000 tx rx"
 	ucidef_set_led_netdev "wan-amber" "WAN" "mdio-bus:00:amber:wan" "wan" "link_100 link_10 tx rx"
+	;;
+teralink,tl3020-256mb)
+	ucidef_set_led_netdev "lan-1" "lan-1" "blue:lan-1" "lan1" "link tx rx"
+	ucidef_set_led_netdev "lan-2" "lan-2" "blue:lan-2" "lan2" "link tx rx"
+	ucidef_set_led_netdev "lan-3" "lan-3" "blue:lan-3" "lan3" "link tx rx"
+	ucidef_set_led_netdev "wan-off" "wan-off" "red:wan" "wan" "link"
+	ucidef_set_led_netdev "wan" "wan" "blue:wan" "wan" "link"
 	;;
 totolink,x6000r)
 	ucidef_set_led_netdev "wan" "wan" "green:wan" "wan" "link tx rx"

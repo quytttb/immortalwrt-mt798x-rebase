@@ -36,11 +36,9 @@ Usage:
  drivers/net/ethernet/mediatek/mtk_ppe_regs.h    | 12 ++++
  4 files changed, 145 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.c b/drivers/net/ethernet/mediatek/mtk_ppe.c
-index fea919f..9180a33 100644
 --- a/drivers/net/ethernet/mediatek/mtk_ppe.c
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
-@@ -307,7 +307,7 @@ static void mtk_ppe_cache_enable(struct mtk_ppe *ppe, bool enable)
+@@ -307,7 +307,7 @@ static void mtk_ppe_cache_enable(struct
  		enable * MTK_PPE_CACHE_CTL_EN);
  }
  
@@ -49,7 +47,7 @@ index fea919f..9180a33 100644
  {
  	u32 hv1, hv2, hv3;
  	u32 hash;
-@@ -342,6 +342,48 @@ static u32 mtk_ppe_hash_entry(struct mtk_eth *eth, struct mtk_foe_entry *e)
+@@ -342,6 +342,48 @@ static u32 mtk_ppe_hash_entry(struct mtk
  	hash ^= hv1 ^ hv2 ^ hv3;
  	hash ^= hash >> 16;
  	hash <<= (ffs(eth->soc->hash_offset) - 1);
@@ -98,7 +96,7 @@ index fea919f..9180a33 100644
  	hash &= MTK_PPE_ENTRIES - 1;
  
  	return hash;
-@@ -1055,7 +1097,7 @@ int mtk_foe_entry_commit(struct mtk_ppe *ppe, struct mtk_flow_entry *entry)
+@@ -1104,7 +1146,7 @@ int mtk_foe_entry_commit(struct mtk_ppe
  	if (type == MTK_PPE_PKT_TYPE_BRIDGE)
  		return mtk_foe_entry_commit_l2(ppe, entry);
  
@@ -107,7 +105,7 @@ index fea919f..9180a33 100644
  	entry->hash = 0xffff;
  	spin_lock_bh(&ppe_lock);
  	hlist_add_head(&entry->list, &ppe->foe_flow[hash / soc->hash_offset]);
-@@ -1372,7 +1414,9 @@ void mtk_ppe_start(struct mtk_ppe *ppe)
+@@ -1421,7 +1463,9 @@ void mtk_ppe_start(struct mtk_ppe *ppe)
  	      FIELD_PREP(MTK_PPE_TB_CFG_ENTRY_NUM,
  			 MTK_PPE_ENTRIES_SHIFT);
  	if (mtk_is_netsys_v2_or_greater(ppe->eth))
@@ -118,11 +116,9 @@ index fea919f..9180a33 100644
  	if (mtk_is_netsys_v3_or_greater(ppe->eth))
  		val |= MTK_PPE_TB_CFG_KEEP_DSCP_ECN_EN |
  		       MTK_PPE_TB_CFG_IS_SP_TAG_EN;
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.h b/drivers/net/ethernet/mediatek/mtk_ppe.h
-index 63f59eb..193104a 100644
 --- a/drivers/net/ethernet/mediatek/mtk_ppe.h
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe.h
-@@ -372,6 +372,7 @@ struct mtk_ppe {
+@@ -373,6 +373,7 @@ struct mtk_ppe {
  	int version;
  	char dirname[5];
  	bool accounting;
@@ -130,8 +126,6 @@ index 63f59eb..193104a 100644
  
  	void *foe_table;
  	dma_addr_t foe_phys;
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-index 9197988..e18bf52 100644
 --- a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
 @@ -6,6 +6,7 @@
@@ -142,7 +136,7 @@ index 9197988..e18bf52 100644
  
  #include "mtk_eth_soc.h"
  #include "mtk_ppe_regs.h"
-@@ -470,6 +471,87 @@ static const struct file_operations mtk_ppe_internal_debugfs_l4s_fops = {
+@@ -416,6 +417,87 @@ static const struct file_operations mtk_
  	.release = single_release,
  };
  
@@ -230,18 +224,16 @@ index 9197988..e18bf52 100644
  static int
  mtk_ppe_internal_debugfs_foe_all_show(struct seq_file *m, void *private)
  {
-@@ -615,6 +697,9 @@ int mtk_ppe_internal_debugfs_init(struct mtk_eth *eth)
+@@ -559,6 +641,9 @@ int mtk_ppe_internal_debugfs_init(struct
+ 			    &mtk_ppe_internal_debugfs_dscp_fops);
+ 	debugfs_create_file("qos_toggle", S_IRUGO, root, eth,
  			    &mtk_ppe_internal_debugfs_qos_fops);
- 	debugfs_create_file("debug_level", S_IRUGO, root, eth,
- 			    &mtk_ppe_internal_debugfs_level_fops);
 +	if (mtk_is_netsys_v2_or_greater(eth))
 +		debugfs_create_file("hash_mode", S_IRUGO, root, eth,
 +				    &mtk_ppe_internal_debugfs_hash_fops);
  	/* only mt7988 can support l4s through tops */
  	if (eth->soc->caps == MT7988_CAPS)
  		debugfs_create_file("l4s_toggle", S_IRUGO, root, eth,
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_regs.h b/drivers/net/ethernet/mediatek/mtk_ppe_regs.h
-index b5854cb..de10904 100644
 --- a/drivers/net/ethernet/mediatek/mtk_ppe_regs.h
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe_regs.h
 @@ -66,6 +66,7 @@
