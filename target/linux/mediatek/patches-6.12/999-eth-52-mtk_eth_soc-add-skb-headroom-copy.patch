@@ -16,7 +16,7 @@ v1: Add SKB headroom copy support for tunnel packets
 ---
 --- a/include/linux/netdevice.h
 +++ b/include/linux/netdevice.h
-@@ -5298,4 +5298,5 @@ extern struct net_device *blackhole_netd
+@@ -5378,4 +5378,5 @@ extern struct net_device *blackhole_netd
  		atomic_long_add((VAL), &(DEV)->stats.__##FIELD)
  #define DEV_STATS_READ(DEV, FIELD) atomic_long_read(&(DEV)->stats.__##FIELD)
  
@@ -24,7 +24,7 @@ v1: Add SKB headroom copy support for tunnel packets
  #endif	/* _LINUX_NETDEVICE_H */
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -182,6 +182,9 @@ static DEFINE_READ_MOSTLY_HASHTABLE(napi
+@@ -185,6 +185,9 @@ static DEFINE_READ_MOSTLY_HASHTABLE(napi
  
  static DECLARE_RWSEM(devnet_rename_sem);
  
@@ -34,7 +34,7 @@ v1: Add SKB headroom copy support for tunnel packets
  static inline void dev_base_seq_inc(struct net *net)
  {
  	unsigned int val = net->dev_base_seq + 1;
-@@ -3759,6 +3762,9 @@ static struct sk_buff *validate_xmit_skb
+@@ -3800,6 +3803,9 @@ static struct sk_buff *validate_xmit_skb
  		if (IS_ERR(segs)) {
  			goto out_kfree_skb;
  		} else if (segs) {
@@ -64,26 +64,31 @@ v1: Add SKB headroom copy support for tunnel packets
  	skb_put(skb2, len + state->hlen);
  	skb_reset_network_header(skb2);
  	skb2->transport_header = skb2->network_header + state->hlen;
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -7662,6 +7662,8 @@ static int mtk_probe(struct platform_dev
+ 	schedule_delayed_work(&eth->reset.monitor_work,
+ 			      MTK_DMA_MONITOR_TIMEOUT);
+ 
++	mtk_skb_headroom_copy = mtk_hnat_skb_headroom_copy;
++
+ 	return 0;
+ 
+ err_unreg_netdev:
+@@ -7690,6 +7692,8 @@ static void mtk_remove(struct platform_d
+ 	struct mtk_mac *mac;
+ 	int i;
+ 
++	mtk_skb_headroom_copy = NULL;
++
+ 	if (eth->esw_base)
+ 		iounmap(eth->esw_base);
+ 
 --- a/drivers/net/ethernet/mediatek/mtk_tnl.h
 +++ b/drivers/net/ethernet/mediatek/mtk_tnl.h
-@@ -6,6 +6,8 @@
- #ifndef MTK_TNL_H
- #define MTK_TNL_H
- 
-+#include <linux/skbuff.h>
-+
- struct mtk_tnl_desc {
- 	u32 entry : 15;
- 	u32 filled : 3;
-@@ -34,9 +36,42 @@ struct mtk_tnl_desc {
- } __packed;
- 
- #define TNL_MAGIC_TAG 0x6789
-+#define skb_tnl_tops(skb) (((struct mtk_tnl_desc *)((skb)->head))->tops)
- #define skb_tnl_cdrt(skb) (((struct mtk_tnl_desc *)((skb)->head))->cdrt)
- #define skb_tnl_set_cdrt(skb, cdrt) ((skb_tnl_cdrt(skb)) = (cdrt))
- #define skb_tnl_magic_tag(skb) (((struct mtk_tnl_desc *)((skb)->head))->magic_tag_protect)
+@@ -43,4 +43,36 @@ struct mtk_tnl_desc {
  #define is_tnl_tag_valid(skb) (skb_tnl_magic_tag(skb) == TNL_MAGIC_TAG)
+ #define skb_tnl_is_pppoe(skb) (((struct mtk_tnl_desc *)((skb)->head))->is_pppoe)
  
 +static inline int
 +mtk_hnat_skb_headroom_copy(struct sk_buff *new, struct sk_buff *old)
@@ -114,28 +119,7 @@ v1: Add SKB headroom copy support for tunnel packets
 +		temp = temp->next;
 +	}
 +
-+ 	return 0;
++	return 0;
 +}
 +
  #endif /* MTK_TNL_H */
-\ No newline at end of file
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -7471,6 +7471,8 @@ static int mtk_probe(struct platform_dev
- 	schedule_delayed_work(&eth->reset.monitor_work,
- 			      MTK_DMA_MONITOR_TIMEOUT);
- 
-+	mtk_skb_headroom_copy = mtk_hnat_skb_headroom_copy;
-+
- 	return 0;
- 
- err_unreg_netdev:
-@@ -7499,6 +7501,8 @@ static void mtk_remove(struct platform_d
- 	struct mtk_mac *mac;
- 	int i;
- 
-+	mtk_skb_headroom_copy = NULL;
-+
- 	if (eth->esw_base)
- 		iounmap(eth->esw_base);
- 

@@ -907,6 +907,7 @@ static int tcp_bind_lifetime(int tcp_life)
 	int i;
 
 	pr_info("tcp_life = %d\n", tcp_life);
+	hnat_priv->tcp_dlta = tcp_life;
 
 	/* set Delta time for aging out an bind TCP FOE entry */
 	for (i = 0; i < CFG_PPE_NUM; i++)
@@ -921,6 +922,7 @@ static int fin_bind_lifetime(int fin_life)
 	int i;
 
 	pr_info("fin_life = %d\n", fin_life);
+	hnat_priv->fin_dlta = fin_life;
 
 	/* set Delta time for aging out an bind TCP FIN FOE entry */
 	for (i = 0; i < CFG_PPE_NUM; i++)
@@ -935,6 +937,7 @@ static int udp_bind_lifetime(int udp_life)
 	int i;
 
 	pr_info("udp_life = %d\n", udp_life);
+	hnat_priv->udp_dlta = udp_life;
 
 	/* set Delta time for aging out an bind UDP FOE entry */
 	for (i = 0; i < CFG_PPE_NUM; i++)
@@ -955,6 +958,8 @@ static int tcp_keep_alive(int tcp_interval)
 		pr_info("tcp_interval = %d\n", tcp_interval);
 	}
 
+	hnat_priv->tcp_ka = tcp_interval;
+
 	/* Keep alive time for bind FOE TCP entry */
 	for (i = 0; i < CFG_PPE_NUM; i++)
 		cr_set_field(hnat_priv->ppe_base[i] + PPE_KA,
@@ -973,6 +978,8 @@ static int udp_keep_alive(int udp_interval)
 	} else {
 		pr_info("udp_interval = %d\n", udp_interval);
 	}
+
+	hnat_priv->udp_ka = udp_interval;
 
 	/* Keep alive timer for bind FOE UDP entry */
 	for (i = 0; i < CFG_PPE_NUM; i++)
@@ -1058,14 +1065,10 @@ static int set_default_cpu_port(int port)
 		return -EINVAL;
 	}
 
-	for (ppe_id = 0; ppe_id < CFG_PPE_NUM; ppe_id++) {
-		/* SP1/2/3 = GMAC1/2/3 source ports (MT798x) */
-		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT, SP1_DFT_CPORT, port);
-		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT, SP2_DFT_CPORT, port);
-		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT, SP3_DFT_CPORT, port);
-		/* SP15 = GMAC3 source ports(MT7987) */
-		cr_set_field(hnat_priv->ppe_base[ppe_id] + PPE_DFT_CPORT1, SP15_DFT_CPORT, port);
-	}
+	hnat_priv->dft_cport = port;
+
+	for (ppe_id = 0; ppe_id < CFG_PPE_NUM; ppe_id++)
+		hnat_hw_set_dft_cport(ppe_id);
 
 	pr_info("Set PPE default CPU port = %d\n", port);
 
@@ -3837,7 +3840,6 @@ static ssize_t hnat_proto_3tuple_write(struct file *file,
 	char buf[256] = {0};
 	char *p_buf, *token;
 	u8 proto_list[16] = {0};
-	u32 prot_regs[4] = {0};
 	u32 ppe_start, ppe_end;
 	u32 blist, proto;
 	u32 chk = 0;
@@ -3875,7 +3877,6 @@ static ssize_t hnat_proto_3tuple_write(struct file *file,
 	 */
 	if (!strncmp(token, "ipv4", 4) || !strncmp(token, "ipv6", 4)) {
 		bool is_ipv4 = !strncmp(token, "ipv4", 4);
-		u32 cur_chk;
 
 		token = strsep(&p_buf, " \t");
 		if (!token || kstrtou32(token, 0, &chk))
@@ -3884,15 +3885,12 @@ static ssize_t hnat_proto_3tuple_write(struct file *file,
 		chk &= 0xffff;
 
 		for (i = ppe_start; i < ppe_end; i++) {
-			cur_chk = readl(hnat_priv->ppe_base[i] + PPE_IP_PROT_CHK);
-			if (is_ipv4) {
-				cur_chk = (cur_chk & 0xffff0000) | chk;
+			if (is_ipv4)
 				hnat_priv->prot_3t[i].ipv4_chk = (u16)chk;
-			} else {
-				cur_chk = (cur_chk & 0x0000ffff) | (chk << 16);
+			else
 				hnat_priv->prot_3t[i].ipv6_chk = (u16)chk;
-			}
-			writel(cur_chk, hnat_priv->ppe_base[i] + PPE_IP_PROT_CHK);
+
+			hnat_hw_set_prot_3t(i);
 		}
 
 		return count;
@@ -3913,26 +3911,18 @@ static ssize_t hnat_proto_3tuple_write(struct file *file,
 			return -EINVAL;
 
 		proto_list[num] = proto & 0xff;
-		prot_regs[num / 4] |= (proto & 0xff) << ((num % 4) * 8);
 
 		chk |= BIT(num);
 	}
 
 	for (i = ppe_start; i < ppe_end; i++) {
-		cr_set_field(hnat_priv->ppe_base[i] + PPE_FLOW_CFG,
-			     BIT_IP_PROT_CHK_BLIST, blist);
-		writel(chk | (chk << 16),
-		       hnat_priv->ppe_base[i] + PPE_IP_PROT_CHK);
-		writel(prot_regs[0], hnat_priv->ppe_base[i] + PPE_IP_PROT_0);
-		writel(prot_regs[1], hnat_priv->ppe_base[i] + PPE_IP_PROT_1);
-		writel(prot_regs[2], hnat_priv->ppe_base[i] + PPE_IP_PROT_2);
-		writel(prot_regs[3], hnat_priv->ppe_base[i] + PPE_IP_PROT_3);
-
 		hnat_priv->prot_3t[i].blist = blist;
 		hnat_priv->prot_3t[i].num = num;
 		hnat_priv->prot_3t[i].ipv4_chk = (u16)chk;
 		hnat_priv->prot_3t[i].ipv6_chk = (u16)chk;
 		memcpy(hnat_priv->prot_3t[i].proto, proto_list, sizeof(proto_list));
+
+		hnat_hw_set_prot_3t(i);
 	}
 
 	return count;

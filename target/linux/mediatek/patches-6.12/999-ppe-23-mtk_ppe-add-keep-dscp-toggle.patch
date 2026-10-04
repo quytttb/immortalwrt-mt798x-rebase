@@ -36,17 +36,17 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -1758,6 +1758,7 @@ struct mtk_eth {
+@@ -1775,6 +1775,7 @@ struct mtk_eth {
+ 
  	struct metadata_dst		*dsa_meta[MTK_MAX_DSA_PORTS];
  
- 	u8				debug_level;
 +	u8				dscp_toggle;
  	u8				qos_toggle;
  	u8				l4s_toggle;
  	struct mtk_ppe			*ppe[3];
 --- a/drivers/net/ethernet/mediatek/mtk_ppe.c
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
-@@ -371,6 +371,17 @@ mtk_foe_entry_ib2(struct mtk_eth *eth, s
+@@ -370,6 +370,17 @@ mtk_foe_entry_ib2(struct mtk_eth *eth, s
  	return &entry->ipv4.ib2;
  }
  
@@ -64,7 +64,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  int mtk_foe_entry_prepare(struct mtk_eth *eth, struct mtk_foe_entry *entry,
  			  int type, int l4proto, u8 pse_port, u8 *src_mac,
  			  u8 *dest_mac)
-@@ -551,6 +562,12 @@ int mtk_foe_entry_set_dscp(struct mtk_et
+@@ -550,6 +561,12 @@ int mtk_foe_entry_set_dscp(struct mtk_et
  	*ib2 &= ~MTK_FOE_IB2_DSCP;
  	*ib2 |= FIELD_PREP(MTK_FOE_IB2_DSCP, dscp);
  
@@ -77,7 +77,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  	return 0;
  }
  
-@@ -1239,6 +1256,8 @@ void mtk_ppe_start(struct mtk_ppe *ppe)
+@@ -1246,6 +1263,8 @@ void mtk_ppe_start(struct mtk_ppe *ppe)
  			 MTK_PPE_ENTRIES_SHIFT);
  	if (mtk_is_netsys_v2_or_greater(ppe->eth))
  		val |= MTK_PPE_TB_CFG_INFO_SEL;
@@ -157,7 +157,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  mtk_ppe_internal_debugfs_read_qos(struct seq_file *m, void *private)
  {
  	struct mtk_eth *eth = m->private;
-@@ -370,6 +420,8 @@ int mtk_ppe_internal_debugfs_init(struct
+@@ -316,6 +366,8 @@ int mtk_ppe_internal_debugfs_init(struct
  			    &mtk_ppe_internal_debugfs_foe_all_fops);
  	debugfs_create_file("bind", S_IRUGO, root, eth,
  			    &mtk_ppe_internal_debugfs_foe_bind_fops);
@@ -165,7 +165,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
 +			    &mtk_ppe_internal_debugfs_dscp_fops);
  	debugfs_create_file("qos_toggle", S_IRUGO, root, eth,
  			    &mtk_ppe_internal_debugfs_qos_fops);
- 	debugfs_create_file("debug_level", S_IRUGO, root, eth,
+ 
 --- a/drivers/net/ethernet/mediatek/mtk_ppe_regs.h
 +++ b/drivers/net/ethernet/mediatek/mtk_ppe_regs.h
 @@ -65,6 +65,7 @@

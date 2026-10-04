@@ -38,7 +38,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  #include <linux/jhash.h>
  #include <linux/bitfield.h>
  #include <net/dsa.h>
-@@ -5137,6 +5138,228 @@ static const struct net_device_ops mtk_n
+@@ -5168,6 +5169,228 @@ static const struct net_device_ops mtk_n
  	.ndo_select_queue	= mtk_select_queue,
  };
  
@@ -267,7 +267,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
  {
  	const __be32 *_id = of_get_property(np, "reg", NULL);
-@@ -5438,7 +5661,7 @@ static int mtk_sgmii_init(struct mtk_eth
+@@ -5469,7 +5692,7 @@ static int mtk_sgmii_init(struct mtk_eth
  static int mtk_probe(struct platform_device *pdev)
  {
  	struct resource *res = NULL, *res_sram;
@@ -276,7 +276,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  	struct mtk_eth *eth;
  	int err, i;
  
-@@ -5678,6 +5901,26 @@ static int mtk_probe(struct platform_dev
+@@ -5702,6 +5925,26 @@ static int mtk_probe(struct platform_dev
  			goto err_free_dev;
  	}
  
@@ -303,7 +303,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  	if (eth->soc->offload_version) {
  		u8 ppe_num = eth->soc->ppe_num;
  
-@@ -5737,6 +5980,7 @@ err_unreg_netdev:
+@@ -5761,6 +6004,7 @@ err_unreg_netdev:
  	mtk_unreg_dev(eth);
  err_deinit_ppe:
  	mtk_ppe_deinit(eth);
@@ -311,7 +311,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  	mtk_mdio_cleanup(eth);
  err_free_dev:
  	mtk_free_dev(eth);
-@@ -5778,6 +6022,7 @@ static void mtk_remove(struct platform_d
+@@ -5802,6 +6046,7 @@ static void mtk_remove(struct platform_d
  	mtk_cleanup(eth);
  	free_netdev(eth->dummy_dev);
  	mtk_mdio_cleanup(eth);
@@ -321,7 +321,7 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  #define DESC_SIZE(struct_name)				\
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-@@ -714,6 +714,7 @@ struct mtk_tx_dma_v2 {
+@@ -719,6 +719,7 @@ struct mtk_tx_dma_v2 {
  
  struct mtk_eth;
  struct mtk_mac;
@@ -329,15 +329,15 @@ Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
  
  struct mtk_xdp_stats {
  	u64 rx_xdp_redirect;
-@@ -1369,6 +1370,7 @@ struct mtk_eth {
+@@ -1374,6 +1375,7 @@ struct mtk_eth {
  	struct net_device		*dummy_dev;
  	struct net_device		*netdev[MTK_MAX_DEVS];
  	struct mtk_mac			*mac[MTK_MAX_DEVS];
 +	struct mtk_mux			*mux[MTK_MAX_DEVS];
- 	int				irq[3];
+ 	int				irq[MTK_FE_IRQ_NUM];
  	u32				msg_enable;
  	unsigned long			sysclk;
-@@ -1454,6 +1456,28 @@ struct mtk_mac {
+@@ -1459,6 +1461,28 @@ struct mtk_mac {
  	struct notifier_block		device_notifier;
  };
  

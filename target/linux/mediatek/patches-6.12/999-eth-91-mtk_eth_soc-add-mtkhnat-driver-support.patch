@@ -9,11 +9,9 @@ Subject: [PATCH] net: ethernet: mtk_eth_soc: add mtkhnat driver support
  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 39 +++++++++++++++++++++
  3 files changed, 64 insertions(+)
 
-diff --git a/drivers/net/ethernet/mediatek/Kconfig b/drivers/net/ethernet/mediatek/Kconfig
-index d974316..1589b36 100644
 --- a/drivers/net/ethernet/mediatek/Kconfig
 +++ b/drivers/net/ethernet/mediatek/Kconfig
-@@ -40,4 +40,28 @@ config NET_MEDIATEK_STAR_EMAC
+@@ -32,4 +32,28 @@ config NET_MEDIATEK_STAR_EMAC
  	  This driver supports the ethernet MAC IP first used on
  	  MediaTek MT85** SoCs.
  
@@ -42,18 +40,13 @@ index d974316..1589b36 100644
 +	  family.
 +
  endif #NET_VENDOR_MEDIATEK
-diff --git a/drivers/net/ethernet/mediatek/Makefile b/drivers/net/ethernet/mediatek/Makefile
-index 52848b7..96d0f74 100644
 --- a/drivers/net/ethernet/mediatek/Makefile
 +++ b/drivers/net/ethernet/mediatek/Makefile
-@@ -11,4 +11,5 @@ mtk_eth-$(CONFIG_NET_MEDIATEK_SOC_WED) += mtk_wed_debugfs.o
+@@ -11,3 +11,4 @@ mtk_eth-$(CONFIG_NET_MEDIATEK_SOC_WED) +
  endif
  obj-$(CONFIG_NET_MEDIATEK_SOC_WED) += mtk_wed_ops.o
  obj-$(CONFIG_NET_MEDIATEK_STAR_EMAC) += mtk_star_emac.o
 +obj-$(CONFIG_NET_MEDIATEK_HNAT) += mtk_hnat/
- obj-$(CONFIG_NET_AIROHA) += airoha_eth.o
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index a03baee..6784cc2 100644
 --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
 @@ -40,6 +40,10 @@
@@ -67,7 +60,7 @@ index a03baee..6784cc2 100644
  static int mtk_msg_level = -1;
  module_param_named(msg_level, mtk_msg_level, int, 0);
  MODULE_PARM_DESC(msg_level, "Message level (-1=defaults,0=none,...,16=all)");
-@@ -2819,6 +2823,31 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+@@ -2954,6 +2958,32 @@ static int mtk_poll_rx(struct napi_struc
  
  			skb_reserve(skb, NET_SKB_PAD + NET_IP_ALIGN);
  			skb_put(skb, pktlen);
@@ -85,6 +78,7 @@ index a03baee..6784cc2 100644
 +			skb_hnat_set_tops(skb, 0);
 +			skb_hnat_set_is_decap(skb, 0);
 +			skb_hnat_set_is_decrypt(skb, (skb_hnat_cdrt(skb) ? 1 : 0));
++			skb_hnat_set_is_pppoe(skb, 0);
 +
 +			if (skb_hnat_reason(skb) == HIT_BIND_FORCE_TO_CPU) {
 +				trace_printk("[%s] reason=0x%x(force to CPU) from WAN to Ext\n",
@@ -99,7 +93,7 @@ index a03baee..6784cc2 100644
  		}
  
  		skb->dev = netdev;
-@@ -2861,8 +2890,10 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+@@ -2996,8 +3026,10 @@ static int mtk_poll_rx(struct napi_struc
  				skb_dst_set_noref(skb, &eth->dsa_meta[port]->dst);
  		}
  
@@ -110,36 +104,29 @@ index a03baee..6784cc2 100644
  
  		if (eth->hwlro && eth->debugfs->hwlro_stats.ebl &&
  		    IS_HW_LRO_RING(ring->ring_no)) {
-@@ -4531,6 +4562,7 @@ static int mtk_open(struct net_device *dev)
+@@ -4763,8 +4795,10 @@ static int mtk_open(struct net_device *d
  		if (err)
  			return err;
  
 +#if !defined(CONFIG_NET_MEDIATEK_HNAT) && !defined(CONFIG_NET_MEDIATEK_HNAT_MODULE)
  		for (i = 0; i < ARRAY_SIZE(eth->ppe); i++)
  			mtk_ppe_start(eth->ppe[i]);
- 
-@@ -4538,6 +4570,7 @@ static int mtk_open(struct net_device *dev)
- 		if (err)
- 			netdev_err(dev, "%s: could not start ppe roaming work: %d\n",
- 				   __func__, err);
 +#endif
  
  		for (i = 0; i < MTK_MAX_DEVS; i++) {
  			if (!eth->netdev[i])
-@@ -4718,10 +4751,12 @@ static int mtk_stop(struct net_device *dev)
+@@ -4938,8 +4972,10 @@ static int mtk_stop(struct net_device *d
  
  	mtk_dma_free(eth);
  
 +#if !defined(CONFIG_NET_MEDIATEK_HNAT) && !defined(CONFIG_NET_MEDIATEK_HNAT_MODULE)
- 	mtk_ppe_roaming_stop(eth);
- 
  	for (i = 0; i < ARRAY_SIZE(eth->ppe); i++)
  		mtk_ppe_stop(eth->ppe[i]);
 +#endif
  
  	return 0;
  }
-@@ -7222,6 +7257,7 @@ static int mtk_probe(struct platform_device *pdev)
+@@ -7581,6 +7617,7 @@ static int mtk_probe(struct platform_dev
  		};
  	}
  
@@ -147,7 +134,7 @@ index a03baee..6784cc2 100644
  	if (eth->soc->offload_version) {
  		u8 ppe_num = eth->soc->ppe_num;
  
-@@ -7246,6 +7282,7 @@ static int mtk_probe(struct platform_device *pdev)
+@@ -7605,6 +7642,7 @@ static int mtk_probe(struct platform_dev
  		if (err)
  			goto err_deinit_ppe;
  	}
@@ -155,7 +142,7 @@ index a03baee..6784cc2 100644
  
  	mtk_eth_debugfs_init(eth);
  
-@@ -7306,7 +7343,9 @@ static int mtk_probe(struct platform_device *pdev)
+@@ -7671,7 +7709,9 @@ err_unreg_netdev:
  	free_netdev(eth->dummy_dev);
  err_deinit_ppe:
  	mtk_napi_del(eth);
@@ -165,6 +152,3 @@ index a03baee..6784cc2 100644
  	mtk_release_all_muxes(eth);
  	mtk_mdio_cleanup(eth);
  err_free_dev:
--- 
-2.45.2
-

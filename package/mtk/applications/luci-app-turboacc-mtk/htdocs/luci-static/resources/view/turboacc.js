@@ -159,12 +159,6 @@ return view.extend({
 			]);
 		};
 
-		/* Mark user edited */
-		s = m.section(form.NamedSection, 'global', 'turboacc');
-		o = s.option(form.HiddenValue, 'set');
-		o.default = '1'; 
-		o.forcewrite = true;
-
 		s = m.section(form.NamedSection, 'config', 'turboacc');
 
 		o = s.option(form.ListValue, 'fastpath', _('Fastpath engine'),

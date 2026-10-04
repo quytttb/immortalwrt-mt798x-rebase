@@ -1,10 +1,13 @@
 ---
-[v4] arm64: dts: mediatek: add BananaPi BPI-R4 Pro support
+[v6] arm64: dts: mediatek: align Ethernet naming with BPI-R4-PRO upstream
 
-Add device tree support for BananaPi BPI-R4 Pro board based on MediaTek MT7988A
-SoC.
+Align Ethernet naming with BPI-R4-PRO upstream.
 
 ---
+v6: Align Ethernet naming with BPI-R4-PRO upstream.
+v5: Move the SPI-NAND flash/NMBM partition table, Factory nvmem cells and the
+    PCIe WiFi EEPROM reference out of the board DTS into
+    mt7988a-bananapi-bpi-r4-pro-spim-nand{,-nmbm}.dtso overlays.
 v4: Remove loglevel from bootargs and use the kernel config default
 v3: Add all pin nodes scattered across different dts into unified pinctrl dtsi.
 v2: Add mt798x flash DTS clock/driving settings (spi0/spi2 pin driving, clock
@@ -15,7 +18,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 
 --- /dev/null
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dts
-@@ -0,0 +1,788 @@
+@@ -0,0 +1,725 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (C) 2025 MediaTek Inc.
@@ -53,7 +56,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +/ {
 +	model = "Bananapi BPI-R4";
-+	compatible = "bananapi,bpi-r4-pro",
++	compatible = "bananapi,bpi-r4-pro-8x",
 +		     "mediatek,mt7988a";
 +
 +	aliases {
@@ -75,7 +78,6 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +			    earlycon=uart8250,mmio32,0x11000000 \
 +			    pci=pcie_bus_perf ubi.block=0,firmware root=/dev/fit0 \
 +			    rootwait";
-+		rootdisk-spim-nand = <&ubi_rootfs>;
 +	};
 +
 +	gpio-keys {
@@ -264,24 +266,19 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +&gmac0 {
 +	status = "okay";
-+	nvmem-cell-names = "mac-address";
-+	nvmem-cells = <&gmac0_mac>;
 +};
 +
 +&gmac1 {
 +	phy-mode = "usxgmii";
 +	phy-connection-type = "usxgmii";
 +	phy = <&phy28>;
-+	nvmem-cell-names = "mac-address";
-+	nvmem-cells = <&gmac1_mac>;
++	openwrt,netdev-name = "wan";
 +	status = "okay";
 +};
 +
 +&gmac2 {
 +	phy-mode = "10gbase-r";
 +	phy-connection-type = "10gbase-r";
-+	nvmem-cell-names = "mac-address";
-+	nvmem-cells = <&gmac2_mac>;
 +	status = "okay";
 +
 +	fixed-link {
@@ -387,7 +384,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +				reg = <12>;
 +				chan-sel-gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
 +				mod-def0-gpios = <&pio 69 GPIO_ACTIVE_LOW>;
-+				sfp-present-channel = <0>;
++				sfp-connected-channel = <0>;
 +
 +				ds_channel_0: channel@0 {
 +					reg = <0>;
@@ -409,7 +406,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +		ports {
 +			port0: port@0 {
 +				reg = <0>;
-+				label = "mxl_lan0";
++				label = "lan1";
 +				phy-handle = <&switchphy0>;
 +				phy-mode = "internal";
 +				status = "okay";
@@ -417,7 +414,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +			port1: port@1 {
 +				reg = <1>;
-+				label = "mxl_lan1";
++				label = "lan2";
 +				phy-handle = <&switchphy1>;
 +				phy-mode = "internal";
 +				status = "okay";
@@ -425,7 +422,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +			port2: port@2 {
 +				reg = <2>;
-+				label = "mxl_lan2";
++				label = "lan3";
 +				phy-handle = <&switchphy2>;
 +				phy-mode = "internal";
 +				status = "okay";
@@ -433,16 +430,8 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +			port3: port@3 {
 +				reg = <3>;
-+				label = "mxl_lan3";
++				label = "lan4";
 +				phy-handle = <&switchphy3>;
-+				phy-mode = "internal";
-+				status = "okay";
-+			};
-+
-+			port4: port@4 {
-+				reg = <4>;
-+				label = "mxl_lan4";
-+				phy-handle = <&switchphy4>;
 +				phy-mode = "internal";
 +				status = "okay";
 +			};
@@ -462,7 +451,7 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +
 +			port6: port@6 {
 +				reg = <12>;
-+				label = "mxl_lan5";
++				label = "lan6";
 +				phy-mode = "usxgmii";
 +				phy-handle = <&phy24>;
 +				status = "okay";
@@ -483,9 +472,6 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +			switchphy3:switchphy@3 {
 +				reg= <3>;
 +			};
-+			switchphy4:switchphy@4 {
-+				reg= <4>;
-+			};
 +		};
 +	};
 +};
@@ -502,7 +488,32 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +};
 +
 +&gsw_port0 {
-+	label = "lan0";
++	label = "lan5";
++};
++
++/* BPI-R4-PRO has only port 0 connected, so disable the others */
++&gsw_phy1 {
++	status = "disabled";
++};
++
++&gsw_port1 {
++	status = "disabled";
++};
++
++&gsw_phy2 {
++	status = "disabled";
++};
++
++&gsw_port2 {
++	status = "disabled";
++};
++
++&gsw_phy3 {
++	status = "disabled";
++};
++
++&gsw_port3 {
++	status = "disabled";
 +};
 +
 +&i2c0 {
@@ -645,17 +656,6 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pcie0_pins>;
 +	status = "okay";
-+
-+	slot0: pcie@0,0 {
-+		reg = <0x0000 0 0 0 0>;
-+
-+		mt7996@0,0 {
-+			compatible = "mediatek,mt76";
-+			reg = <0x0000 0 0 0 0>;
-+			device_type = "pci";
-+			mediatek,mtd-eeprom = <&factory 0x0>;
-+		};
-+	};
 +};
 +
 +/* mPCIe SIM3 */
@@ -712,72 +712,12 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +	pinctrl-0 = <&spi0_flash_pins>;
 +	status = "okay";
 +
-+	spi_nand: spi_nand@0 {
++	spi_nand: flash@0 {
 +		compatible = "spi-nand";
 +		reg = <0>;
 +		spi-max-frequency = <52000000>;
-+		spi-tx-buswidth = <4>;
-+		spi-rx-buswidth = <4>;
-+	};
-+};
-+
-+&spi_nand {
-+	partitions {
-+		compatible = "fixed-partitions";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partition@0 {
-+			label = "BL2";
-+			reg = <0x00000 0x0100000>;
-+			read-only;
-+		};
-+
-+
-+		partition@100000 {
-+			label = "u-boot-env";
-+			reg = <0x0100000 0x0080000>;
-+		};
-+
-+		factory: partition@180000 {
-+			label = "Factory";
-+			reg = <0x180000 0x0400000>;
-+
-+			nvmem-layout {
-+				compatible = "fixed-layout";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+
-+				gmac2_mac: eeprom@fffee {
-+					reg = <0xfffee 0x6>;
-+				};
-+
-+				gmac1_mac: eeprom@ffffa {
-+					reg = <0xffffa 0x6>;
-+				};
-+
-+				gmac0_mac: eeprom@ffff4 {
-+					reg = <0xffff4 0x6>;
-+				};
-+			};
-+		};
-+
-+		partition@580000 {
-+			label = "FIP";
-+			reg = <0x580000 0x0200000>;
-+		};
-+
-+		partition@780000 {
-+			label = "ubi";
-+			reg = <0x780000 0x7080000>;
-+			compatible = "linux,ubi";
-+
-+			volumes {
-+				ubi_rootfs: ubi-volume-fit {
-+					volname = "firmware";
-+				};
-+			};
-+		};
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
 +	};
 +};
 +
@@ -804,5 +744,224 @@ v1: Move openwrt-master files to openwrt-25.12 branch after OpenWrt official
 +&xsphy {
 +	status = "okay";
 +};
---
-2.45.2
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-spim-nand-nmbm.dtso
+@@ -0,0 +1,137 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ */
++
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
++
++	fragment@0 {
++		target = <&spi0>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi0_flash_pins>;
++			status = "okay";
++
++			flash@0 {
++				compatible = "spi-nand";
++				reg = <0>;
++				spi-max-frequency = <52000000>;
++				spi-tx-bus-width = <4>;
++				spi-rx-bus-width = <4>;
++				mediatek,nmbm;
++				mediatek,bmt-max-ratio = <1>;
++				mediatek,bmt-max-reserved-blocks = <64>;
++
++				partitions {
++					compatible = "fixed-partitions";
++					#address-cells = <1>;
++					#size-cells = <1>;
++
++					partition@0 {
++						label = "BL2";
++						reg = <0x00000 0x0100000>;
++						read-only;
++					};
++
++					partition@100000 {
++						label = "u-boot-env";
++						reg = <0x0100000 0x0080000>;
++					};
++
++					factory: partition@180000 {
++						label = "Factory";
++						reg = <0x180000 0x0400000>;
++
++						nvmem-layout {
++							compatible = "fixed-layout";
++							#address-cells = <1>;
++							#size-cells = <1>;
++
++							gmac2_mac: eeprom@fffee {
++								reg = <0xfffee 0x6>;
++							};
++
++							gmac1_mac: eeprom@ffffa {
++								reg = <0xffffa 0x6>;
++							};
++
++							gmac0_mac: eeprom@ffff4 {
++								reg = <0xffff4 0x6>;
++							};
++						};
++					};
++
++					partition@580000 {
++						label = "FIP";
++						reg = <0x580000 0x0200000>;
++					};
++
++					partition@780000 {
++						label = "ubi";
++						reg = <0x780000 0x0>;
++						compatible = "linux,ubi";
++						mtd-extend-to-end;
++
++						volumes {
++							ubi_rootfs: ubi-volume-fit {
++								volname = "firmware";
++							};
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target = <&pcie0>;
++		__overlay__ {
++			slot0: pcie@0,0 {
++				reg = <0x0000 0 0 0 0>;
++
++				mt7996@0,0 {
++					compatible = "mediatek,mt76";
++					reg = <0x0000 0 0 0 0>;
++					device_type = "pci";
++					mediatek,mtd-eeprom = <&factory 0x0>;
++				};
++			};
++		};
++	};
++
++	fragment@2 {
++		target-path = "/chosen";
++		__overlay__ {
++			rootdisk-spim-nand = <&ubi_rootfs>;
++		};
++	};
++
++	fragment@3 {
++		target = <&gmac0>;
++		__overlay__ {
++			nvmem-cell-names = "mac-address";
++			nvmem-cells = <&gmac0_mac>;
++		};
++	};
++
++	fragment@4 {
++		target = <&gmac1>;
++		__overlay__ {
++			nvmem-cell-names = "mac-address";
++			nvmem-cells = <&gmac1_mac>;
++		};
++	};
++
++	fragment@5 {
++		target = <&gmac2>;
++		__overlay__ {
++			nvmem-cell-names = "mac-address";
++			nvmem-cells = <&gmac2_mac>;
++		};
++	};
++};
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-spim-nand.dtso
+@@ -0,0 +2,78 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ */
++
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
++
++	fragment@0 {
++		target = <&spi0>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi0_flash_pins>;
++			status = "okay";
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			flash@0 {
++				compatible = "spi-nand";
++				reg = <0>;
++				spi-max-frequency = <52000000>;
++				spi-tx-bus-width = <4>;
++				spi-rx-bus-width = <4>;
++
++				partitions {
++					compatible = "fixed-partitions";
++					#address-cells = <1>;
++					#size-cells = <1>;
++
++					partition@0 {
++						label = "BL2";
++						reg = <0x00000 0x0200000>;
++						read-only;
++					};
++
++					ubi_part: partition@200000 {
++						label = "ubi";
++						reg = <0x0200000 0x0>;
++						compatible = "linux,ubi";
++						mtd-extend-to-end;
++
++						volumes {
++							ubi-volume-ubootenv {
++								volname = "ubootenv";
++								nvmem-layout {
++									compatible = "u-boot,env-redundant-bool";
++								};
++							};
++
++							ubi-volume-ubootenv2 {
++								volname = "ubootenv2";
++								nvmem-layout {
++									compatible = "u-boot,env-redundant-bool";
++								};
++							};
++
++							ubi_root: ubi-volume-fit {
++								volname = "fit";
++							};
++
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/chosen";
++		__overlay__ {
++			rootdisk-spim-nand = <&ubi_root>;
++		};
++	};
++};
