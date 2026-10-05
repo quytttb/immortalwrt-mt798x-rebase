@@ -13,19 +13,39 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
 echo "=== Bước 1: Update và install feeds ==="
+# Bước 3 injects translations into the luci feed checkout on every run. Reset those
+# paths first so 'feeds update' never fails on a dirty-tree merge (they are
+# re-applied deterministically in Bước 3).
+if [[ -d feeds/luci/.git ]]; then
+    git -C feeds/luci checkout -- \
+        modules/luci-base/po/vi/base.po \
+        applications/luci-app-upnp/po/vi/upnp.po 2>/dev/null || true
+fi
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
-echo "=== Bước 2: Verify custom packages (Aurora) ==="
-# Aurora sources are vendored in this fork, so their revision is pinned by the
-# top-level firmware commit. Do not replace them with an unpinned clone at build time.
-for package_dir in package/luci-theme-aurora package/luci-app-aurora-config; do
-    if [[ ! -f "$package_dir/Makefile" ]]; then
-        echo "ERROR: Missing vendored Aurora package: $package_dir" >&2
-        exit 1
+echo "=== Bước 2: Sync Aurora packages (rolling) ==="
+# Aurora theme + config app track upstream eamonxg HEAD so each build picks up the
+# latest release. These are single-package repos (Makefile at repo root), which the
+# buildroot feed indexer cannot handle as src-git feeds, so sync them straight into
+# package/ instead (local package/ shadows feeds/ by design).
+sync_aurora_repo() {
+    local dest="$1" url="$2" branch sha ver
+    branch="$(git ls-remote --symref "$url" HEAD | awk '/^ref:/ { sub("refs/heads/", "", $2); print $2; exit }')"
+    [[ -n "$branch" ]] || { echo "ERROR: cannot resolve HEAD branch for $url" >&2; exit 1; }
+    if [[ -d "$dest/.git" ]]; then
+        git -C "$dest" fetch --quiet --depth 1 origin "$branch"
+        git -C "$dest" reset --quiet --hard FETCH_HEAD
+    else
+        rm -rf "$dest"
+        git clone --quiet --depth 1 --branch "$branch" "$url" "$dest"
     fi
-done
-echo "  Aurora packages are pinned by this firmware revision."
+    sha="$(git -C "$dest" rev-parse --short HEAD)"
+    ver="$(awk -F':= *' '/^PKG_VERSION/ { print $2; exit }' "$dest/Makefile")"
+    echo "  $(basename "$dest"): $ver @ $sha ($branch)"
+}
+sync_aurora_repo package/luci-theme-aurora https://github.com/eamonxg/luci-theme-aurora.git
+sync_aurora_repo package/luci-app-aurora-config https://github.com/eamonxg/luci-app-aurora-config.git
 
 echo "=== Bước 3: Áp dụng bản dịch và defaults tuỳ chỉnh ==="
 inject_po() {

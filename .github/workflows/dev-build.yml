@@ -11,6 +11,7 @@ on:
       - "feeds.conf.default"
       - "Makefile"
       - "rules.mk"
+      - "scripts/**"
       - ".github/workflows/**"
   workflow_dispatch:
 

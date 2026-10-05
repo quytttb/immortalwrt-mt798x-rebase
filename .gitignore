@@ -19,6 +19,10 @@
 /overlay
 /package/feeds
 /package/openwrt-packages
+# Aurora theme + config app are synced rolling from upstream at build time
+# (see scripts/prepare-build.sh), never committed.
+/package/luci-theme-aurora
+/package/luci-app-aurora-config
 /*.patch
 /llvm-bpf*
 key-build*
