@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       UPSTREAM_REPOSITORY: https://github.com/chasey-dev/immortalwrt-mt798x-rebase.git
       UPSTREAM_BRANCH: 25.12

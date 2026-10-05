@@ -24,7 +24,7 @@ permissions:
 jobs:
   build-firmware:
     if: "!contains(github.event.head_commit.message, 'chore(release):')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7
@@ -53,9 +53,9 @@ jobs:
           path: |
             staging_dir/host
             staging_dir/toolchain-aarch64_cortex-a53_gcc-*
-          key: openwrt-toolchain-filogic-aarch64-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
+          key: openwrt-toolchain-filogic-aarch64-ubuntu2604-${{ hashFiles('feeds.conf.default') }}-v1
           restore-keys: |
-            openwrt-toolchain-filogic-aarch64-ubuntu2404-
+            openwrt-toolchain-filogic-aarch64-ubuntu2604-
 
       - name: Restore download cache
         id: cache-dl
@@ -63,9 +63,9 @@ jobs:
         with:
           path: dl
           # Key unique mỗi run → luôn restore qua restore-keys (cache mới nhất)
-          key: openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-${{ github.run_id }}
+          key: openwrt-dl-filogic-ubuntu2604-${{ hashFiles('feeds.conf.default') }}-v1-${{ github.run_id }}
           restore-keys: |
-            openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-
+            openwrt-dl-filogic-ubuntu2604-${{ hashFiles('feeds.conf.default') }}-v1-
 
       - name: Build firmware and collect artifacts
         env:
@@ -103,7 +103,7 @@ jobs:
           path: |
             staging_dir/host
             staging_dir/toolchain-aarch64_cortex-a53_gcc-*
-          key: openwrt-toolchain-filogic-aarch64-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1
+          key: openwrt-toolchain-filogic-aarch64-ubuntu2604-${{ hashFiles('feeds.conf.default') }}-v1
 
       - name: Save download cache
         # Key unique mỗi run → luôn tạo entry mới (dl tích lũy tarball mới)
@@ -111,4 +111,4 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: dl
-          key: openwrt-dl-filogic-ubuntu2404-${{ hashFiles('feeds.conf.default') }}-v1-${{ github.run_id }}
+          key: openwrt-dl-filogic-ubuntu2604-${{ hashFiles('feeds.conf.default') }}-v1-${{ github.run_id }}
