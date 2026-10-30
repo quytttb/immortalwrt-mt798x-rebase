@@ -19,14 +19,6 @@ endif
 
 # driver version
 
-ifeq ($(CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7661),y)
-PKG_SOURCE:=mt79xx_20220907-8b55f5.tar.xz
-PKG_SOURCE_URL:=$(REPO_URL)
-PKG_HASH:=6d338f3dcb6844bdc420619388b6de7575065eece55b2e00d3bd43d6ba92cb4b
-PKG_VERSION:=7.6.6.1
-PATCH_DIR:=patches-7661
-endif
-
 ifeq ($(CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7672),y)
 PKG_SOURCE:=mt79xx_20231229-4012a0.tar.xz
 PKG_SOURCE_URL:=$(REPO_URL)
@@ -298,8 +290,7 @@ PKG_KCONFIG:= \
 	DFS_SLAVE_SUPPORT \
 
 PKG_CONFIG_DEPENDS:=$(foreach c, $(PKG_KCONFIG),$(if $(CONFIG_MTK_$c),CONFIG_$(c)))
-PKG_PREPARED_DEPENDS:=CONFIG_MTK_FW_NEW_API_PATCH \
-            CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7661 \
+PKG_PREPARED_DEPENDS:= \
 			CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7672 \
 			CONFIG_MTK_MT_WIFI_DRIVER_VERSION_7673
 
@@ -321,15 +312,6 @@ endef
 define KernelPackage/mt_wifi/config
 	source "$(SOURCE)/config.in"
 endef
-
-define MT_WIFI_SRC_PATCH
-	@if [ "$$(CONFIG_MTK_FW_NEW_API_PATCH)" = "y" ]; then \
-		echo "Fixup new mcu fw API"; \
-		patch -p1 -d $(PKG_BUILD_DIR) < ./files/fix-new-mcu-fw-api.patch; \
-	fi
-endef
-
-Hooks/Prepare/Post := MT_WIFI_SRC_PATCH
 
 define Build/Compile
 	+$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
