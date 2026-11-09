@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=hnat-detect
 PKG_LICENSE:=GPL-2.0
 PKG_VERSION:=1
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -15,6 +15,7 @@ UCODE_DEPENDS:= \
   +ucode \
   +ucode-mod-fs \
   +ucode-mod-log \
+  +ucode-mod-ubus \
   +ucode-mod-uci
 
 define Package/hnat-detect/Default
@@ -30,7 +31,7 @@ endef
 
 define Package/hnat-detect
   $(call Package/hnat-detect/Default)
-  DEPENDS:=$(UCODE_DEPENDS) +kmod-dummy
+  DEPENDS:=$(UCODE_DEPENDS) +kmod-dummy +ip +firewall4
 endef
 
 define Build/Prepare
