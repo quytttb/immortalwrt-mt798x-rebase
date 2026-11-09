@@ -23,47 +23,61 @@ import * as fs from 'fs';
 import { merge } from 'hnat.utils.common';
 
 const SYS_NET_PATH = '/sys/class/net';
-const p = (dev, sub) => `${SYS_NET_PATH}/${dev}/${sub ? `/${sub}` : ''}`;
+function net_path(dev, sub) {
+    return sub ? `${SYS_NET_PATH}/${dev}/${sub}` : `${SYS_NET_PATH}/${dev}`;
+}
 
 let _devs  = null;
-let _roots = null;
 
-const devs = () => _devs ||= (fs.lsdir(SYS_NET_PATH) || []);
+function get_net_devices() {
+    if (_devs == null) {
+        _devs = fs.lsdir(SYS_NET_PATH);
+        if (_devs == null)
+            die(`cannot list network devices: ${fs.error()}`);
+    }
+    return _devs;
+}
 
 function is_gmac_root(dev) {
-    let c = fs.readfile(p(dev, 'of_node/compatible'));
+    let c = fs.readfile(net_path(dev, 'of_node/compatible'));
     if (!c)
-        c = fs.readfile(p(dev, 'device/of_node/compatible'));
+        c = fs.readfile(net_path(dev, 'device/of_node/compatible'));
     return (c && index(c, 'mediatek,eth-mac') >= 0);
 };
 
 export function get_gmac_roots() {
-    if (_roots) return _roots;
-    _roots = filter(devs(), d => is_gmac_root(d));
-    _roots = uniq(_roots);
-    return _roots;
+    return filter(get_net_devices(), is_gmac_root);
 };
 
 export function dev_exist(dev) {
-    return fs.stat(p(dev)) != null;
+    return fs.stat(net_path(dev)) != null;
+};
+
+export function is_up(dev) {
+    return !!(int(fs.readfile(net_path(dev, 'flags')), 16) & 1);
+};
+
+export function get_master(dev) {
+    let link = fs.readlink(net_path(dev, 'master'));
+    return link ? fs.basename(link) : null;
 };
 
 function get_lower_devs(dev) {
-    let ents = fs.lsdir(p(dev)) || [];
+    let ents = fs.lsdir(net_path(dev)) || [];
     let lowers = filter(ents, n => index(n, 'lower_') == 0);
-    return uniq(map(lowers, n => substr(n, 6)));
+    return map(lowers, n => substr(n, 6));
 };
 
 export function is_bridge(dev) {
-    return fs.stat(p(dev, 'bridge')) != null;
+    return fs.stat(net_path(dev, 'bridge')) != null;
 };
 
 export function br_members(br) {
-    return fs.lsdir(p(br, 'brif')) || [];
+    return fs.lsdir(net_path(br, 'brif')) || [];
 };
 
 export function has_phy(dev) {
-    return (fs.readlink(p(dev, 'phydev')) != null);
+    return (fs.readlink(net_path(dev, 'phydev')) != null);
 };
 
 /*
@@ -72,8 +86,8 @@ export function has_phy(dev) {
  * - use phys_switch_id + phys_port_name existence
  */
 export function is_switch_port(dev) {
-    return fs.readfile(p(dev, 'phys_switch_id')) != null &&
-        fs.readfile(p(dev, 'phys_port_name')) != null;
+    return fs.readfile(net_path(dev, 'phys_switch_id')) != null &&
+        fs.readfile(net_path(dev, 'phys_port_name')) != null;
 };
 
 function get_switch_master_on_gmac(dev, roots, depth) {
@@ -98,6 +112,25 @@ export function is_switch_port_on_gmac(port, roots) {
 };
 
 /*
+ * Resolve a NAT zone device to Ext device names.
+ * - Require administrative UP state and exclude MTK GMACs and their switch ports.
+ * - Follow lower_* links through upper devices such as VLANs and bridges.
+ * - At devices without lowers, accept usb/wwan/eth name prefixes.
+ * - Return unique names. Detection uses names, not bus or driver information.
+ */
+export function resolve_ext_devices(dev, roots, depth) {
+    if (depth == null) depth = 0;
+    if (depth > 12 || !is_up(dev)) return [];
+    if (index(roots, dev) >= 0 || is_switch_port_on_gmac(dev, roots)) return [];
+
+    let lowers = get_lower_devs(dev);
+    if (length(lowers))
+        return uniq(merge(...map(lowers, d => resolve_ext_devices(d, roots, depth + 1))));
+
+    return match(dev, /^(usb|wwan|eth)/) ? [ dev ] : [];
+};
+
+/*
  * Map an upper device to physical devices.
  * - bridge: resolve physical devices respectively
  * - DSA port: return itself
@@ -106,7 +139,7 @@ export function is_switch_port_on_gmac(port, roots) {
 export function resolve_endpoints(dev, roots, depth) {
     if (depth == null) depth = 0;
     if (depth > 12) return [];
-    if (!dev || fs.stat(p(dev)) == null) return [];
+    if (!dev || fs.stat(net_path(dev)) == null) return [];
 
     if (is_bridge(dev)) {
         let mem = br_members(dev);
@@ -143,29 +176,19 @@ export function resolve_gmac_endpoint(dev, roots) {
     return null;
 };
 
-export function get_all_switch_ports(roots) {
-    return filter(devs(), d => is_switch_port_on_gmac(d, roots));
-};
-
 /*
  * Compute a safe numeric prefix for switch ports (e.g. lan1/lan2 -> "lan").
- * Safety: any netdev starting with prefix must ALSO be a switch port.
+ * Every matching netdev must be a switch port on an MTK GMAC.
  * This avoids accidentally matching Wi-Fi/USB/etc.
  */
-export function get_switch_prefix(ports) {
-    if (!ports || !length(ports)) return null;
+export function get_switch_prefix(port, roots) {
+    let m = match(port, /^([A-Za-z_-]+)[0-9]+$/);
+    if (!m) return null;
+    let pref = m[1];
 
-    let pref = null;
-    for (let port in ports) {
-        let m = match(port, /^([A-Za-z_-]+)[0-9]+$/);
-        if (!m) return null;
-        if (pref == null) pref = m[1];
-        if (pref != m[1]) return null;
-    }
-
-    /* safety: prefix must not match non-switch devices */
-    for (let d in devs()) {
-        if (index(d, pref) == 0 && !is_switch_port(d))
+    /* Do not include devices outside the supported GMAC topology. */
+    for (let d in get_net_devices()) {
+        if (index(d, pref) == 0 && !is_switch_port_on_gmac(d, roots))
             return null;
     }
 
